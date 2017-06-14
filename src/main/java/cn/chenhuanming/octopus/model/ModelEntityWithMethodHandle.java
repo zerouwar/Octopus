@@ -13,11 +13,11 @@ import java.util.regex.Pattern;
 @Getter
 @Setter
 public class ModelEntityWithMethodHandle {
-    private String name;//属性名
-    private String defaultValue;//默认值
-    private MethodHandle handle;//方法句柄
-    private String description;//属性描述
-    private String wrongMsg;//错误信息
-    private Optional<Pattern> pattern;//正则表达式检查
-
+    private String name;// name of field
+    private String description;// description of field
+    private String defaultValue;// default value when cell is blank
+    private MethodHandle handle;// method handle
+    private String wrongMsg;// wrong message
+    private Optional<Pattern> pattern;// regex pattern
+    private boolean blankable;// whether cell can be blank
 }

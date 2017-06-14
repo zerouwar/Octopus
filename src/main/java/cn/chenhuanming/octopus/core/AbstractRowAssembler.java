@@ -6,12 +6,15 @@ import cn.chenhuanming.octopus.annotation.ModelProperty;
 import cn.chenhuanming.octopus.dataConvert.ConvertManager;
 import cn.chenhuanming.octopus.dataConvert.DefaultValueConvertManager;
 import cn.chenhuanming.octopus.dataConvert.SimpleConvertManager;
+import cn.chenhuanming.octopus.dictionary.DefaultValue;
+import cn.chenhuanming.octopus.exception.CellCanNotBlankException;
 import cn.chenhuanming.octopus.exception.ExcelImportException;
 import cn.chenhuanming.octopus.exception.PatternNotMatchException;
 import cn.chenhuanming.octopus.exception.UnExpectedException;
 import cn.chenhuanming.octopus.model.ConfigurableModelEntity;
 import cn.chenhuanming.octopus.model.ModelEntity;
 import cn.chenhuanming.octopus.model.ModelEntityWithMethodHandle;
+import cn.chenhuanming.octopus.util.CellUtil;
 import cn.chenhuanming.octopus.util.DataUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -77,17 +80,24 @@ public abstract class AbstractRowAssembler<T> implements RowAssembler<T> {
             Cell cell = row.getCell(startIndex + i);
             try {
                 if(cell==null){
-                    methodHandle.invoke(defaultConvertManager.convert(row.createCell(i),methodHandle.type().parameterType(0),handle));
+                    if(handle.isBlankable())
+                        methodHandle.invoke(defaultConvertManager.convert(row.createCell(i),methodHandle.type().parameterType(0),handle));
+                    else
+                        throw new CellCanNotBlankException(CellUtil.positionMsg(cell),handle,cell);
                 }else if(cell.getCellTypeEnum()== CellType.BLANK||(cell.getCellTypeEnum()== CellType.STRING&&cell.getStringCellValue().equals(""))){
-                    methodHandle.invoke(defaultConvertManager.convert(cell,methodHandle.type().parameterType(0),handle));
+                    if(handle.isBlankable())
+                        methodHandle.invoke(defaultConvertManager.convert(cell,methodHandle.type().parameterType(0),handle));
+                    else
+                        throw new CellCanNotBlankException(CellUtil.positionMsg(cell),handle,cell);
                 }
                 else {
-                    methodHandle.invoke(null);
+                    Object defaultValue = DefaultValue.getDefaultValue(methodHandle.type().parameterType(0));
+                    methodHandle.invoke(defaultValue);
 
                     Object val = convertManager.convert(cell,methodHandle.type().parameterType(0),handle);
 
                     //检查pattern是否匹配
-                    patternMatches(handle,val);
+                    patternMatches(handle,val,cell);
 
                     methodHandle.invoke(val);
                 }
@@ -95,7 +105,7 @@ public abstract class AbstractRowAssembler<T> implements RowAssembler<T> {
                 modelEntity.addException(e);
             } catch (Throwable cause) {
                 cause.printStackTrace();
-                UnExpectedException exception = new UnExpectedException("it occurs unknow error:"+cause.toString(),cause,handle);
+                UnExpectedException exception = new UnExpectedException("it occurs unknow error:"+cause.toString(),cause,handle,row.getRowNum(),startIndex + i);
                 modelEntity.addException(exception);
             }
         }
@@ -144,10 +154,10 @@ public abstract class AbstractRowAssembler<T> implements RowAssembler<T> {
      * @param val
      * @throws PatternNotMatchException 当pattern和val不匹配时抛出
      */
-    private void patternMatches(ModelEntityWithMethodHandle handle,Object val) throws PatternNotMatchException {
+    private void patternMatches(ModelEntityWithMethodHandle handle,Object val,Cell cell) throws PatternNotMatchException {
         if(handle.getPattern().isPresent()){
             if(!handle.getPattern().get().matcher(val.toString()).matches())
-                throw new PatternNotMatchException(handle);
+                throw new PatternNotMatchException(handle,cell);
         }
     }
 
@@ -168,11 +178,13 @@ public abstract class AbstractRowAssembler<T> implements RowAssembler<T> {
             handle.setWrongMsg(property.wrongMsg());
             handle.setPattern(DataUtils.notNullAndNotEmpty(property.pattern(),s -> Optional.of(Pattern.compile(property.pattern())),s -> Optional.empty()));
             handle.setDefaultValue(property.defaultValue());
+            handle.setBlankable(property.blankable());
         } else {
             handle.setWrongMsg("");
             handle.setDescription("");
             handle.setPattern(Optional.empty());
             handle.setDefaultValue("");
+            handle.setBlankable(true);
         }
         return handle;
     }

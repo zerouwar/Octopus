@@ -12,7 +12,7 @@ import java.util.function.Function;
  *
  * @author chenhuanming
  */
-public class CellUtil {
+public final class CellUtil {
     public static String positionMsg(Cell cell){
         return String.format("cell (%d,%d) ",cell.getRowIndex()+1,cell.getColumnIndex()+1);
     }
@@ -46,9 +46,9 @@ public class CellUtil {
             case FORMULA:
                 return cell.getCellFormula();
             case ERROR:
-                throw new UnSupportedDataTypeException("cell type is error!",null);
+                throw new UnSupportedDataTypeException("cell type is error!",null,cell);
             default:
-                throw new UnSupportedDataTypeException("unknow cell type!",null);
+                throw new UnSupportedDataTypeException("unknow cell type!",null,cell);
         }
     }
 }

@@ -35,5 +35,8 @@ public @interface ModelProperty {
      */
     String pattern() default "";
 
-
+    /**
+     * whether cell can be blank(In POI's words,cell type is blank,cell type is string but empty or cell is null)
+     */
+    boolean blankable() default true;
 }

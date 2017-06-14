@@ -59,7 +59,7 @@ public class SimpleConvertManager extends AbstractConvertManager {
                         return dateFormat.format(cell.getDateCellValue());
                     return decimalFormat.format(cell.getNumericCellValue());
                 default:
-                    throw new UnSupportedDataTypeException("not support for cell type:" + cell.getCellTypeEnum(),handle);
+                    throw new UnSupportedDataTypeException("not support for cell type:" + cell.getCellTypeEnum(),handle,cell);
             }
         });
         addConverter(Date.class, (handle, cell) -> {
@@ -67,7 +67,7 @@ public class SimpleConvertManager extends AbstractConvertManager {
                 if (DateUtil.isCellDateFormatted(cell))
                     return cell.getDateCellValue();
                 else
-                    throw new UnSupportedDataTypeException(CellUtil.positionMsg(cell)+"is not a date",handle);
+                    throw new UnSupportedDataTypeException(CellUtil.positionMsg(cell)+"is not a date",handle,cell);
             }
             else if (cell.getCellTypeEnum() == CellType.STRING)
                 try {
@@ -76,14 +76,14 @@ public class SimpleConvertManager extends AbstractConvertManager {
                     throw new DataFormatException(handle,Date.class,cell);
                 }
             else
-                throw new UnSupportedDataTypeException(CellUtil.positionMsg(cell)+"is not a date",handle);
+                throw new UnSupportedDataTypeException(CellUtil.positionMsg(cell)+"is not a date",handle,cell);
         });
         addConverter(LocalDate.class, (handle, cell) -> {
             if(cell.getCellTypeEnum()==CellType.NUMERIC){
                 if (DateUtil.isCellDateFormatted(cell))
                     return LocalDateTime.ofInstant(cell.getDateCellValue().toInstant(), zone).toLocalDate();
                 else
-                    throw new UnSupportedDataTypeException(CellUtil.positionMsg(cell)+"is not a date",handle);
+                    throw new UnSupportedDataTypeException(CellUtil.positionMsg(cell)+"is not a date",handle,cell);
             }
             else if (cell.getCellTypeEnum() == CellType.STRING)
                 try {
@@ -92,14 +92,14 @@ public class SimpleConvertManager extends AbstractConvertManager {
                     throw new DataFormatException(handle,LocalDate.class,cell);
                 }
             else
-                throw new UnSupportedDataTypeException(CellUtil.positionMsg(cell) + "is not a date", handle);
+                throw new UnSupportedDataTypeException(CellUtil.positionMsg(cell) + "is not a date", handle,cell);
         });
         addConverter(LocalDateTime.class, (handle, cell) -> {
             if(cell.getCellTypeEnum()==CellType.NUMERIC){
                 if (DateUtil.isCellDateFormatted(cell))
                     return LocalDateTime.ofInstant(cell.getDateCellValue().toInstant(), zone);
                 else
-                    throw new UnSupportedDataTypeException(CellUtil.positionMsg(cell)+"is not a datetime",handle);
+                    throw new UnSupportedDataTypeException(CellUtil.positionMsg(cell)+"is not a datetime",handle,cell);
             }
             else if (cell.getCellTypeEnum() ==  CellType.STRING)
                 try {
@@ -108,14 +108,14 @@ public class SimpleConvertManager extends AbstractConvertManager {
                     throw new DataFormatException(handle,LocalDateTime.class,cell);
                 }
             else
-                throw new UnSupportedDataTypeException(CellUtil.positionMsg(cell) + "is not a datetime", handle);
+                throw new UnSupportedDataTypeException(CellUtil.positionMsg(cell) + "is not a datetime", handle,cell);
         });
         addConverter(LocalTime.class, (handle, cell) -> {
             if(cell.getCellTypeEnum()==CellType.NUMERIC){
                 if (DateUtil.isCellDateFormatted(cell))
                     return LocalDateTime.ofInstant(cell.getDateCellValue().toInstant(), zone).toLocalTime();
                 else
-                    throw new UnSupportedDataTypeException(CellUtil.positionMsg(cell)+"is not a time",handle);
+                    throw new UnSupportedDataTypeException(CellUtil.positionMsg(cell)+"is not a time",handle,cell);
             }
             else if (cell.getCellTypeEnum() ==  CellType.STRING)
                 try {
@@ -124,7 +124,7 @@ public class SimpleConvertManager extends AbstractConvertManager {
                     throw new DataFormatException(handle,LocalTime.class,cell);
                 }
             else
-                throw new UnSupportedDataTypeException(CellUtil.positionMsg(cell) + "is not a time", handle);
+                throw new UnSupportedDataTypeException(CellUtil.positionMsg(cell) + "is not a time", handle,cell);
         });
 
     }
@@ -139,7 +139,7 @@ public class SimpleConvertManager extends AbstractConvertManager {
                 throw new DataFormatException(handle,clazz,cell);
             }
         }else
-            throw new UnSupportedDataTypeException(CellUtil.positionMsg(cell)+" must be numeric",handle);
+            throw new UnSupportedDataTypeException(CellUtil.positionMsg(cell)+" must be numeric",handle,cell);
     }
 
 }
