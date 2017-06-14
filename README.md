@@ -54,13 +54,13 @@ pattern ------ regex pattern which will be used to check the content of cell
 blankable ------ whether cell can be blank(In POI's words,cell type is blank,cell type is string but empty or cell is null)
 
 ***
-#### we can traversal sheet with following code.
+#### we can traverse sheet with following code.
 
     InputStream is = getClass().getResourceAsStream("/test.xlsx");
 	Workbook workbook = WorkbookFactory.create(is);
 	Sheet sheet = workbook.getSheetAt(0);
 	//convert from index 1 row,index 0 column(same as POI)
-    SheetReader<ModelEntity<Student>> students = new RowAssemblerSheetReader<>(sheet,1,0,Student.class);
+    SheetReader<ModelEntity<Student>> students = new ReusableSheetReader<>(sheet,1,0,Student.class);
 
     for (ModelEntity<Student> student:students) {
         System.out.println(student.getEntity());

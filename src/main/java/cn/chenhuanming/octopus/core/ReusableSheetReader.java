@@ -4,7 +4,7 @@ import cn.chenhuanming.octopus.model.ModelEntity;
 import org.apache.poi.ss.usermodel.Sheet;
 
 /**
- * The RowAssembler will reuse modelEntity and entity,so it the same modelEntity and entity for traversal.
+ * The RowAssembler will reuse modelEntity and entity,so it is the same modelEntity and entity for traversal.
  * @param <T> entity you want
  */
 public class ReusableSheetReader<T> extends AbstractSheetReader<ModelEntity<T>> {
