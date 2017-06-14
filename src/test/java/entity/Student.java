@@ -17,19 +17,19 @@ public class Student {
     @ModelLineNumber
     private int lineNum;
 
-    @ModelProperty(value = "学号",wrongMsg = "学号有错?")
+    @ModelProperty(value = "student's id")
     private String studentId;
 
-    @ModelProperty(value = "名字",defaultValue = "anonymous")
+    @ModelProperty(value = "student's name",defaultValue = "anonymous")
     private String name;
 
-    @ModelProperty(value = "性别",wrongMsg = "学号有错?")
+    @ModelProperty(value = "student's sex",wrongMsg = "sex must be M or F",pattern = "^M|F$")
     private String sex;
 
-    @ModelProperty(value = "入学时间",wrongMsg = "入学时间必须为时间格式")
+    @ModelProperty(value = "student's admission",wrongMsg = "admission must be a date")
     private LocalDate inTime;
 
-    @ModelProperty(value = "成绩",wrongMsg = "成绩必须为数字",defaultValue = "100")
+    @ModelProperty(value = "student's score",wrongMsg = "score must be numberic",defaultValue = "100")
     private Double score;
 
 }

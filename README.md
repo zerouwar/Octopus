@@ -1,15 +1,15 @@
 # Octopus
 A java simple object-row-mapping util used to import excel
 
-## introdution
-`Octopus` can convert row of sheet in the excel(HSSF) to object you want,in order to get rid of
-operation of POI(actually `Octopus` deal with sheet temporarily,so you still have to get sheet with POI).
+## introduction
+***Octopus*** can convert row of sheet in the excel(HSSF) to object you want,in order to get rid of
+operation of POI(actually ***Octopus*** deal with sheet temporarily,so you still have to get sheet with POI).
 It runs with apache POI 3.16,lombok 1.16.14 and in java8
 ## How to use
 #### As a example,we have a Student class which represents one row of sheet.
 
 Every fields of the Student will be 
-converted to one column of a row in the order they are declared,except marked by `@ModelIgnore`.Noted that,field without any annotation 
+converted to one column of a row in the order they are declared,except marked by `@ModelIgnore`.Note that field without any annotation
 also will be converted.
 ***
 	@Getter
@@ -36,8 +36,8 @@ also will be converted.
 
 	}
 
-Field marked by `@ModelLineNumber` represents the line number in excel you see,
-it must be `int` type or `Integer` Object.  
+Field marked by `@ModelLineNumber` represents the line number in excel you see(begin with 1),
+it must be `int` type or `Integer`.
 
 ***
 #### These are properties of `@ModelProperty`
@@ -47,25 +47,26 @@ value ------ description of property
 defaultValue ------ value of property when cell is blank(In POI's words,blank cell or empty string cell)
 
 wrongMsg ------- hint when process of convert occurs error,such as '2013-211-01' can not be
-converted to a `Date` Type field,cell's content and pattern don't match,it will be stored in `ExcelImportException`.
+converted to a `Date` Type field,cell's content and pattern don't match,it will be stored in `ExcelImportException` of `ModelEntity` you got.
 
-pattern ------ regex pattern which will be use to check the content of cell
+pattern ------ regex pattern which will be used to check the content of cell
 
 blankable ------ whether cell can be blank(In POI's words,cell type is blank,cell type is string but empty or cell is null)
 
 ***
-#### we can read it with following code.
+#### we can traversal sheet with following code.
 
     InputStream is = getClass().getResourceAsStream("/test.xlsx");
 	Workbook workbook = WorkbookFactory.create(is);
 	Sheet sheet = workbook.getSheetAt(0);
+	//convert from index 1 row,index 0 column(same as POI)
     SheetReader<ModelEntity<Student>> students = new RowAssemblerSheetReader<>(sheet,1,0,Student.class);
 
     for (ModelEntity<Student> student:students) {
         System.out.println(student.getEntity());
     }
 `RowAssemblerSheetReader` needs four paramters:sheet,startRow(line number start to convert,
-begin with 0 as same as POI),startCol(column number start to convert,also begin with 0) 
+begin with 0, same as POI),startCol(column number start to convert,also begin with 0)
 and Class to convert(here is Student.class).
 
 And we got some students,`SheetReader` implements `Iterable`,so we can read with `foreach`.
