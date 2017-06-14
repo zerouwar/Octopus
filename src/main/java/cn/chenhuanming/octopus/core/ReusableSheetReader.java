@@ -4,13 +4,14 @@ import cn.chenhuanming.octopus.model.ModelEntity;
 import org.apache.poi.ss.usermodel.Sheet;
 
 /**
- * Created by Administrator on 2017-06-10.
+ * The RowAssembler will reuse modelEntity and entity,so it the same modelEntity and entity for traversal.
+ * @param <T> entity you want
  */
-public class RowAssemblerSheetReader<T> extends AbstractSheetReader<ModelEntity<T>> {
+public class ReusableSheetReader<T> extends AbstractSheetReader<ModelEntity<T>> {
     private final RowAssembler<T> assembler;
     private ModelEntity<T> modelEntity;
 
-    public RowAssemblerSheetReader(Sheet sheet, int startRow, int startCol,Class<T> clazz) {
+    public ReusableSheetReader(Sheet sheet, int startRow, int startCol, Class<T> clazz) {
         super(sheet, startRow, startCol);
         this.assembler = new ReusableRowAssembler<>("yyyy-MM-dd",0,clazz);
         try {

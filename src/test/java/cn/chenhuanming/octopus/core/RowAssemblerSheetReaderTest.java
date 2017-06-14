@@ -20,7 +20,7 @@ public class RowAssemblerSheetReaderTest {
         InputStream is = getClass().getResourceAsStream("/test.xlsx");
         Workbook workbook = WorkbookFactory.create(is);
         Sheet sheet = workbook.getSheetAt(0);
-        SheetReader<ModelEntity<Student>> students = new RowAssemblerSheetReader<>(sheet,1,0,Student.class);
+        SheetReader<ModelEntity<Student>> students = new ReusableSheetReader<>(sheet,1,0,Student.class);
 
         for (ModelEntity<Student> student:students) {
             System.out.println(student.getEntity().getInTime());
