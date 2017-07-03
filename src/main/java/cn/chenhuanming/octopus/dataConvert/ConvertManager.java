@@ -1,7 +1,7 @@
 package cn.chenhuanming.octopus.dataConvert;
 
 import cn.chenhuanming.octopus.exception.ExcelImportException;
-import cn.chenhuanming.octopus.model.ModelEntityWithMethodHandle;
+import cn.chenhuanming.octopus.model.ModelEntityWithMethodHandleInImport;
 import org.apache.poi.ss.usermodel.Cell;
 
 /**
@@ -10,5 +10,5 @@ import org.apache.poi.ss.usermodel.Cell;
  * @author chenhuanming
  */
 public interface ConvertManager {
-    Object convert(Cell cell,Class clazz,ModelEntityWithMethodHandle handle) throws ExcelImportException;
+    Object convert(Cell cell,Class clazz,ModelEntityWithMethodHandleInImport handle) throws ExcelImportException;
 }

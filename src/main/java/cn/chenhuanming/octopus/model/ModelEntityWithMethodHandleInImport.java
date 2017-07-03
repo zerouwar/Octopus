@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  */
 @Getter
 @Setter
-public class ModelEntityWithMethodHandle {
+public class ModelEntityWithMethodHandleInImport {
     private String name;// name of field
     private String description;// description of field
     private String defaultValue;// default value when cell is blank

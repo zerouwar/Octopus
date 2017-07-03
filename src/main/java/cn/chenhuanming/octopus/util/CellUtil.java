@@ -2,8 +2,11 @@ package cn.chenhuanming.octopus.util;
 
 import cn.chenhuanming.octopus.exception.DataFormatException;
 import cn.chenhuanming.octopus.exception.UnSupportedDataTypeException;
-import cn.chenhuanming.octopus.model.ModelEntityWithMethodHandle;
+import cn.chenhuanming.octopus.model.ModelEntityWithMethodHandleInImport;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.function.Function;
 
@@ -17,11 +20,11 @@ public final class CellUtil {
         return String.format("cell (%d,%d) ",cell.getRowIndex()+1,cell.getColumnIndex()+1);
     }
 
-    public static Object formatDefaultValue(ModelEntityWithMethodHandle handle, Cell cell, Class clazz, Function<String,Object> convertDefaultValue,Object valueIfStringEmpty){
+    public static Object formatDefaultValue(ModelEntityWithMethodHandleInImport handle, Cell cell, Class clazz, Function<String,Object> convertDefaultValue, Object valueIfStringEmpty){
         return formatString(handle,cell,clazz,convertDefaultValue,handle.getDefaultValue(),valueIfStringEmpty);
     }
 
-    public static Object formatString(ModelEntityWithMethodHandle handle, Cell cell, Class clazz, Function<String,Object> convert,String value,Object valueIfEmptyString){
+    public static Object formatString(ModelEntityWithMethodHandleInImport handle, Cell cell, Class clazz, Function<String,Object> convert, String value, Object valueIfEmptyString){
         try{
             if(value.equals(""))
                 return valueIfEmptyString;
@@ -49,6 +52,17 @@ public final class CellUtil {
                 throw new UnSupportedDataTypeException("cell type is error!",null,cell);
             default:
                 throw new UnSupportedDataTypeException("unknow cell type!",null,cell);
+        }
+    }
+
+    public static void createCells(int startRow, int lastRow, int startCol, int lastCol, Sheet sheet, CellStyle cellStyle){
+        //create all cells we need
+        for (int i = startRow; i <=lastRow; i++) {
+            Row row = sheet.createRow(i);
+            for (int j = startCol; j <=lastCol; j++) {
+                Cell cell = row.createCell(j);
+                cell.setCellStyle(cellStyle);
+            }
         }
     }
 }

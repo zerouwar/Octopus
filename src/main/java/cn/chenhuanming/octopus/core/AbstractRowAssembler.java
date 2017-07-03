@@ -13,9 +13,10 @@ import cn.chenhuanming.octopus.exception.PatternNotMatchException;
 import cn.chenhuanming.octopus.exception.UnExpectedException;
 import cn.chenhuanming.octopus.model.ConfigurableModelEntity;
 import cn.chenhuanming.octopus.model.ModelEntity;
-import cn.chenhuanming.octopus.model.ModelEntityWithMethodHandle;
+import cn.chenhuanming.octopus.model.ModelEntityWithMethodHandleInImport;
 import cn.chenhuanming.octopus.util.CellUtil;
-import cn.chenhuanming.octopus.util.DataUtils;
+import cn.chenhuanming.octopus.util.DataUtil;
+import cn.chenhuanming.octopus.util.MethodHandleUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.poi.ss.usermodel.Cell;
@@ -23,15 +24,12 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
-
-import static java.lang.invoke.MethodHandles.lookup;
 
 /**
  * Created by Administrator on 2017-06-08.
@@ -40,7 +38,7 @@ public abstract class AbstractRowAssembler<T> implements RowAssembler<T> {
     //目前实体类的Class
     private final Class<T> clazz;
     //保存每个带有@ModelProperty属性的注解信息及其MethodHandle
-    private ModelEntityWithMethodHandle[] modelProperties;
+    private ModelEntityWithMethodHandleInImport[] modelProperties;
     //行号MethodHandle
     private MethodHandle lineNumberHandler;
 
@@ -75,7 +73,7 @@ public abstract class AbstractRowAssembler<T> implements RowAssembler<T> {
         }
         //开始处理@ModelProperty注解的属性
         for (int i = 0; i < modelProperties.length; i++) {
-            ModelEntityWithMethodHandle handle = modelProperties[i];
+            ModelEntityWithMethodHandleInImport handle = modelProperties[i];
             MethodHandle methodHandle = handle.getHandle().bindTo(t);
             Cell cell = row.getCell(startIndex + i);
             try {
@@ -129,7 +127,7 @@ public abstract class AbstractRowAssembler<T> implements RowAssembler<T> {
      */
     private void initModelInfo() {
         Field[] fields = this.clazz.getDeclaredFields();
-        List<ModelEntityWithMethodHandle> handles = new ArrayList<>();
+        List<ModelEntityWithMethodHandleInImport> handles = new ArrayList<>();
         for (Field field : fields) {
             //遇到ModelIgnore忽略掉
             if (field.getAnnotation(ModelIgnore.class) != null)
@@ -138,13 +136,13 @@ public abstract class AbstractRowAssembler<T> implements RowAssembler<T> {
             if (lineNumberHandler==null&&field.getAnnotation(ModelLineNumber.class) != null) {
                 if (field.getType() != Integer.class && field.getType() != int.class)
                     throw new IllegalArgumentException("type of property annotated by @ModelLineNumber must be Integer or int");
-                lineNumberHandler = getMethodHandle(field);
+                lineNumberHandler = MethodHandleUtil.setterMethodHandle(field);
                 continue;
             }
             //获取ModelProperty
             handles.add(getModelProperty(field));
         }
-        modelProperties = new ModelEntityWithMethodHandle[handles.size()];
+        modelProperties = new ModelEntityWithMethodHandleInImport[handles.size()];
         IntStream.range(0, handles.size()).forEach(i -> modelProperties[i] = handles.get(i));
     }
 
@@ -154,7 +152,7 @@ public abstract class AbstractRowAssembler<T> implements RowAssembler<T> {
      * @param val
      * @throws PatternNotMatchException 当pattern和val不匹配时抛出
      */
-    private void patternMatches(ModelEntityWithMethodHandle handle,Object val,Cell cell) throws PatternNotMatchException {
+    private void patternMatches(ModelEntityWithMethodHandleInImport handle, Object val, Cell cell) throws PatternNotMatchException {
         if(handle.getPattern().isPresent()){
             if(!handle.getPattern().get().matcher(val.toString()).matches())
                 throw new PatternNotMatchException(handle,cell);
@@ -166,17 +164,17 @@ public abstract class AbstractRowAssembler<T> implements RowAssembler<T> {
      * @param field
      * @return
      */
-    private ModelEntityWithMethodHandle getModelProperty(Field field) {
+    private ModelEntityWithMethodHandleInImport getModelProperty(Field field) {
         ModelProperty property = field.getAnnotation(ModelProperty.class);
-        ModelEntityWithMethodHandle handle = new ModelEntityWithMethodHandle();
+        ModelEntityWithMethodHandleInImport handle = new ModelEntityWithMethodHandleInImport();
         handle.setName(field.getName());
 
-        MethodHandle mh = getMethodHandle(field);
+        MethodHandle mh = MethodHandleUtil.setterMethodHandle(field);
         handle.setHandle(mh);
         if (property != null) {
             handle.setDescription(property.value());
             handle.setWrongMsg(property.wrongMsg());
-            handle.setPattern(DataUtils.notNullAndNotEmpty(property.pattern(),s -> Optional.of(Pattern.compile(property.pattern())),s -> Optional.empty()));
+            handle.setPattern(DataUtil.notNullAndNotEmpty(property.pattern(), s -> Optional.of(Pattern.compile(property.pattern())), s -> Optional.empty()));
             handle.setDefaultValue(property.defaultValue());
             handle.setBlankable(property.blankable());
         } else {
@@ -189,27 +187,6 @@ public abstract class AbstractRowAssembler<T> implements RowAssembler<T> {
         return handle;
     }
 
-    /**
-     * 获取方法句柄
-     *
-     * @param field Model的property
-     * @return 方法句柄
-     */
-    private MethodHandle getMethodHandle(Field field) {
-        StringBuilder setter = new StringBuilder("set");
-        String name = field.getName();
-        setter.append(Character.toUpperCase(name.charAt(0))).append(name.substring(1));
 
-        MethodType mt = MethodType.methodType(void.class, field.getType());
-        try {
-            return lookup().findVirtual(this.clazz, setter.toString(), mt);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            throw new IllegalArgumentException("property " + name + " must has setter method");
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        throw new IllegalArgumentException("property " + name + " must has setter method");
-    }
 
 }

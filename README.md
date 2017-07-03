@@ -3,7 +3,7 @@ A java simple object-row-mapping util used to import excel
 
 ## introduction
 ***Octopus*** can convert row of sheet in the excel(HSSF) to object you want,in order to get rid of
-operation of POI(actually ***Octopus*** deal with sheet temporarily,so you still have to get sheet with POI).
+operation of POI(actually ***Octopus*** deal with sheet currently,so you still have to get sheet with POI).
 It runs with apache POI 3.16,lombok 1.16.14 and in java8
 ## How to use
 #### As a example,we have a Student class which represents one row of sheet.

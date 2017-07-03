@@ -1,6 +1,6 @@
 package cn.chenhuanming.octopus.exception;
 
-import cn.chenhuanming.octopus.model.ModelEntityWithMethodHandle;
+import cn.chenhuanming.octopus.model.ModelEntityWithMethodHandleInImport;
 import org.apache.poi.ss.usermodel.Cell;
 
 /**
@@ -9,7 +9,7 @@ import org.apache.poi.ss.usermodel.Cell;
  * @author chenhuanming
  */
 public class UnSupportedDataTypeException extends ExcelImportException {
-    public UnSupportedDataTypeException(String message, ModelEntityWithMethodHandle handle, Cell cell) {
+    public UnSupportedDataTypeException(String message, ModelEntityWithMethodHandleInImport handle, Cell cell) {
         super(message, handle,cell);
     }
 }

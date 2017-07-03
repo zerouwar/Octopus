@@ -1,7 +1,7 @@
 package cn.chenhuanming.octopus.dataConvert;
 
 import cn.chenhuanming.octopus.exception.ExcelImportException;
-import cn.chenhuanming.octopus.model.ModelEntityWithMethodHandle;
+import cn.chenhuanming.octopus.model.ModelEntityWithMethodHandleInImport;
 import lombok.AccessLevel;
 import lombok.Setter;
 import org.apache.poi.ss.usermodel.Cell;
@@ -32,7 +32,7 @@ public abstract class AbstractConvertManager implements ConvertManager{
     }
 
     @Override
-    public Object convert(Cell cell, Class clazz, ModelEntityWithMethodHandle handle)throws ExcelImportException {
+    public Object convert(Cell cell, Class clazz, ModelEntityWithMethodHandleInImport handle)throws ExcelImportException {
         return convertMap.get(clazz).convert(handle,cell);
     }
 

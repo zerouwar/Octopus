@@ -1,6 +1,6 @@
 package cn.chenhuanming.octopus.exception;
 
-import cn.chenhuanming.octopus.model.ModelEntityWithMethodHandle;
+import cn.chenhuanming.octopus.model.ModelEntityWithMethodHandleInImport;
 import cn.chenhuanming.octopus.util.CellUtil;
 import lombok.Getter;
 import org.apache.poi.ss.usermodel.Cell;
@@ -13,7 +13,7 @@ import org.apache.poi.ss.usermodel.Cell;
 @Getter
 public class DataFormatException extends ExcelImportException {
 
-    public DataFormatException(ModelEntityWithMethodHandle handle, Class clazz, Cell cell) {
+    public DataFormatException(ModelEntityWithMethodHandleInImport handle, Class clazz, Cell cell) {
         super("in "+CellUtil.positionMsg(cell)+","+CellUtil.getStringValue(cell)+" can not be formatted to "+clazz,handle,cell);
     }
 

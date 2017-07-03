@@ -1,6 +1,6 @@
 package cn.chenhuanming.octopus.exception;
 
-import cn.chenhuanming.octopus.model.ModelEntityWithMethodHandle;
+import cn.chenhuanming.octopus.model.ModelEntityWithMethodHandleInImport;
 import cn.chenhuanming.octopus.util.CellPosition;
 
 /**
@@ -10,7 +10,7 @@ import cn.chenhuanming.octopus.util.CellPosition;
  */
 public class UnExpectedException extends ExcelImportException {
 
-    public UnExpectedException(String message, Throwable cause,ModelEntityWithMethodHandle handle,int rowNum,int colNum) {
+    public UnExpectedException(String message, Throwable cause, ModelEntityWithMethodHandleInImport handle, int rowNum, int colNum) {
         super(message,cause, handle);
         setCellPosition(new CellPosition(rowNum,colNum));
     }

@@ -6,7 +6,7 @@ import java.util.function.Function;
 /**
  * Created by Administrator on 2017-04-05.
  */
-public class DataUtils {
+public class DataUtil {
 
     public static <R> R equalsThenAndNot(String s,String compare,Function<String,R> then,Function<String,R> notEquals){
         return s.equals(compare)?then.apply(s):notEquals.apply(s);
