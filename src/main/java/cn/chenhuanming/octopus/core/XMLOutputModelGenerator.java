@@ -17,16 +17,20 @@ import java.util.List;
  *
  * @author chenhuanming
  */
-public class SimpleOutputModelGenerator implements OutputModelGenerator {
+public class XMLOutputModelGenerator implements OutputModelGenerator {
+    private InputStream is;
     private Element root;
     private final String CONFIG_ROOT_NAME = "OutputModel";
     private final String CONFIG_FlELD_NAME = "Field";
 
+    public XMLOutputModelGenerator(InputStream is) {
+        this.is = is;
+    }
+
     @Override
-    public OutputModel generate(InputStream is) {
+    public OutputModel generate() {
 
         Document document;
-
         try {
             document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
         } catch (Exception e) {

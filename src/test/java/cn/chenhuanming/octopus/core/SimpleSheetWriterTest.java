@@ -24,7 +24,7 @@ public class SimpleSheetWriterTest {
     public void testSheetWriter() throws Exception {
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
         rootPath = rootPath.substring(1);
-        SheetWriter sheetWriter = new SimpleSheetWriter(getClass().getClassLoader().getResourceAsStream("studentOutput.xml"));
+        SheetWriter sheetWriter = new XMLConfigSheetWriter(getClass().getClassLoader().getResourceAsStream("studentOutput.xml"));
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         CellStyle headStyle = workbook.createCellStyle();

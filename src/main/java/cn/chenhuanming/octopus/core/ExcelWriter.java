@@ -1,5 +1,6 @@
 package cn.chenhuanming.octopus.core;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
 
@@ -11,5 +12,6 @@ import java.util.Collection;
 public interface ExcelWriter<T> {
     void write(Collection<T> collection);
 
-    void writeToFile(OutputStream os);
+    void writeToStream(OutputStream os) throws IOException;
+
 }

@@ -17,8 +17,12 @@ public class SimpleSheetReader<T> extends AbstractSheetReader<ModelEntity<T>> {
     private Constructor<T> constructor;
 
     public SimpleSheetReader(Sheet sheet, int startRow, int startCol, Class<T> clazz) {
+        this(sheet, new SimpleRowAssembler<>("yyyy-MM-dd",0,clazz),startRow, startCol,clazz);
+    }
+
+    public SimpleSheetReader(Sheet sheet, RowAssembler<T> rowAssembler,int startRow, int startCol, Class<T> clazz) {
         super(sheet, startRow, startCol);
-        this.assembler = new SimpleRowAssembler<>("yyyy-MM-dd",0,clazz);
+        this.assembler = rowAssembler;
         this.clazz = clazz;
         for (Constructor<?> constructor : clazz.getConstructors()) {
             if(constructor.getParameterCount()==0){

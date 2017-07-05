@@ -1,5 +1,7 @@
 package cn.chenhuanming.octopus.core;
 
+import cn.chenhuanming.octopus.dataConvert.DefaultValueConvertManager;
+import cn.chenhuanming.octopus.dataConvert.SimpleConvertManager;
 import cn.chenhuanming.octopus.model.ConfigurableModelEntity;
 import cn.chenhuanming.octopus.model.SimpleModelEntity;
 
@@ -14,7 +16,7 @@ public class ReusableRowAssembler<T> extends AbstractRowAssembler<T>{
     private final ConfigurableModelEntity<T> modelEntity;
 
     public ReusableRowAssembler(String date2StringFormat, int mantissaNumber, Class<T> clazz) {
-        super(date2StringFormat, mantissaNumber,clazz);
+        super(new SimpleConvertManager(date2StringFormat, mantissaNumber),new DefaultValueConvertManager(),clazz);
         modelEntity = new SimpleModelEntity<>();
     }
 

@@ -11,14 +11,13 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import java.io.InputStream;
 import java.util.Collection;
 
 import static cn.chenhuanming.octopus.util.CellUtil.createCells;
 
 /**
+ * All inherited class must call prepare() method in its constructor.
  * Created by chenhuanming on 2017-07-01.
- *
  * @author chenhuanming
  */
 public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
@@ -28,25 +27,12 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
     protected OutputModel outputModel;
     protected OutputModelGenerator outputModelGenerator;
 
-
-    private AbstractSheetWriter() {
+    public AbstractSheetWriter() {
         startRow = 0;
         startCol = 0;
-
     }
 
-    public AbstractSheetWriter(InputStream is) {
-        this();
-        outputModelGenerator = outputModelGenerator();
-        this.objectMapper = ObjectMapper();
-        if (objectMapper == null)
-            throw new IllegalArgumentException("objectMapper is not initialized");
-        if (outputModelGenerator == null)
-            throw new IllegalArgumentException("outputModelGenerator is not initialized");
-        this.outputModel = outputModelGenerator.generate(is);
-    }
-
-    public AbstractSheetWriter(InputStream is, int startRow, int startCol) {
+    public AbstractSheetWriter(int startRow, int startCol) {
         if (startRow < 0 || startCol < 0)
             throw new IllegalArgumentException("startRow and startCol can not be less than 0");
         this.startRow = startRow;
@@ -55,6 +41,12 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
 
     @Override
     public void write(Sheet sheet, CellStyle headStyle, CellStyle contentStyle, Collection<T> collection) {
+        if (collection==null)
+            throw new IllegalArgumentException("collection can not be null!");
+        if(outputModel==null)
+            throw new IllegalArgumentException("sheetWriter is not prepared and outputModel is null!");
+        if(objectMapper==null)
+            throw new IllegalArgumentException("objectMapper can not be null!");
         setHead(sheet, headStyle);
         setContent(sheet,contentStyle,collection);
     }
@@ -120,6 +112,16 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
                 setContentField(row,node.get(f.getName()),contentStyle,f,col+i);
             }
         }
+    }
+
+    protected void prepare(){
+        outputModelGenerator = outputModelGenerator();
+        if (outputModelGenerator == null)
+            throw new IllegalArgumentException("outputModelGenerator is not initialized");
+        this.outputModel = outputModelGenerator.generate();
+        this.objectMapper = ObjectMapper();
+        if (objectMapper == null)
+            throw new IllegalArgumentException("objectMapper is not initialized");
     }
 
     protected abstract ObjectMapper ObjectMapper();

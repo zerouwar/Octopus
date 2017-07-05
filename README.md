@@ -1,12 +1,22 @@
 # Octopus
-A java simple object-row-mapping util used to import excel
+A java simple object-row-mapping util used to import and export excel
 
-## introduction
-***Octopus*** can convert row of sheet in the excel(HSSF) to object you want,in order to get rid of
-operation of POI(actually ***Octopus*** deal with sheet currently,so you still have to get sheet with POI).
-It runs with apache POI 3.16,lombok 1.16.14 and in java8
-## How to use
-#### As a example,we have a Student class which represents one row of sheet.
+## Introduction
+
+***Octopus*** can convert row of sheet in the excel(only for XSSF) to object you want,in order to get rid of
+most operations of POI(actually ***Octopus*** deal with sheet currently,so you still have to get sheet with POI).
+
+What'more,you can use `ExcelWriter`  to export a excel.
+
+**Dependency**:
+- java 8
+- apache POI 3.16
+- lombok 1.16.14
+- jackson 2.8.6
+
+## How to import excel
+
+### As a example,we have a Student class which represents one row of sheet.
 
 Every fields of the Student will be 
 converted to one column of a row in the order they are declared,except marked by `@ModelIgnore`.Note that field without any annotation
@@ -37,7 +47,7 @@ also will be converted.
 	}
 
 Field marked by `@ModelLineNumber` represents the line number in excel you see(begin with 1),
-it must be `int` type or `Integer`.
+its data type must be `int` or `Integer`.
 
 ***
 #### These are properties of `@ModelProperty`
@@ -54,7 +64,7 @@ pattern ------ regex pattern which will be used to check the content of cell
 blankable ------ whether cell can be blank(In POI's words,cell type is blank,cell type is string but empty or cell is null)
 
 ***
-#### we can traverse sheet with following code.
+### we can traverse sheet with following code.
 
     InputStream is = getClass().getResourceAsStream("/test.xlsx");
 	Workbook workbook = WorkbookFactory.create(is);
@@ -74,7 +84,7 @@ Every loop we got a **`ModelEntity<Student>`**,`ModelEntity` has two method,`get
 the student object represented a row data,`exceptions()` returns a list of `ExcelImportException`
 so you can know what errors occured in the process of convert
 ***
-#### Now,this is one sheet of excel.
+### Now,this is one sheet of excel.
 
 	studentId   name    sex    inTime       score
 	-----------------------------------------------
@@ -92,3 +102,15 @@ second is `DataFormatException` for 'qwe' is not numeric.
 At last,Last student has not any exceptions,inTime property is `null`,score is 100.
 
 **you can run test in this maven project to see the real result**
+
+## Export Excel
+
+There are some interfaces to export excel,such as `ExcelWriter`,`SheetWriter`.
+We use `OneSheetExcelWriter` implemented `ExcelWriter` to export excel commonly.
+
+`ExcelWriter` will leave work to `SheetWriter`,`SheetWriter` will use jackson to serialize collections to
+json string , and then transform json string to `JsonNode`(jackson).finally write to sheet.Thus,you can
+format output through jackson.
+
+Now we export some students.
+

@@ -4,8 +4,6 @@ import cn.chenhuanming.octopus.annotation.ModelIgnore;
 import cn.chenhuanming.octopus.annotation.ModelLineNumber;
 import cn.chenhuanming.octopus.annotation.ModelProperty;
 import cn.chenhuanming.octopus.dataConvert.ConvertManager;
-import cn.chenhuanming.octopus.dataConvert.DefaultValueConvertManager;
-import cn.chenhuanming.octopus.dataConvert.SimpleConvertManager;
 import cn.chenhuanming.octopus.dictionary.DefaultValue;
 import cn.chenhuanming.octopus.exception.CellCanNotBlankException;
 import cn.chenhuanming.octopus.exception.ExcelImportException;
@@ -50,11 +48,11 @@ public abstract class AbstractRowAssembler<T> implements RowAssembler<T> {
     private int startIndex;//开始的列索引，默认从0开始
 
 
-    public AbstractRowAssembler(String date2StringFormat, int mantissaNumber, Class<T> clazz) {
+    public AbstractRowAssembler(ConvertManager convertManager,ConvertManager defaultConvertManager, Class<T> clazz) {
         this.clazz = clazz;
         startIndex = 0;
-        convertManager = new SimpleConvertManager(date2StringFormat, mantissaNumber);
-        defaultConvertManager = new DefaultValueConvertManager();
+        this.convertManager = convertManager;
+        this.defaultConvertManager = defaultConvertManager;
         //读取类信息和注解信息
         initModelInfo();
 

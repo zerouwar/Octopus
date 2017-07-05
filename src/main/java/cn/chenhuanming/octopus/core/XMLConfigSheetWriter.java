@@ -10,13 +10,18 @@ import java.io.InputStream;
  *
  * @author chenhuanming
  */
-public class SimpleSheetWriter<T> extends AbstractSheetWriter<T> {
-    public SimpleSheetWriter(InputStream is) {
-        super(is);
+public class XMLConfigSheetWriter<T> extends AbstractSheetWriter<T> {
+    private InputStream is;
+
+    public XMLConfigSheetWriter(InputStream is) {
+        this.is = is;
+        prepare();
     }
 
-    public SimpleSheetWriter(InputStream is, int startRow, int startCol) {
-        super(is, startRow, startCol);
+    public XMLConfigSheetWriter(InputStream is, int startRow, int startCol) {
+        super(startRow, startCol);
+        this.is = is;
+        prepare();
     }
 
     @Override
@@ -28,6 +33,6 @@ public class SimpleSheetWriter<T> extends AbstractSheetWriter<T> {
 
     @Override
     protected OutputModelGenerator outputModelGenerator() {
-        return new SimpleOutputModelGenerator();
+        return new XMLOutputModelGenerator(is);
     }
 }
