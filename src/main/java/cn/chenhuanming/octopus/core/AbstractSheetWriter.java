@@ -1,7 +1,7 @@
 package cn.chenhuanming.octopus.core;
 
-import cn.chenhuanming.octopus.model.OutputField;
-import cn.chenhuanming.octopus.model.OutputModel;
+import cn.chenhuanming.octopus.model.ExportField;
+import cn.chenhuanming.octopus.model.ExportModel;
 import cn.chenhuanming.octopus.util.CellUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,8 +24,8 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
     protected int startRow;
     protected int startCol;
     protected ObjectMapper objectMapper;
-    protected OutputModel outputModel;
-    protected OutputModelGenerator outputModelGenerator;
+    protected ExportModel exportModel;
+    protected ExportModelGenerator exportModelGenerator;
 
     public AbstractSheetWriter() {
         startRow = 0;
@@ -43,8 +43,8 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
     public void write(Sheet sheet, CellStyle headStyle, CellStyle contentStyle, Collection<T> collection) {
         if (collection==null)
             throw new IllegalArgumentException("collection can not be null!");
-        if(outputModel==null)
-            throw new IllegalArgumentException("sheetWriter is not prepared and outputModel is null!");
+        if(exportModel==null)
+            throw new IllegalArgumentException("sheetWriter is not prepared and exportModel is null!");
         if(objectMapper==null)
             throw new IllegalArgumentException("objectMapper can not be null!");
         setHead(sheet, headStyle);
@@ -52,16 +52,16 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
     }
 
     private void setHead(Sheet sheet, CellStyle headStyle) {
-        createCells(startRow,startRow+outputModel.getHeight(),startCol,startCol+outputModel.getWidth(),sheet,headStyle);
+        createCells(startRow,startRow+exportModel.getHeight(),startCol,startCol+exportModel.getWidth(),sheet,headStyle);
         int colIndex = startCol;
-        for (int i = 0; i < outputModel.getFields().size(); i++) {
-            OutputField field = outputModel.getFields().get(i);
+        for (int i = 0; i < exportModel.getFields().size(); i++) {
+            ExportField field = exportModel.getFields().get(i);
             setHeadField(startRow, colIndex, sheet, field, headStyle);
             colIndex += field.getWidth();
         }
     }
 
-    private void setHeadField(int rowIndex, int colIndex, Sheet sheet, OutputField field, CellStyle headStyle) {
+    private void setHeadField(int rowIndex, int colIndex, Sheet sheet, ExportField field, CellStyle headStyle) {
         if (field.getHeight() != 1 || field.getWidth() != 1) {
             int mergeHeight = field.getHeight();
             if(!field.getFields().isEmpty()){
@@ -69,7 +69,7 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
             }
             sheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex + mergeHeight - 1, colIndex, colIndex + field.getWidth() - 1));
             for (int i = 0; i < field.getFields().size(); i++) {
-                OutputField f = field.getFields().get(i);
+                ExportField f = field.getFields().get(i);
                 setHeadField(rowIndex + mergeHeight, i==0?colIndex:colIndex + field.getFields().get(i-1).getWidth(), sheet, f, headStyle);
             }
         }
@@ -81,7 +81,7 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
 
     private void setContent(Sheet sheet, CellStyle contentStyle, Collection<?> collection) {
         JsonNode root;
-        CellUtil.createCells(startRow+outputModel.getHeight(),startRow+outputModel.getHeight()+collection.size(),startCol,startCol+outputModel.getWidth(),sheet,contentStyle);
+        CellUtil.createCells(startRow+exportModel.getHeight(),startRow+exportModel.getHeight()+collection.size(),startCol,startCol+exportModel.getWidth(),sheet,contentStyle);
 
         try {
             String string = objectMapper.writeValueAsString(collection);
@@ -90,35 +90,35 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
             e.printStackTrace();
             throw new IllegalArgumentException(e);
         }
-        int rowIndex = startRow + outputModel.getHeight();
+        int rowIndex = startRow + exportModel.getHeight();
         for (JsonNode node : root) {
             Row row = sheet.getRow(rowIndex++);
             int colIndex = startCol;
-            for (int i = 0; i < outputModel.getFields().size(); i++) {
-                OutputField field = outputModel.getFields().get(i);
-                colIndex = i==0?colIndex:colIndex + outputModel.getFields().get(i-1).getWidth();
+            for (int i = 0; i < exportModel.getFields().size(); i++) {
+                ExportField field = exportModel.getFields().get(i);
+                colIndex = i==0?colIndex:colIndex + exportModel.getFields().get(i-1).getWidth();
                 setContentField(row,node.get(field.getName()),contentStyle,field,colIndex);
             }
         }
     }
 
-    private void setContentField(Row row,JsonNode node,CellStyle contentStyle,OutputField field,int col){
+    private void setContentField(Row row, JsonNode node, CellStyle contentStyle, ExportField field, int col){
         if(field.getFields().isEmpty()){
             Cell cell = row.getCell(col);
             cell.setCellValue(node.asText());
         }else {
             for (int i = 0; i < field.getFields().size(); i++) {
-                OutputField f = field.getFields().get(i);
+                ExportField f = field.getFields().get(i);
                 setContentField(row,node.get(f.getName()),contentStyle,f,col+i);
             }
         }
     }
 
     protected void prepare(){
-        outputModelGenerator = outputModelGenerator();
-        if (outputModelGenerator == null)
-            throw new IllegalArgumentException("outputModelGenerator is not initialized");
-        this.outputModel = outputModelGenerator.generate();
+        exportModelGenerator = exportModelGenerator();
+        if (exportModelGenerator == null)
+            throw new IllegalArgumentException("exportModelGenerator is not initialized");
+        this.exportModel = exportModelGenerator.generate();
         this.objectMapper = ObjectMapper();
         if (objectMapper == null)
             throw new IllegalArgumentException("objectMapper is not initialized");
@@ -126,5 +126,5 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
 
     protected abstract ObjectMapper ObjectMapper();
 
-    protected abstract OutputModelGenerator outputModelGenerator();
+    protected abstract ExportModelGenerator exportModelGenerator();
 }

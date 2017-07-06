@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExportModel class="entity.Student">
+    <Field name="studentId" description="id"></Field>
+    <Field name="name" description="name"></Field>
+    <Field name="sex" description="sex"></Field>
+    <Field name="inTime" description="admission"></Field>
+    <Field name="score" description="score"></Field>
+    <Field name="gradeAndClazz" description="class info">
+        <Field name="grade" description="grade"></Field>
+        <Field name="clazz" description="class"></Field>
+    </Field>
+
+</ExportModel>

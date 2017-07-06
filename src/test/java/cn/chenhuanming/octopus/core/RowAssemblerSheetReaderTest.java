@@ -23,7 +23,7 @@ public class RowAssemblerSheetReaderTest {
         SheetReader<ModelEntity<Student>> students = new ReusableSheetReader<>(sheet,1,0,Student.class);
 
         for (ModelEntity<Student> student:students) {
-            System.out.println(student.getEntity().getInTime());
+            System.out.println(student.toString());
         }
     }
 

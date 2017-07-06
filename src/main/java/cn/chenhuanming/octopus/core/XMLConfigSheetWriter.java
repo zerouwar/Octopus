@@ -32,7 +32,7 @@ public class XMLConfigSheetWriter<T> extends AbstractSheetWriter<T> {
     }
 
     @Override
-    protected OutputModelGenerator outputModelGenerator() {
-        return new XMLOutputModelGenerator(is);
+    protected ExportModelGenerator exportModelGenerator() {
+        return new XMLExportModelGenerator(is);
     }
 }

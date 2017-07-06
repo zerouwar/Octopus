@@ -13,14 +13,14 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class OutputField implements OutputSize {
+public class ExportField implements ExportSize {
     private final String name;
     private final String description;
     private int height;
     private int width;
-    private List<OutputField> fields;
+    private List<ExportField> fields;
 
-    public OutputField(String name, String description) {
+    public ExportField(String name, String description) {
         this.name = name;
         this.description = description;
         width = 0;
@@ -30,7 +30,7 @@ public class OutputField implements OutputSize {
 
     @Override
     public void calculateSize() {
-        System.out.println("---------outputField is calculating size.....");
+        System.out.println("---------exportField is calculating size.....");
         int maxHeight = maxFieldHeight(fields);
         this.height = maxHeight + 1;
         this.width = sumFieldWidth(fields);

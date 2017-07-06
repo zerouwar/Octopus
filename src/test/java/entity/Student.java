@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 
@@ -16,25 +17,26 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class Student {
 
     @ModelLineNumber
     private int lineNum;
 
-    @ModelProperty(value = "student's id")
+    @ModelProperty(value = "id")
     private String studentId;
 
-    @ModelProperty(value = "student's name",defaultValue = "anonymous")
+    @ModelProperty(value = "name",defaultValue = "anonymous")
     private String name;
 
-    @ModelProperty(value = "student's sex",wrongMsg = "sex must be M or F",pattern = "^M|F$")
+    @ModelProperty(value = "sex",wrongMsg = "sex must be M or F",pattern = "^M|F$")
     private String sex;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @ModelProperty(value = "student's admission",wrongMsg = "admission must be a date")
+    @ModelProperty(value = "admission",wrongMsg = "admission must be a date")
     private LocalDate inTime;
 
-    @ModelProperty(value = "student's score",wrongMsg = "score must be numeric",defaultValue = "100")
+    @ModelProperty(value = "score",wrongMsg = "score must be numeric",defaultValue = "100")
     private Double score;
 
     @ModelIgnore

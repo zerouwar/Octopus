@@ -7,7 +7,7 @@ import java.util.List;
  *
  * @author chenhuanming
  */
-public interface OutputSize {
+public interface ExportSize {
 
 
     int getHeight();
@@ -16,11 +16,11 @@ public interface OutputSize {
 
     void calculateSize();
 
-    default int maxFieldHeight(List<OutputField> outputFields){
-        if(outputFields.isEmpty())
+    default int maxFieldHeight(List<ExportField> exportFields){
+        if(exportFields.isEmpty())
             return 0;
-        int max = outputFields.get(0).getHeight();
-        for (OutputField field:outputFields) {
+        int max = exportFields.get(0).getHeight();
+        for (ExportField field:exportFields) {
             int t = maxFieldHeight(field.getFields());
             field.setHeight(t+1);
             if(t>max)
@@ -29,11 +29,11 @@ public interface OutputSize {
         return max;
     }
 
-    default int sumFieldWidth(List<OutputField> outputFields){
-        if(outputFields.isEmpty())
+    default int sumFieldWidth(List<ExportField> exportFields){
+        if(exportFields.isEmpty())
             return 1;
         int s = 0;
-        for (OutputField field:outputFields) {
+        for (ExportField field:exportFields) {
             if(field.getWidth()==0)
                 field.setWidth(field.sumFieldWidth(field.getFields()));
             s += field.getWidth();

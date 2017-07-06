@@ -24,7 +24,7 @@ public class SimpleSheetWriterTest {
     public void testSheetWriter() throws Exception {
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
         rootPath = rootPath.substring(1);
-        SheetWriter sheetWriter = new XMLConfigSheetWriter(getClass().getClassLoader().getResourceAsStream("studentOutput.xml"));
+        SheetWriter sheetWriter = new XMLConfigSheetWriter(getClass().getClassLoader().getResourceAsStream("studentExport.xml"));
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         CellStyle headStyle = workbook.createCellStyle();
@@ -45,7 +45,7 @@ public class SimpleSheetWriterTest {
 
         sheetWriter.write(workbook.createSheet(),headStyle,contentStyle, Arrays.asList(student1,student2,student3));
 
-        OutputStream os = new FileOutputStream(rootPath+"output.xlsx");
+        OutputStream os = new FileOutputStream(rootPath+"exportStudent.xlsx");
         workbook.write(os);
     }
 }

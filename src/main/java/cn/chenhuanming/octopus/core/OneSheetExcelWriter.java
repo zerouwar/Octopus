@@ -1,7 +1,6 @@
 package cn.chenhuanming.octopus.core;
 
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
 
 import java.io.InputStream;
 import java.util.Collection;
@@ -14,21 +13,32 @@ import java.util.Collection;
 public class OneSheetExcelWriter<T> extends AbstractExcelWriter<T> {
 
     public OneSheetExcelWriter(InputStream xmlInputStream) {
-        setWorkbook(new XSSFWorkbook());
-        setSheetWriter(new XMLConfigSheetWriter(xmlInputStream));
-        headStyle = headStyle();
-        contentStyle = contentStyle();
+        super(new XMLConfigSheetWriter(xmlInputStream));
     }
 
     @Override
-    public void write(Collection<T> collection) {
-        setWorkbook(new XSSFWorkbook());
+    public void write(Workbook workbook,Collection<T> collection) {
         if(workbook==null)
             throw new IllegalStateException("workbook can not be null!");
-        if(sheetWriter==null)
-            throw new IllegalStateException("sheetWriter can not be null!");
         Sheet sheet = workbook.createSheet();
-        sheetWriter.write(sheet,headStyle,contentStyle,collection);
+        sheetWriter.write(sheet,headStyle(workbook),contentStyle(workbook),collection);
+    }
+
+    protected CellStyle headStyle(Workbook workbook){
+        CellStyle headStyle = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setBold(true);
+        headStyle.setFont(font);
+        headStyle.setBorderBottom(BorderStyle.THIN);
+        headStyle.setBorderLeft(BorderStyle.THIN);
+        headStyle.setBorderRight(BorderStyle.THIN);
+        headStyle.setBorderTop(BorderStyle.THIN);
+        headStyle.setAlignment(HorizontalAlignment.CENTER);
+        return headStyle;
+    }
+
+    protected CellStyle contentStyle(Workbook workbook){
+        return workbook.createCellStyle();
     }
 
 }

@@ -12,13 +12,13 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class OutputModel implements OutputSize {
+public class ExportModel implements ExportSize {
     private Class clazz;
     private int height;
     private int width;
-    private List<OutputField> fields;
+    private List<ExportField> fields;
 
-    public OutputModel(Class clazz) {
+    public ExportModel(Class clazz) {
         this.clazz = clazz;
         height = 1;
     }
@@ -32,7 +32,7 @@ public class OutputModel implements OutputSize {
         this.width = sumFieldWidth(fields);
     }
 
-    private void adjustHeight(List<OutputField> fields){
+    private void adjustHeight(List<ExportField> fields){
         if(fields.isEmpty())
             return ;
         int max = fields.get(0).getHeight();
@@ -40,7 +40,7 @@ public class OutputModel implements OutputSize {
             if(fields.get(i).getHeight()>max)
                 max = fields.get(i).getHeight();
         }
-        for (OutputField f:fields) {
+        for (ExportField f:fields) {
             f.setHeight(max);
             adjustHeight(f.getFields());
         }
