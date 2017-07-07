@@ -1,10 +1,14 @@
 # Octopus
  `Octopus` is a simple java excel import and export tool.
 
+***
+
 ## Dependency
  - poi 3.16
  - lombok 1.16.14
  - jackson 2.8.6
+
+***
 
 ## How to import
 Now, we have four student information in excel file stored in src/test/java/resources:
@@ -15,6 +19,8 @@ Now, we have four student information in excel file stored in src/test/java/reso
     20124524            F      20122-81-31  79
     20156243    Joyce   2      2012-5-15    qwe
     20116522    Nemo    F
+    
+***
 
 `Student` class
 
@@ -50,6 +56,8 @@ We can customize more information with `@ModelProperty`,whose `value` is the des
 this field when the corresponding cell is blank in excel.Moreover,`blankable` of `@ModelProperty` is whether cell is blank in excel or not
  ,`wrongMsg` is customized hint for user,not for programmer,and `pattern` is regex pattern to validate data.
 
+***
+
 Now,we read excel with `SheetReader` and get four students.Before that,we need use `POI` to get one `Sheet` object.
 
     InputStream is = getClass().getResourceAsStream("/test.xlsx");
@@ -72,6 +80,8 @@ The result of console.
     Student(lineNum=4, studentId=20156243, name=anonymous, sex=null, inTime=2015-05-15, score=94.0)
     Student(lineNum=5, studentId=20116522, name=Nemo, sex=F, inTime=2011-02-26, score=100.0)
 
+***
+
 At Last,pay attention on exception of transformation and print student in the loop.
 
     SimpleModelEntity(entity=Student(lineNum=2, studentId=20134123, name=John, sex=M, inTime=2013-09-01, score=89.0), exceptions=[])
@@ -89,6 +99,8 @@ On a separate note,`ReusableSheetReader` will reuse entity in order to avoid cre
 Thus,you should be care of this.If you want a new object in every loop,`SimpleSheetReader` will be nice choice.
 
 *complete demo is src/test/java/cn/chenhuanming/octopus/core/RowAssemblerSheetReaderTest*
+
+***
 
 ## Export
 Just like import,we will export some students' data.This time we add one field into `Student`
@@ -134,6 +146,8 @@ Just like import,we will export some students' data.This time we add one field i
 
 There are two string fields in `GradeAndClazz`,`grade` and `clazz`(class is the key word in java).
 
+***
+
 We need a xml configuration file to indicate strategy of export.
 
     <?xml version="1.0" encoding="UTF-8"?>
@@ -152,6 +166,8 @@ We need a xml configuration file to indicate strategy of export.
 
 `Octopus` will export the field of student according to the order of `<Filed>` declaration.
 `name` is name of field in class and `description` will be used to write table head.
+
+***
 
 Now,write excel with `ExcelWriter`.
 
