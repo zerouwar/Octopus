@@ -52,9 +52,13 @@ Now, we have four student information in excel file stored in src/test/java/reso
 What we want is transforming four rows of data into four student object and validate.
 
 Let's see `Student` class,`lineNum` is the row number you see in excel,which marked by `@ModelLineNumber`.
-We can customize more information with `@ModelProperty`,whose `value` is the description of it,defaultValue is default value of
-this field when the corresponding cell is blank in excel.Moreover,`blankable` of `@ModelProperty` is whether cell is blank in excel or not
- ,`wrongMsg` is customized hint for user,not for programmer,and `pattern` is regex pattern to validate data.
+We can customize more information with `@ModelProperty`.There are some properties in `@ModelProperty` .
+
+- `value` : the description of field.
+- `defaultValue`:default value of field when the corresponding cell is blank in excel.
+- `blankable`: whether cell can be blank in excel or not.
+- `wrongMsg` : customized hint to user,not for programmer.
+- `pattern` : regex pattern used to validate data.
 
 ***
 
