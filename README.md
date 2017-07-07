@@ -1,116 +1,187 @@
 # Octopus
-A java simple object-row-mapping util used to import and export excel
+ `Octopus` is a simple java excel import and export tool.
 
-## Introduction
+## Dependency
+ - poi 3.16
+ - lombok 1.16.14
+ - jackson 2.8.6
 
-***Octopus*** can convert row of sheet in the excel(only for XSSF) to object you want,in order to get rid of
-most operations of POI(actually ***Octopus*** deal with sheet currently,so you still have to get sheet with POI).
+## How to import
+Now, we have four student information in excel file stored in src/test/java/resources:
+    studentId   name    sex    inTime       score
+    -----------------------------------------------
+    20134123    John    M      2013-9-1     89
+    20124524            F      20122-81-31  79
+    20156243    Joyce   2      2012-5-15    qwe
+    20116522    Nemo    F
 
-What'more,you can use `ExcelWriter`  to export a excel.
+`Student` class
 
-**Dependency**:
-- java 8
-- apache POI 3.16
-- lombok 1.16.14
-- jackson 2.8.6
+    @Getter
+    @Setter
+    @ToString
+    public class Student {
 
-## How to import excel
+      @ModelLineNumber
+      private int lineNum;
 
-### As a example,we have a Student class which represents one row of sheet.
+      @ModelProperty(value = "student's id")
+      private String studentId;
 
-Every fields of the Student will be 
-converted to one column of a row in the order they are declared,except marked by `@ModelIgnore`.Note that field without any annotation
-also will be converted.
-***
-	@Getter
-	@Setter
-	public class Student {
+      @ModelProperty(value = "student's name",defaultValue = "anonymous")
+      private String name;
 
-		@ModelLineNumber
-		private int lineNum;
+      @ModelProperty(value = "student's sex",wrongMsg = "sex must be M or F",pattern = "^M|F$")
+      private String sex;
 
-		@ModelProperty(value = "student's id")
-		private String studentId;
+      @ModelProperty(value = "student's admission",wrongMsg = "admission must be a date")
+      private LocalDate inTime;
 
-		@ModelProperty(value = "student's name",defaultValue = "anonymous")
-		private String name;
+      @ModelProperty(value = "student's score",wrongMsg = "score must be numberic",defaultValue = "100")
+      private Double score;
 
-		@ModelProperty(value = "student's sex",wrongMsg = "sex must be M or F")
-		private String sex;
+    }
 
-		@ModelProperty(value = "student's admission",wrongMsg = "admission must be a date")
-		private LocalDate inTime;
+What we want is transforming four rows of data into four student object and validate.
 
-		@ModelProperty(value = "student's score",wrongMsg = "score must be numberic",defaultValue = "100")
-		private Double score;
+Let's see `Student` class,`lineNum` is the row number you see in excel,which marked by `@ModelLineNumber`.
+We can customize more information with `@ModelProperty`,whose `value` is the description of it,defaultValue is default value of
+this field when the corresponding cell is blank in excel.Moreover,`blankable` of `@ModelProperty` is whether cell is blank in excel or not
+ ,`wrongMsg` is customized hint for user,not for programmer,and `pattern` is regex pattern to validate data.
 
-	}
-
-Field marked by `@ModelLineNumber` represents the line number in excel you see(begin with 1),
-its data type must be `int` or `Integer`.
-
-***
-#### These are properties of `@ModelProperty`
-
-value ------ description of property
-
-defaultValue ------ value of property when cell is blank(In POI's words,blank cell or empty string cell)
-
-wrongMsg ------- hint when process of convert occurs error,such as '2013-211-01' can not be
-converted to a `Date` Type field,cell's content and pattern don't match,it will be stored in `ExcelImportException` of `ModelEntity` you got.
-
-pattern ------ regex pattern which will be used to check the content of cell
-
-blankable ------ whether cell can be blank(In POI's words,cell type is blank,cell type is string but empty or cell is null)
-
-***
-### we can traverse sheet with following code.
+Now,we read excel with `SheetReader` and get four students.Before that,we need use `POI` to get one `Sheet` object.
 
     InputStream is = getClass().getResourceAsStream("/test.xlsx");
-	Workbook workbook = WorkbookFactory.create(is);
-	Sheet sheet = workbook.getSheetAt(0);
-	//convert from index 1 row,index 0 column(same as POI)
+    Workbook workbook = WorkbookFactory.create(is);
+    Sheet sheet = workbook.getSheetAt(0);
+
+    //从索引为1的row，索引为0的col（跟POI一样）开始读取，转换为Student对象
     SheetReader<ModelEntity<Student>> students = new ReusableSheetReader<>(sheet,1,0,Student.class);
 
+At the end of code,we get one `SheetReader` object,`SheetReader` implements `Iterable`,so read of excel likes this.
+
     for (ModelEntity<Student> student:students) {
-        System.out.println(student.getEntity());
+      System.out.println(student.getEntity().toString());
     }
-`RowAssemblerSheetReader` needs four paramters:sheet,startRow(line number start to convert,
-begin with 0, same as POI),startCol(column number start to convert,also begin with 0)
-and Class to convert(here is Student.class).
 
-And we got some students,`SheetReader` implements `Iterable`,so we can read with `foreach`.
-Every loop we got a **`ModelEntity<Student>`**,`ModelEntity` has two method,`getEntity()` returns
-the student object represented a row data,`exceptions()` returns a list of `ExcelImportException`
-so you can know what errors occured in the process of convert
-***
-### Now,this is one sheet of excel.
+The result of console.
 
-	studentId   name    sex    inTime       score
-	-----------------------------------------------
-	20134123    John    M      2013-9-1     89
-	20124524            F      20122-81-31  79
-	20156243    Joyce   2      2012-5-15    qwe
-	20116522    Nemo    F          
-***
-As we see,first row is correct,so it will be converted to a student object.
-Name of second row is blank,so his name will be default value -- anonymous.
-Then,second student will have one exception(Actually it's `DataFormatException` which extends `ExcelImportException`),
-because inTime of second row is not a correct date.
-Third student has two exceptions,first is 'PatternNotMatchException' because 2 is not 'M' or 'F',
-second is `DataFormatException` for 'qwe' is not numeric.
-At last,Last student has not any exceptions,inTime property is `null`,score is 100.
+    Student(lineNum=2, studentId=20134123, name=John, sex=M, inTime=2013-09-01, score=89.0)
+    Student(lineNum=3, studentId=20124524, name=Joyce, sex=F, inTime=null, score=79.0)
+    Student(lineNum=4, studentId=20156243, name=anonymous, sex=null, inTime=2015-05-15, score=94.0)
+    Student(lineNum=5, studentId=20116522, name=Nemo, sex=F, inTime=2011-02-26, score=100.0)
 
-**you can run test in this maven project to see the real result**
+At Last,pay attention on exception of transformation and print student in the loop.
 
-## Export Excel
+    SimpleModelEntity(entity=Student(lineNum=2, studentId=20134123, name=John, sex=M, inTime=2013-09-01, score=89.0), exceptions=[])
+    SimpleModelEntity(entity=Student(lineNum=3, studentId=20124524, name=Joyce, sex=F, inTime=null, score=79.0), exceptions=[cn.chenhuanming.octopus.exception.DataFormatException: in cell (3,4) ,20123-8-31 can not be formatted to class java.time.LocalDate])
+    SimpleModelEntity(entity=Student(lineNum=4, studentId=20156243, name=anonymous, sex=null, inTime=2015-05-15, score=94.0), exceptions=[cn.chenhuanming.octopus.exception.PatternNotMatchException: P and ^M|F$ don't match!])
+    SimpleModelEntity(entity=Student(lineNum=5, studentId=20116522, name=Nemo, sex=F, inTime=2011-02-26, score=100.0), exceptions=[])
 
-There are some interfaces to export excel,such as `ExcelWriter`,`SheetWriter`.
-We use `OneSheetExcelWriter` implemented `ExcelWriter` to export excel commonly.
+There is one exception in second student named Joyce because her `inTime` is not a correct date.The third
+student's `sex` is not M or F so he has one `PatternNotMatchException`,in addition,his name is anonymous because of
+`defaultValue`.
 
-`ExcelWriter` will leave work to `SheetWriter`,`SheetWriter` will use jackson to serialize collections to
-json string , and then transform json string to `JsonNode`(jackson).finally write to sheet.Thus,you can
-format output through jackson.
+All type of elements of `exceptions` in `ModelEntity` is `ExcelImportException`.
 
-Now we export some students.
+On a separate note,`ReusableSheetReader` will reuse entity in order to avoid creating more object.
+Thus,you should be care of this.If you want a new object in every loop,`SimpleSheetReader` will be nice choice.
 
+*complete demo is src/test/java/cn/chenhuanming/octopus/core/RowAssemblerSheetReaderTest*
+
+## Export
+Just like import,we will export some students' data.This time we add one field into `Student`
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @ToString
+    public class Student {
+
+        @ModelLineNumber
+        private int lineNum;
+
+        @ModelProperty(value = "student's id")
+        private String studentId;
+
+        @ModelProperty(value = "student's name",defaultValue = "anonymous")
+        private String name;
+
+        @ModelProperty(value = "student's sex",wrongMsg = "sex must be M or F",pattern = "^M|F$")
+        private String sex;
+
+        @JsonFormat(pattern = "yyyy-MM-dd")
+        @ModelProperty(value = "student's admission",wrongMsg = "admission must be a date")
+        private LocalDate inTime;
+
+        @ModelProperty(value = "student's score",wrongMsg = "score must be numeric",defaultValue = "100")
+        private Double score;
+
+        @ModelIgnore
+        private GradeAndClazz gradeAndClazz;
+
+        public Student(String studentId, String name, String sex, LocalDate inTime, Double score,GradeAndClazz gradeAndClazz) {
+            this.studentId = studentId;
+            this.name = name;
+            this.sex = sex;
+            this.inTime = inTime;
+            this.score = score;
+            this.gradeAndClazz = gradeAndClazz;
+        }
+
+    }
+
+There are two string fields in `GradeAndClazz`,`grade` and `clazz`(class is the key word in java).
+
+We need a xml configuration file to indicate strategy of export.
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <ExportModel class="entity.Student">
+    <Field name="studentId" description="id"></Field>
+    <Field name="name" description="name"></Field>
+    <Field name="sex" description="sex"></Field>
+    <Field name="inTime" description="admission"></Field>
+    <Field name="score" description="score"></Field>
+    <Field name="gradeAndClazz" description="class info">
+        <Field name="grade" description="grade"></Field>
+        <Field name="clazz" description="class"></Field>
+    </Field>
+
+    </ExportModel>
+
+`Octopus` will export the field of student according to the order of `<Filed>` declaration.
+`name` is name of field in class and `description` will be used to write table head.
+
+Now,write excel with `ExcelWriter`.
+
+    Workbook workbook = new XSSFWorkbook();
+    String rootPath = this.getClass().getClassLoader().getResource("").getPath();
+    FileOutputStream os = new FileOutputStream(rootPath+"/export.xlsx");
+
+    GradeAndClazz gradeAndClazz = new GradeAndClazz("2014","R6");
+    Student student1 = new Student("201223","John","M", LocalDate.now(),98.00,gradeAndClazz);
+    Student student2 = new Student("204354","Tony","M", LocalDate.now(),87.00,gradeAndClazz);
+    Student student3 = new Student("202432","Joyce","F", LocalDate.now(),90.00,gradeAndClazz);
+
+    //advice,new ExcelWriter in initialization of application and it should be single.
+    ExcelWriter<Student> studentExcelWriter = new OneSheetExcelWriter<>(getClass().getClassLoader().getResourceAsStream("studentOutput.xml"));
+    //往Excel中写入这三个Student
+    studentExcelWriter.write(workbook,Arrays.asList(student1,student2,student3));
+
+The final export excel.
+
+                                              |    class info      |
+    id        name    M     admission   score |---------|----------|
+                                              |  grade  |   class  |
+    ---------------------------------------------------------------|
+    201223    John    M     2017-07-06  98.0  |  2014   |   R6     |
+    204354    Tony    M     2017-07-06  87.0  |  2014   |   R6     |
+    202432    Joyce   F     2017-07-06  90.0  |  2014   |   R6     |
+
+
+*complete demo is src/test/java/cn/chenhuanming/octopus/core/OneSheetExcelWriterTest*
+
+### Theory of `Octopus` export part
+Actually,`Octopus` transforms Collection of data to a tree,then traverses this tree and write
+excel according xml configuration file.The transformation is commissioned to `jackson`.
+This brings us benefit is we can use tool of `jackson` to customize the output.
