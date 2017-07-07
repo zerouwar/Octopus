@@ -8,6 +8,7 @@
 
 ## How to import
 Now, we have four student information in excel file stored in src/test/java/resources:
+
     studentId   name    sex    inTime       score
     -----------------------------------------------
     20134123    John    M      2013-9-1     89
