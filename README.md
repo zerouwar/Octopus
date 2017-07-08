@@ -19,7 +19,7 @@ Now, we have four student information in excel file stored in src/test/java/reso
     20124524            F      20122-81-31  79
     20156243    Joyce   2      2012-5-15    qwe
     20116522    Nemo    F
-    
+
 ***
 
 `Student` class
@@ -86,7 +86,7 @@ The result of console.
 
 ***
 
-At Last,pay attention on exception of transformation and print student in the loop.
+At Last,pay attention on exceptions of transformation process,then print student not student' entity in each loop.
 
     SimpleModelEntity(entity=Student(lineNum=2, studentId=20134123, name=John, sex=M, inTime=2013-09-01, score=89.0), exceptions=[])
     SimpleModelEntity(entity=Student(lineNum=3, studentId=20124524, name=Joyce, sex=F, inTime=null, score=79.0), exceptions=[cn.chenhuanming.octopus.exception.DataFormatException: in cell (3,4) ,20123-8-31 can not be formatted to class java.time.LocalDate])
