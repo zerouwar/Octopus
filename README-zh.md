@@ -12,7 +12,7 @@
 - jackson 2.8.6
 
 ## 导入
-我们需要导入一些学生信息，手上有一个excel文件（在项目src/test/java/resources下的test.xlsx）:
+假设我们需要导入一些学生信息，手上有一个excel文件（在项目src/test/java/resources下的test.xlsx）:
 
     studentId   name    sex    inTime       score
     -----------------------------------------------
@@ -50,8 +50,13 @@
 
 我们的目标就是把这四行数据转换成四个`Student`对象，并且能简单检查一下数据合法性。
 
-再把目光放到`Student`类，`lineNum`表示该对象对应的row在excel中的行号，需要用`@ModelLineNumber`来告诉`Octopus`。
-利用`@ModelProperty`可以自定义更多的信息，value表示该属性的实际含义，defaultValue表示当excel中没有数据时该属性的默认值，另外`@ModelProperty`的blankable可以指定excel中该属性能否为空白。wrongMsg表示错误信息，注意这个只用来给用户作提示作用，具体的异常在后面的`ModelEntity`会有体现。pattern会被当作正则表达式来检查数据合法性，这里不匹配时也会在异常里有所体现。
+再把目光放到`Student`类，`lineNum`表示该对象对应的row在excel中的行号，需要用`@ModelLineNumber`来告诉`Octopus`。被`@ModelIgnore`标记的属性不会被`Octopus`处理，**但是即使没有任何注解的属性依然会被处理**。利用`@ModelProperty`可以自定义更多的信息，这里说一下`@ModelProperty`的属性。
+
+- value 该属性的现实含义。
+- defaultValue 当excel中没有数据时该属性的默认值。
+- blankable  excel中的单元格能否为空白。
+- wrongMsg 错误信息，给用户作提示作用，通过`ExcelImportException`获取，后面会说到异常处理。
+- pattern 检查数据合法性的正则表达式，这里不匹配时也会在异常里有所体现。
 
 现在，我们使用`SheetReader`来读取这个excel内容，并转换成四个学生对象。在此之前，先用POI读取这个excel文件，拿到sheet对象
 
@@ -76,7 +81,7 @@
     Student(lineNum=4, studentId=20156243, name=anonymous, sex=null, inTime=2015-05-15, score=94.0)
     Student(lineNum=5, studentId=20116522, name=Nemo, sex=F, inTime=2011-02-26, score=100.0)
 
-现在关注下异常情况，`@ModelEntity`除了指定的entity外，还有一个异常集合。
+现在关注下异常情况，`ModelEntity`除了指定的entity外，还有一个异常集合。
 
     SimpleModelEntity(entity=Student(lineNum=2, studentId=20134123, name=John, sex=M, inTime=2013-09-01, score=89.0), exceptions=[])
     SimpleModelEntity(entity=Student(lineNum=3, studentId=20124524, name=Joyce, sex=F, inTime=null, score=79.0), exceptions=[cn.chenhuanming.octopus.exception.DataFormatException: in cell (3,4) ,20123-8-31 can not be formatted to class java.time.LocalDate])
@@ -85,11 +90,11 @@
 
 可以看到第二个叫Joyce的学生的inTime不是一个日期，因此在异常中有一个`DataFormatException`。第三个学生的sex因为不是M或F而有`PatternNotMatchException`，同时name是anonymous（默认值）。`ModelEntity`里exceptions的元素类型都是`ExcelImportException`。
 
-需要注意的是，这里的exceptions只是给程序员提示而已，需要返回错误提示给用户的话，可以在`ExcelImportException`里获取`@ModelProperty`的wrongMsg，或者根据异常类的类型来自定义错误提示。
+需要注意的是，这里的exceptions只是给程序员提示而已。如果需要返回错误提示给用户的话，可以在`ExcelImportException`里获取`@ModelProperty`设定的wrongMsg，或者根据异常类的类型来自定义错误提示。
 
-另外`ModelEntity`里的entity，即自己指定的pojo，一般只做临时存储，尤其注意的是`ReusableSheetReader`这个会重用entity，即整一个迭代过程只有一个entity对象。如果需要每次迭代都要一个全新的对象，可以使用`SimpleSheetReader`。
+另外`ModelEntity`里的entity，即自己指定的pojo，一般只做临时存储，尤其注意的是`ReusableSheetReader`这个会重用entity，即迭代过程只有一个entity对象。如果需要每次迭代都要一个全新的对象，可以使用`SimpleSheetReader`。
 
-上面例子可以通过执行src/test/java/cn/chenhuanming/octopus/core下的`RowAssemblerSheetReaderTest`类来查看运行效果。
+*上面例子可以通过执行src/test/java/cn/chenhuanming/octopus/core下的`RowAssemblerSheetReaderTest`类来查看运行效果。*
 
 ## 导出Excel
 导出Excel比导入用起来相对容易一点。但是考虑到可能导出需要自定义的excel内容更多，所以我只做了一个简单的表头绘制和数据填充。
@@ -171,7 +176,7 @@
     //往Excel中写入这三个Student
     studentExcelWriter.write(workbook,Arrays.asList(student1,student2,student3));
 
-写入结果。
+写入excel结果。
 
                                               |    class info      |
     id        name    M     admission   score |---------|----------|
@@ -181,7 +186,7 @@
     204354    Tony    M     2017-07-06  87.0  |  2014   |   R6     |
     202432    Joyce   F     2017-07-06  90.0  |  2014   |   R6     |
 
-实际效果请运行src/test/java/cn/chenhuanming/octopus/core/OneSheetExcelWriterTest类。
+*实际效果请运行src/test/java/cn/chenhuanming/octopus/core/OneSheetExcelWriterTest类。*
 
 ### 关于`Octopus`的导出原理
 导入基本就是获取，检查，赋值，没什么特别的东西。导出虽然看起来比导入简单，但是考虑到自定义输出的可能性更大，由此我想到了可以利用json序列化工具来帮我做对象的转换工作，尤其是这些json序列化工具都会建立一棵树的结构。所以利用这一点，`Octopus`本身并不做数据的序列化工作，由jackson转换后给`Octopus`一个`Node`，`Octopus`就可以根据配置文件，通过遍历这棵树来写入excel。因此前一段序列化工作，完全可以利用jackson的一些注解或者`@JsonSerialize`等自定义序列化。
