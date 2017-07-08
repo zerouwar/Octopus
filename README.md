@@ -1,5 +1,5 @@
 # Octopus
- `Octopus` is a simple java excel import and export tool.
+`Octopus` is a simple java excel import and export tool.
 
 ***
 
@@ -52,7 +52,9 @@ Now, we have four student information in excel file stored in src/test/java/reso
 What we want is transforming four rows of data into four student object and validate.
 
 Let's see `Student` class,`lineNum` is the row number you see in excel,which marked by `@ModelLineNumber`.
-We can customize more information with `@ModelProperty`.There are some properties in `@ModelProperty` .
+We can customize more information with `@ModelProperty`.Note,**all fields will be dealed except for field marked by `@ModelIgnore`.**
+
+There are some properties in `@ModelProperty` .
 
 - `value` : the description of field.
 - `defaultValue`:default value of field when the corresponding cell is blank in excel.
