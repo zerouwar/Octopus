@@ -41,29 +41,4 @@ public abstract class AbstractConvertManager implements ConvertManager{
         return this;
     }
 
-//    protected Object getCellValueIfCellTypeEquals(ModelEntityWithMethodHandle handle,Cell cell,CellType cellType,Function<Cell,Object> equals) {
-//        return getCellValueIfCellTypeEquals(handle,cell,cellType,equals,(handle1, cell1) ->{
-//            throw new UnSupportedDataTypeException("cellType of cell ("+cell.getRowIndex()+","+cell.getColumnIndex()+") is not "+cellType,handle.getName(),handle.getDescription());
-//        });
-//    }
-//
-//    protected Object getCellValueIfCellTypeEquals(ModelEntityWithMethodHandle handle, Cell cell, CellType cellType, Function<Cell,Object> equals, BiFunction<ModelEntityWithMethodHandle,Cell,Object> notEquals)  {
-//        if(cell.getCellTypeEnum()==cellType){
-//            return equals.apply(cell);
-//        } else
-//            return notEquals.apply(handle,cell);
-//    }
-//
-//    protected Object getCellValueIfIsString(ModelEntityWithMethodHandle handle, Cell cell, Function<String,Object> isString){
-//        return getCellValueIfIsString(handle,cell,isString,(handle1, cell1) -> {
-//            throw new UnSupportedDataTypeException("cell ("+cell.getRowIndex()+","+cell.getColumnIndex()+") is not string",handle.getName(),handle.getDescription());
-//        });
-//    }
-//
-//    protected Object getCellValueIfIsString(ModelEntityWithMethodHandle handle, Cell cell, Function<String,Object> isString,BiFunction<ModelEntityWithMethodHandle,Cell,Object> notString) {
-//        if(cell.getCellTypeEnum()==CellType.STRING){
-//            return isString.apply(cell.getStringCellValue());
-//        }else
-//            return notString.apply(handle,cell);
-//    }
 }

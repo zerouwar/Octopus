@@ -52,6 +52,8 @@ public class SimpleConvertManager extends AbstractConvertManager {
             switch (cell.getCellTypeEnum()) {
                 case STRING:
                     return cell.getStringCellValue();
+                case FORMULA:
+                    return cell.getStringCellValue();
                 case BOOLEAN:
                     return cell.getBooleanCellValue() + "";
                 case NUMERIC:
@@ -130,7 +132,7 @@ public class SimpleConvertManager extends AbstractConvertManager {
     }
 
     private Object getNumericValue(ModelEntityWithMethodHandleInImport handle, Cell cell, Class clazz, Function<String,Object> stringFormat){
-        if(cell.getCellTypeEnum()==CellType.NUMERIC)
+        if(cell.getCellTypeEnum()==CellType.NUMERIC||cell.getCellTypeEnum()==CellType.FORMULA)
             return cell.getNumericCellValue();
         else if(cell.getCellTypeEnum()==CellType.STRING){
             try{

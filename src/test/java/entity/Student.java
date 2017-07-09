@@ -23,7 +23,7 @@ public class Student {
     @ModelLineNumber
     private int lineNum;
 
-    @ModelProperty(value = "id")
+    @ModelProperty(value = "id",blankable = false)
     private String studentId;
 
     @ModelProperty(value = "name",defaultValue = "anonymous")
