@@ -49,7 +49,7 @@ Now, we have four student information in excel file stored in src/test/java/reso
 
     }
 
-What we want is transforming four rows of data into four student object and validate.
+What we want is transforming four rows of data into four student object and validate them.
 
 Let's see `Student` class,`lineNum` is the row number you see in excel,which marked by `@ModelLineNumber`.
 We can customize more information with `@ModelProperty`.Note,**all fields will be dealed except for field marked by `@ModelIgnore`.**
