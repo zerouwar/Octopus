@@ -70,7 +70,7 @@ output result.
 
 You can get more error details through exceptions in `ModelEntity<Student>`.
 
-***complete test case at `cn.chenhuanming.octopus.core.SheetReaderTest`***
+***complete test case at `src/test/cn/chenhuanming/octopus/core/SheetReaderTest`***
 
 ## How to export excel
 We add `GradeAndClazz` field into `Student` class so as to show export features.This is final `Student` class which can be used to import and export.
@@ -168,4 +168,4 @@ Here is the export result.
 
 As you see,it will merge cells.Note that value of admission is formatted through `@JsonFormat`.Actually,`Octopus` calls `jackson` to serialize students to json and write to excel.
 
-***For more details,run unit test with `cn.chenhuanming.octopus.core.OneSheetExcelWriterTest`***
+***For more details,run unit test with `src/test/cn/chenhuanming/octopus/core/OneSheetExcelWriterTest`***
