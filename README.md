@@ -18,7 +18,7 @@ Here is a sheet of excel represents four students information.
 | 20156243  |       | P   | 2015-5-15  | 94    |
 | 20116522  | Nemo  | F   | 2011-2-26  |       |
 
-And we have a `Student` class to save student information
+And we have a `Student` class to save student information.
 
     //lombok annotations
     @Getter
@@ -47,7 +47,7 @@ And we have a `Student` class to save student information
 
     }
 
-Assemble students object with following code
+Assemble students object with following code.
 
     InputStream is = getClass().getResourceAsStream("/test.xlsx");
     Workbook workbook = WorkbookFactory.create(is);
@@ -61,7 +61,7 @@ Assemble students object with following code
         System.out.println(student.toString());
     }
 
-output result
+output result.
 
     SimpleModelEntity(entity=Student(lineNum=2, studentId=20134123, name=John, sex=M, inTime=2013-09-01, score=89.0, gradeAndClazz=null), exceptions=[])
     SimpleModelEntity(entity=Student(lineNum=3, studentId=20124524, name=Joyce, sex=F, inTime=null, score=79.0, gradeAndClazz=null), exceptions=[cn.chenhuanming.octopus.exception.DataFormatException: in cell (3,4) ,20123-8-31 can not be formatted to class java.time.LocalDate])
@@ -73,7 +73,7 @@ You can get more error details through exceptions in `ModelEntity<Student>`.
 ***complete test case at `cn.chenhuanming.octopus.core.SheetReaderTest`***
 
 ## How to export excel
-We add `GradeAndClazz` field into `Student` class so as to show export features.This is final `Student` class which can be used to import and export
+We add `GradeAndClazz` field into `Student` class so as to show export features.This is final `Student` class which can be used to import and export.
 
     @Getter
     @Setter
@@ -114,7 +114,7 @@ We add `GradeAndClazz` field into `Student` class so as to show export features.
         }
     }
 
-And the `GradeAndClazz` class
+And the `GradeAndClazz` class.
 
     @Getter
     @Setter
@@ -124,7 +124,7 @@ And the `GradeAndClazz` class
         private String clazz;
     }
 
-Use xml to config fields that needs to export
+Use xml to config fields that needs to export.
 
     <?xml version="1.0" encoding="UTF-8"?>
     <ExportModel class="entity.Student">
@@ -139,7 +139,7 @@ Use xml to config fields that needs to export
         </Field>
     </ExportModel>
 
-Export students with following code
+Export students with following code.
 
     //prepare workbook and stuednts objects
     Workbook workbook = new XSSFWorkbook();
@@ -156,7 +156,7 @@ Export students with following code
     studentExcelWriter.write(workbook,Arrays.asList(student1,student2,student3));
     workbook.write(os);
 
-Here is the export result
+Here is the export result.
 
                                               |    class info      |
     id        name    M     admission   score |---------|----------|
