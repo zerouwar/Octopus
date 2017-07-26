@@ -70,7 +70,7 @@
 
 通过`ModelEntity<Student>`，可以获取更多异常信息，例如`@ModelProperty`的配置信息和所发生的异常.
 
-***完整的测试用例：`cn.chenhuanming.octopus.core.SheetReaderTest`***
+***完整的测试用例：`src/test/cn/chenhuanming/octopus/core/SheetReaderTest`***
 
 ## 如何导出excel
 为了说明导出的特性，我们给`Student`类增加一个属性`GradeAndClazz`用来表示年级和班级.下面是最终的`Student`类，可以用来导入导出.
@@ -168,4 +168,4 @@
 
 可以看到，对于gradeAndClazz属性，会用一个合并单元格来表示.admission因为被`@JsonFormat`标记，因此会格式化输出日期。事实上`Octopus`会调用`jackson`来格式化json后再写入excel.
 
-***详细例子在 `cn.chenhuanming.octopus.core.OneSheetExcelWriterTest`***
+***详细例子在 `src/test/cn/chenhuanming/octopus/core/OneSheetExcelWriterTest`***
