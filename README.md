@@ -1,3 +1,4 @@
+
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Octopus](#octopus)
@@ -5,6 +6,9 @@
 	- [How to export excel](#how-to-export-excel)
 
 <!-- /TOC -->
+
+[跳去中文版](https://github.com/zerouwar/Octopus/blob/master/README-zh.md)
+
 # Octopus
  `Octopus` is a simple java excel import and export tool.
 
