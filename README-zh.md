@@ -1,19 +1,15 @@
-
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Octopus](#octopus)
-	- [How to import excel](#how-to-import-excel)
-	- [How to export excel](#how-to-export-excel)
+	- [如何导入excel](#如何导入excel)
+	- [如何导出excel](#如何导出excel)
 
 <!-- /TOC -->
-
-[跳去中文版](https://github.com/zerouwar/Octopus/blob/master/README-zh.md)
-
 # Octopus
- `Octopus` is a simple java excel import and export tool.
+ `Octopus` 是一个简单的java excel导入导出工具.
 
-## How to import excel
-Here is a sheet of excel represents four students information.
+## 如何导入excel
+下面是一个excel文件中sheet的数据，有四个学生信息.
 
 | studentId | name  | sex |   inTime   | score |
 | --------- | ----- | --- | ---------- | ----- |
@@ -22,7 +18,7 @@ Here is a sheet of excel represents four students information.
 | 20156243  |       | P   | 2015-5-15  | 94    |
 | 20116522  | Nemo  | F   | 2011-2-26  |       |
 
-And we have a `Student` class to save student information.
+一个学生类，用来保存从excel中读取的学生信息.
 
     //lombok annotations
     @Getter
@@ -51,7 +47,7 @@ And we have a `Student` class to save student information.
 
     }
 
-Assemble students object with following code.
+用代码读取excel，并输出学生信息：
 
     InputStream is = getClass().getResourceAsStream("/test.xlsx");
     Workbook workbook = WorkbookFactory.create(is);
@@ -65,19 +61,19 @@ Assemble students object with following code.
         System.out.println(student.toString());
     }
 
-output result.
+输出的学生信息
 
     SimpleModelEntity(entity=Student(lineNum=2, studentId=20134123, name=John, sex=M, inTime=2013-09-01, score=89.0, gradeAndClazz=null), exceptions=[])
     SimpleModelEntity(entity=Student(lineNum=3, studentId=20124524, name=Joyce, sex=F, inTime=null, score=79.0, gradeAndClazz=null), exceptions=[cn.chenhuanming.octopus.exception.DataFormatException: in cell (3,4) ,20123-8-31 can not be formatted to class java.time.LocalDate])
     SimpleModelEntity(entity=Student(lineNum=4, studentId=20156243, name=anonymous, sex=null, inTime=2015-05-15, score=94.0, gradeAndClazz=null), exceptions=[cn.chenhuanming.octopus.exception.PatternNotMatchException: P and ^M|F$ don't match!])
     SimpleModelEntity(entity=Student(lineNum=5, studentId=20116522, name=Nemo, sex=F, inTime=2011-02-26, score=100.0, gradeAndClazz=null), exceptions=[])
 
-You can get more error details through exceptions in `ModelEntity<Student>`.
+通过`ModelEntity<Student>`，可以获取更多异常信息，例如`@ModelProperty`的配置信息和所发生的异常.
 
-***complete test case at `src/test/cn/chenhuanming/octopus/core/SheetReaderTest`***
+***完整的测试用例：`src/test/cn/chenhuanming/octopus/core/SheetReaderTest`***
 
-## How to export excel
-We add `GradeAndClazz` field into `Student` class so as to show export features.This is final `Student` class which can be used to import and export.
+## 如何导出excel
+为了说明导出的特性，我们给`Student`类增加一个属性`GradeAndClazz`用来表示年级和班级.下面是最终的`Student`类，可以用来导入导出.
 
     @Getter
     @Setter
@@ -118,7 +114,7 @@ We add `GradeAndClazz` field into `Student` class so as to show export features.
         }
     }
 
-And the `GradeAndClazz` class.
+`GradeAndClazz`类，只有年级和班级两个信息.
 
     @Getter
     @Setter
@@ -128,7 +124,7 @@ And the `GradeAndClazz` class.
         private String clazz;
     }
 
-Use xml to config fields that needs to export.
+需要一个xml来配置导出的属性和属性描述作为表头
 
     <?xml version="1.0" encoding="UTF-8"?>
     <ExportModel class="entity.Student">
@@ -143,7 +139,7 @@ Use xml to config fields that needs to export.
         </Field>
     </ExportModel>
 
-Export students with following code.
+用代码导出学生信息
 
     //prepare workbook and stuednts objects
     Workbook workbook = new XSSFWorkbook();
@@ -160,7 +156,7 @@ Export students with following code.
     studentExcelWriter.write(workbook,Arrays.asList(student1,student2,student3));
     workbook.write(os);
 
-Here is the export result.
+导出结果
 
                                               |    class info      |
     id        name    M     admission   score |---------|----------|
@@ -170,6 +166,6 @@ Here is the export result.
     204354    Tony    M     2017-07-06  87.0  |  2014   |   R6     |
     202432    Joyce   F     2017-07-06  90.0  |  2014   |   R6     |
 
-As you see,it will merge cells.Note that value of admission is formatted through `@JsonFormat`.Actually,`Octopus` calls `jackson` to serialize students to json and write to excel.
+可以看到，对于gradeAndClazz属性，会用一个合并单元格来表示.admission因为被`@JsonFormat`标记，因此会格式化输出日期。事实上`Octopus`会调用`jackson`来格式化json后再写入excel.
 
-***For more details,run unit test with `src/test/cn/chenhuanming/octopus/core/OneSheetExcelWriterTest`***
+***详细例子在 `src/test/cn/chenhuanming/octopus/core/OneSheetExcelWriterTest`***
