@@ -12,6 +12,26 @@
 # Octopus
  `Octopus` is a simple java excel import and export tool.
 
+## Import from Maven
+
+Add repository
+
+		<repositories>
+		    <repository>
+		        <id>chenhuanming-repo</id>
+		        <name>chenhuanming-repo</name>
+		        <url>https://raw.githubusercontent.com/zerouwar/my-maven-repo/master</url>
+		    </repository>
+		</repositories>
+
+Add dependency
+
+		<dependency>
+				<groupId>cn.chenhuanming</groupId>
+				<artifactId>octopus</artifactId>
+				<version>1.0-SNAPSHOT</version>
+		</dependency>
+
 ## How to import excel
 Here is a sheet of excel represents four students information.
 

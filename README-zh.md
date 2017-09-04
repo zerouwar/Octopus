@@ -8,6 +8,26 @@
 # Octopus
  `Octopus` 是一个简单的java excel导入导出工具.
 
+## 从Maven导入
+
+增加仓库
+
+		<repositories>
+		    <repository>
+		        <id>chenhuanming-repo</id>
+		        <name>chenhuanming-repo</name>
+		        <url>https://raw.githubusercontent.com/zerouwar/my-maven-repo/master</url>
+		    </repository>
+		</repositories>
+
+引入依赖
+
+		<dependency>
+				<groupId>cn.chenhuanming</groupId>
+				<artifactId>octopus</artifactId>
+				<version>1.0-SNAPSHOT</version>
+		</dependency>
+
 ## 如何导入excel
 下面是一个excel文件中sheet的数据，有四个学生信息.
 
