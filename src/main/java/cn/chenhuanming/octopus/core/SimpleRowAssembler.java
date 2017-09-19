@@ -12,7 +12,11 @@ import cn.chenhuanming.octopus.model.SimpleModelEntity;
  */
 public class SimpleRowAssembler<T> extends AbstractRowAssembler<T> {
     public SimpleRowAssembler(String date2StringFormat, int mantissaNumber, Class<T> clazz) {
-        super(new SimpleConvertManager(date2StringFormat, mantissaNumber),new DefaultValueConvertManager(), clazz);
+        super(new SimpleConvertManager(date2StringFormat, mantissaNumber),new DefaultValueConvertManager(), new JavaConfigImportModel<>(clazz));
+    }
+
+    public SimpleRowAssembler(String date2StringFormat, int mantissaNumber, ImportModel<T> importModel) {
+        super(new SimpleConvertManager(date2StringFormat, mantissaNumber),new DefaultValueConvertManager(), importModel);
     }
 
     @Override

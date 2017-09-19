@@ -2,7 +2,7 @@ package cn.chenhuanming.octopus.util;
 
 import cn.chenhuanming.octopus.exception.DataFormatException;
 import cn.chenhuanming.octopus.exception.UnSupportedDataTypeException;
-import cn.chenhuanming.octopus.model.ModelEntityWithMethodHandleInImport;
+import cn.chenhuanming.octopus.model.ImportModelProperty;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -20,11 +20,11 @@ public final class CellUtil {
         return String.format("cell (%d,%d) ",cell.getRowIndex()+1,cell.getColumnIndex()+1);
     }
 
-    public static Object formatDefaultValue(ModelEntityWithMethodHandleInImport handle, Cell cell, Class clazz, Function<String,Object> convertDefaultValue, Object valueIfStringEmpty){
+    public static Object formatDefaultValue(ImportModelProperty handle, Cell cell, Class clazz, Function<String,Object> convertDefaultValue, Object valueIfStringEmpty){
         return formatString(handle,cell,clazz,convertDefaultValue,handle.getDefaultValue(),valueIfStringEmpty);
     }
 
-    public static Object formatString(ModelEntityWithMethodHandleInImport handle, Cell cell, Class clazz, Function<String,Object> convert, String value, Object valueIfEmptyString){
+    public static Object formatString(ImportModelProperty handle, Cell cell, Class clazz, Function<String,Object> convert, String value, Object valueIfEmptyString){
         try{
             if(value.equals(""))
                 return valueIfEmptyString;

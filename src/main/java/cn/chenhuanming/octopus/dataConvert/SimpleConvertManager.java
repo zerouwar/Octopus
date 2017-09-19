@@ -2,7 +2,7 @@ package cn.chenhuanming.octopus.dataConvert;
 
 import cn.chenhuanming.octopus.exception.DataFormatException;
 import cn.chenhuanming.octopus.exception.UnSupportedDataTypeException;
-import cn.chenhuanming.octopus.model.ModelEntityWithMethodHandleInImport;
+import cn.chenhuanming.octopus.model.ImportModelProperty;
 import cn.chenhuanming.octopus.util.CellUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -131,7 +131,7 @@ public class SimpleConvertManager extends AbstractConvertManager {
 
     }
 
-    private Object getNumericValue(ModelEntityWithMethodHandleInImport handle, Cell cell, Class clazz, Function<String,Object> stringFormat){
+    private Object getNumericValue(ImportModelProperty handle, Cell cell, Class clazz, Function<String,Object> stringFormat){
         if(cell.getCellTypeEnum()==CellType.NUMERIC||cell.getCellTypeEnum()==CellType.FORMULA)
             return cell.getNumericCellValue();
         else if(cell.getCellTypeEnum()==CellType.STRING){

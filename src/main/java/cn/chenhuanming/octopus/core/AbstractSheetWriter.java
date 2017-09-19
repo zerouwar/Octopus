@@ -56,12 +56,12 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
         int colIndex = startCol;
         for (int i = 0; i < exportModel.getFields().size(); i++) {
             ExportField field = exportModel.getFields().get(i);
-            setHeadField(startRow, colIndex, sheet, field, headStyle);
+            setHeadField(startRow, colIndex, sheet, field);
             colIndex += field.getWidth();
         }
     }
 
-    private void setHeadField(int rowIndex, int colIndex, Sheet sheet, ExportField field, CellStyle headStyle) {
+    private void setHeadField(int rowIndex, int colIndex, Sheet sheet, ExportField field) {
         if (field.getHeight() != 1 || field.getWidth() != 1) {
             int mergeHeight = field.getHeight();
             if(!field.getFields().isEmpty()){
@@ -70,7 +70,7 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
             sheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex + mergeHeight - 1, colIndex, colIndex + field.getWidth() - 1));
             for (int i = 0; i < field.getFields().size(); i++) {
                 ExportField f = field.getFields().get(i);
-                setHeadField(rowIndex + mergeHeight, i==0?colIndex:colIndex + field.getFields().get(i-1).getWidth(), sheet, f, headStyle);
+                setHeadField(rowIndex + mergeHeight, i==0?colIndex:colIndex + field.getFields().get(i-1).getWidth(), sheet, f);
             }
         }
         Row head = sheet.getRow(rowIndex);

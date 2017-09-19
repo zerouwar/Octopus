@@ -1,6 +1,6 @@
 package cn.chenhuanming.octopus.exception;
 
-import cn.chenhuanming.octopus.model.ModelEntityWithMethodHandleInImport;
+import cn.chenhuanming.octopus.model.ImportModelProperty;
 import cn.chenhuanming.octopus.util.CellPosition;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -23,21 +23,21 @@ public class ExcelImportException extends RuntimeException{
 
     private CellPosition cellPosition;
 
-    ExcelImportException(String message, ModelEntityWithMethodHandleInImport handle) {
+    ExcelImportException(String message, ImportModelProperty handle) {
         super(message);
         this.property = handle.getName();
         this.propertyDescription = handle.getDescription();
         this.wrongMsg = handle.getWrongMsg();
     }
 
-    ExcelImportException(String message, Throwable cause, ModelEntityWithMethodHandleInImport handle) {
+    ExcelImportException(String message, Throwable cause, ImportModelProperty handle) {
         super(message, cause);
         this.property = handle.getName();
         this.propertyDescription = handle.getDescription();
         this.wrongMsg = handle.getWrongMsg();
     }
 
-    public ExcelImportException(String message, ModelEntityWithMethodHandleInImport handle, Cell cell) {
+    public ExcelImportException(String message, ImportModelProperty handle, Cell cell) {
         super(message);
         this.property = handle.getName();
         this.propertyDescription = handle.getDescription();
@@ -45,7 +45,7 @@ public class ExcelImportException extends RuntimeException{
         this.cellPosition = new CellPosition(cell);
     }
 
-    public ExcelImportException(String message, Throwable cause, ModelEntityWithMethodHandleInImport handle, Cell cell) {
+    public ExcelImportException(String message, Throwable cause, ImportModelProperty handle, Cell cell) {
         super(message, cause);
         this.property = handle.getName();
         this.propertyDescription = handle.getDescription();
