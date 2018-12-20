@@ -1,16 +1,14 @@
 package cn.chenhuanming.octopus.core;
 
-import org.apache.poi.ss.usermodel.Workbook;
-
+import java.io.IOException;
 import java.util.Collection;
 
 /**
- * It should be stateless, thread-safe and single.
- * Created by chenhuanming on 2017-07-01.
- *
  * @author chenhuanming
+ * Created at 2018/12/19
  */
-public interface ExcelWriter<T> {
-    void write(Workbook workbook,Collection<T> collection);
+public interface ExcelWriter {
+    <T> ExcelWriter write(String sheetName, SheetWriter<T> sheetWriter, Collection<T> collection) throws IOException;
 
+    void close() throws IOException;
 }

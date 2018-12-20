@@ -8,6 +8,10 @@
 # Octopus
  `Octopus` 是一个简单的java excel导入导出工具.
 
+## ChangLog
+##### 0.0.2
+ExcelWriter支持写多个Sheet
+
 ## 从Maven导入
 
 增加仓库
@@ -83,10 +87,10 @@
 
 输出的学生信息
 
-    SimpleModelEntity(entity=Student(lineNum=2, studentId=20134123, name=John, sex=M, inTime=2013-09-01, score=89.0, gradeAndClazz=null), exceptions=[])
-    SimpleModelEntity(entity=Student(lineNum=3, studentId=20124524, name=Joyce, sex=F, inTime=null, score=79.0, gradeAndClazz=null), exceptions=[cn.chenhuanming.octopus.exception.DataFormatException: in cell (3,4) ,20123-8-31 can not be formatted to class java.time.LocalDate])
-    SimpleModelEntity(entity=Student(lineNum=4, studentId=20156243, name=anonymous, sex=null, inTime=2015-05-15, score=94.0, gradeAndClazz=null), exceptions=[cn.chenhuanming.octopus.exception.PatternNotMatchException: P and ^M|F$ don't match!])
-    SimpleModelEntity(entity=Student(lineNum=5, studentId=20116522, name=Nemo, sex=F, inTime=2011-02-26, score=100.0, gradeAndClazz=null), exceptions=[])
+    SimpleModelEntity(cn.chenhuanming.octopus.entity=Student(lineNum=2, studentId=20134123, name=John, sex=M, inTime=2013-09-01, score=89.0, gradeAndClazz=null), exceptions=[])
+    SimpleModelEntity(cn.chenhuanming.octopus.entity=Student(lineNum=3, studentId=20124524, name=Joyce, sex=F, inTime=null, score=79.0, gradeAndClazz=null), exceptions=[cn.chenhuanming.octopus.exception.DataFormatException: in cell (3,4) ,20123-8-31 can not be formatted to class java.time.LocalDate])
+    SimpleModelEntity(cn.chenhuanming.octopus.entity=Student(lineNum=4, studentId=20156243, name=anonymous, sex=null, inTime=2015-05-15, score=94.0, gradeAndClazz=null), exceptions=[cn.chenhuanming.octopus.exception.PatternNotMatchException: P and ^M|F$ don't match!])
+    SimpleModelEntity(cn.chenhuanming.octopus.entity=Student(lineNum=5, studentId=20116522, name=Nemo, sex=F, inTime=2011-02-26, score=100.0, gradeAndClazz=null), exceptions=[])
 
 通过`ModelEntity<Student>`，可以获取更多异常信息，例如`@ModelProperty`的配置信息和所发生的异常.
 
@@ -147,7 +151,7 @@
 需要一个xml来配置导出的属性和属性描述作为表头
 
     <?xml version="1.0" encoding="UTF-8"?>
-    <ExportModel class="entity.Student">
+    <ExportModel class="cn.chenhuanming.octopus.entity.Student">
         <Field name="studentId" description="id"></Field>
         <Field name="name" description="name"></Field>
         <Field name="sex" description="sex"></Field>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root class="cn.chenhuanming.octopus.entity.Employee">
+
+    <Header name="id" description="id">
+        <Field name="value" description="value"></Field>
+    </Header>
+    <Field name="name" description="name"></Field>
+    <Header name="job" description="job">
+        <Field name="company" description="company name"></Field>
+        <Field name="address" description="address" formatter="cn.chenhuanming.octopus.formatter.AddressFormatter">
+        </Field>
+    </Header>
+
+    <Formatters>
+        <Format class=""/>
+    </Formatters>
+
+</Root>

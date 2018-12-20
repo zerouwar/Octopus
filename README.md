@@ -87,10 +87,10 @@ Assemble students object with following code.
 
 output result.
 
-    SimpleModelEntity(entity=Student(lineNum=2, studentId=20134123, name=John, sex=M, inTime=2013-09-01, score=89.0, gradeAndClazz=null), exceptions=[])
-    SimpleModelEntity(entity=Student(lineNum=3, studentId=20124524, name=Joyce, sex=F, inTime=null, score=79.0, gradeAndClazz=null), exceptions=[cn.chenhuanming.octopus.exception.DataFormatException: in cell (3,4) ,20123-8-31 can not be formatted to class java.time.LocalDate])
-    SimpleModelEntity(entity=Student(lineNum=4, studentId=20156243, name=anonymous, sex=null, inTime=2015-05-15, score=94.0, gradeAndClazz=null), exceptions=[cn.chenhuanming.octopus.exception.PatternNotMatchException: P and ^M|F$ don't match!])
-    SimpleModelEntity(entity=Student(lineNum=5, studentId=20116522, name=Nemo, sex=F, inTime=2011-02-26, score=100.0, gradeAndClazz=null), exceptions=[])
+    SimpleModelEntity(cn.chenhuanming.octopus.entity=Student(lineNum=2, studentId=20134123, name=John, sex=M, inTime=2013-09-01, score=89.0, gradeAndClazz=null), exceptions=[])
+    SimpleModelEntity(cn.chenhuanming.octopus.entity=Student(lineNum=3, studentId=20124524, name=Joyce, sex=F, inTime=null, score=79.0, gradeAndClazz=null), exceptions=[cn.chenhuanming.octopus.exception.DataFormatException: in cell (3,4) ,20123-8-31 can not be formatted to class java.time.LocalDate])
+    SimpleModelEntity(cn.chenhuanming.octopus.entity=Student(lineNum=4, studentId=20156243, name=anonymous, sex=null, inTime=2015-05-15, score=94.0, gradeAndClazz=null), exceptions=[cn.chenhuanming.octopus.exception.PatternNotMatchException: P and ^M|F$ don't match!])
+    SimpleModelEntity(cn.chenhuanming.octopus.entity=Student(lineNum=5, studentId=20116522, name=Nemo, sex=F, inTime=2011-02-26, score=100.0, gradeAndClazz=null), exceptions=[])
 
 You can get more error details through exceptions in `ModelEntity<Student>`.
 
@@ -151,7 +151,7 @@ And the `GradeAndClazz` class.
 Use xml to config fields that needs to export.
 
     <?xml version="1.0" encoding="UTF-8"?>
-    <ExportModel class="entity.Student">
+    <ExportModel class="cn.chenhuanming.octopus.entity.Student">
         <Field name="studentId" description="id"></Field>
         <Field name="name" description="name"></Field>
         <Field name="sex" description="sex"></Field>
