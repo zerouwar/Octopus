@@ -79,7 +79,7 @@ public class SupportHeader extends AbstractField {
     }
 
     @Override
-    public Method getInvoker() {
+    public Method getPicker() {
         return null;
     }
 

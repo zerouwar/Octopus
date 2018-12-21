@@ -117,7 +117,7 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
         Method invoker = null;
         if (!keep) {
             invoker = ReflectionUtils.getterMethod(clazz, field.getName());
-            field.setInvoker(invoker);
+            field.setPicker(invoker);
         }
 
         Class<?> returnType = keep ? clazz : (invoker == null ? null : invoker.getReturnType());

@@ -24,7 +24,8 @@ public abstract class AbstractField implements Field {
     protected java.awt.Color color;
     protected boolean bold;
     protected java.awt.Color backgroundColor;
-    protected Method invoker;
+    protected Method picker;
+    protected Method pusher;
     protected List<Field> children;
 
     public AbstractField() {

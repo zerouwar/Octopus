@@ -69,20 +69,20 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
             if (o != null) {
 
                 if (field.getFormatter() != null) {
-                    value = field.getFormatter().format(ReflectionUtils.invokeGetter(field.getInvoker(), o));
+                    value = field.getFormatter().format(ReflectionUtils.invokeGetter(field.getPicker(), o));
                     CellUtils.setCellValue(sheet, row, col, value, field.getCellStyle(sheet.getWorkbook()));
                     return col + 1;
                 }
 
-                CellFormatter cellFormatter = configReader.getConfig().getCellFormatterMap().get(field.getInvoker().getReturnType());
+                CellFormatter cellFormatter = configReader.getConfig().getCellFormatterMap().get(field.getPicker().getReturnType());
 
-                if (field.getInvoker().getReturnType() == String.class || cellFormatter == null) {
-                    value = ReflectionUtils.invokeGetter(field.getInvoker(), o, field.getDefaultValue());
+                if (field.getPicker().getReturnType() == String.class || cellFormatter == null) {
+                    value = ReflectionUtils.invokeGetter(field.getPicker(), o, field.getDefaultValue());
                     CellUtils.setCellValue(sheet, row, col, value, field.getCellStyle(sheet.getWorkbook()));
                     return col + 1;
                 }
-                if (field.getInvoker().getReturnType() == Date.class && field.getDateFormat() != null) {
-                    value = field.getDateFormat().format((Date) ReflectionUtils.invokeGetter(field.getInvoker(), o));
+                if (field.getPicker().getReturnType() == Date.class && field.getDateFormat() != null) {
+                    value = field.getDateFormat().format((Date) ReflectionUtils.invokeGetter(field.getPicker(), o));
                     if (Strings.isNullOrEmpty(value)) {
                         value = field.getDefaultValue();
 
@@ -91,7 +91,7 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
                     return col + 1;
                 }
 
-                value = cellFormatter.format(ReflectionUtils.invokeGetter(field.getInvoker(), o));
+                value = cellFormatter.format(ReflectionUtils.invokeGetter(field.getPicker(), o));
                 if (Strings.isNullOrEmpty(value)) {
                     value = field.getDefaultValue();
                 }
@@ -104,7 +104,7 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
 
         Object p = null;
         if (o != null) {
-            p = ReflectionUtils.invokeGetter(field.getInvoker(), o);
+            p = ReflectionUtils.invokeGetter(field.getPicker(), o);
         }
         int c = col;
         for (Field child : field.getChildren()) {

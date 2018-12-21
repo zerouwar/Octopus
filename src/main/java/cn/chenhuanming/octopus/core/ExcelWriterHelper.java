@@ -27,8 +27,8 @@ public final class ExcelWriterHelper {
         excelWriter.close();
     }
 
-    public static void writeOneSheet(OutputStream os, WriteExcelMaterial param) throws IOException {
-        write(os, Collections.singletonList(param));
+    public static void writeOneSheet(OutputStream os, WriteExcelMaterial material) throws IOException {
+        write(os, Collections.singletonList(material));
     }
 
     @Getter
