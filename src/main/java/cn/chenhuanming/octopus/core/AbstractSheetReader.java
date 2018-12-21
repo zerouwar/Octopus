@@ -32,13 +32,14 @@ public abstract class AbstractSheetReader<T> implements SheetReader<T> {
         if (t == null) {
             return null;
         }
-
-
+        // todo: chenhuanming at 2018/12/21,临时保存
+        return null;
     }
 
     private Object readCell(int row, int col, Field field, Object o) {
         if (field.isLeaf()) {
-
+            return null;
         }
+        return null;
     }
 }
