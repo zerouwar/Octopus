@@ -11,6 +11,9 @@
 
 # Octopus
  `Octopus` is a simple java excel import and export tool.
+ 
+## Upgrade
+0.0.2 is coming,developed on branch `dev-refactor`,check more detail on https://github.com/zerouwar/Octopus/wiki/0.0.2-Feature
 
 ## Import from Maven
 
