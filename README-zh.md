@@ -8,6 +8,9 @@
 # Octopus
  `Octopus` 是一个简单的java excel导入导出工具.
 
+## 更新
+0.0.2在分支`dev-refactor`开发中，更多查看[Wiki](https://github.com/zerouwar/Octopus/wiki/0.0.2-Feature)
+
 ## 从Maven导入
 
 增加仓库
