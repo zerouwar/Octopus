@@ -1,5 +1,9 @@
 package cn.chenhuanming.octopus.model;
 
+import cn.chenhuanming.octopus.model.formatter.DateFormatter;
+import cn.chenhuanming.octopus.model.formatter.DefaultFormatterContainer;
+import cn.chenhuanming.octopus.model.formatter.Formatter;
+import cn.chenhuanming.octopus.model.formatter.FormatterContainer;
 import cn.chenhuanming.octopus.util.ColorUtils;
 import cn.chenhuanming.octopus.util.ReflectionUtils;
 import com.google.common.base.Strings;
@@ -62,28 +66,29 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
         Class<?> clazz = null;
         try {
             clazz = Class.forName(className);
-            config.setClazz(clazz);
+            config.setClassType(clazz);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException(e);
         }
 
-        NodeList formatNode = root.getElementsByTagName(XMLConfig.Formatter.name);
-        config.setCellFormatterMap(readFormatter(formatNode.item(0)));
+        Node formattersNode = root.getElementsByTagName(XMLConfig.Formatter.name).item(0);
+        config.setFormatterContainer(readFormatter(formattersNode));
 
-        Field field = getField(root, clazz, true, config);
+        Field field = getField(root, clazz);
 
         config.setFields(field.getChildren());
 
         return config;
     }
 
-    private CellFormatterMap readFormatter(Node formatNode) {
-        DefaultCellformatter formatter = new DefaultCellformatter();
+    private FormatterContainer readFormatter(Node formatNode) {
+        DefaultFormatterContainer formatter = new DefaultFormatterContainer();
+
         String dateFormat = getAttribute(formatNode, XMLConfig.Formatter.Attribute.DATE_FORMAT);
         if (Strings.isNullOrEmpty(dateFormat)) {
-            formatter.addFormat(Date.class, new DateCellFormatter("yyyy-MM-dd HH:mm:ss"));
+            formatter.addFormat(Date.class, new DateFormatter("yyyy-MM-dd HH:mm:ss"));
         } else {
-            formatter.addFormat(Date.class, new DateCellFormatter(dateFormat));
+            formatter.addFormat(Date.class, new DateFormatter(dateFormat));
         }
 
         if (formatNode.hasChildNodes()) {
@@ -99,7 +104,7 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
                 try {
                     Class target = Class.forName(targetClass);
                     Class format = Class.forName(formatClass);
-                    formatter.addFormat(target, (CellFormatter) format.newInstance());
+                    formatter.addFormat(target, (Formatter) format.newInstance());
                 } catch (Exception e) {
                     throw new IllegalArgumentException(e);
                 }
@@ -109,30 +114,27 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
         return formatter;
     }
 
-    private Field getField(Node node, Class clazz, boolean keep, Config config) {
+    private Field getField(Node node, Class classType) {
         DefaultField field = new DefaultField();
-        setBaseConfig(field, node, config);
 
-        //set invoker
-        Method invoker = null;
-        if (!keep) {
-            invoker = ReflectionUtils.getterMethod(clazz, field.getName());
-            field.setPicker(invoker);
-        }
+        setBaseConfig(field, node);
 
-        Class<?> returnType = keep ? clazz : (invoker == null ? null : invoker.getReturnType());
+        setInvoker(field, classType);
+
         NodeList children = node.getChildNodes();
+
+        Class headerType = node.getNodeName().equals(XMLConfig.Root.name) ? classType : (field.getPicker() != null ? field.getPicker().getReturnType() : null);
         for (int i = 0; i < children.getLength(); i++) {
             Node item = children.item(i);
             if (item.getNodeType() != Node.ELEMENT_NODE || (!item.getNodeName().equals(XMLConfig.Field.name) && !item.getNodeName().equals(XMLConfig.Header.name))) {
                 continue;
             }
-            field.addChildren(getField(children.item(i), returnType, false, config));
+            field.addChildren(getField(children.item(i), headerType));
         }
         return field;
     }
 
-    private void setBaseConfig(AbstractField field, Node node, Config config) {
+    private void setBaseConfig(AbstractField field, Node node) {
         String name = getAttribute(node, XMLConfig.Field.Attribute.NAME);
         if (!Strings.isNullOrEmpty(name)) {
             field.setName(name);
@@ -159,7 +161,7 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
         }
         String dateFormat = getAttribute(node, XMLConfig.Field.Attribute.DATE_FORMAT);
         if (!Strings.isNullOrEmpty(dateFormat)) {
-            field.setDateFormat(new DateCellFormatter(dateFormat));
+            field.setDateFormat(new DateFormatter(dateFormat));
         }
 
         //read formatter
@@ -167,15 +169,30 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
         if (!Strings.isNullOrEmpty(formatterStr)) {
             try {
                 Class formatterClass = Class.forName(formatterStr);
-                if (!CellFormatter.class.isAssignableFrom(formatterClass)) {
-                    LOGGER.warn(formatterStr + " is not subclass of cn.chenhuanming.octopus.model.CellFormatter");
+                if (!Formatter.class.isAssignableFrom(formatterClass)) {
+                    LOGGER.warn(formatterStr + " is not subclass of cn.chenhuanming.octopus.model.formatter.Formatter");
                 } else {
-                    field.setFormatter((CellFormatter) formatterClass.newInstance());
+                    field.setFormatter((Formatter) formatterClass.newInstance());
                 }
             } catch (Exception e) {
                 LOGGER.warn(formatterStr + " may not have a empty constructor");
             }
         }
+    }
+
+    private void setInvoker(DefaultField field, Class classType) {
+        if (classType == null || Strings.isNullOrEmpty(field.getName())) {
+            return;
+        }
+        //set picker
+        Method picker;
+        picker = ReflectionUtils.readMethod(classType, field.getName());
+        field.setPicker(picker);
+
+        //set pusher
+        Method pusher;
+        pusher = ReflectionUtils.writeMethod(classType, field.getName());
+        field.setPusher(pusher);
     }
 
 }

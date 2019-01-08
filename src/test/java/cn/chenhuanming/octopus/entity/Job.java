@@ -2,6 +2,7 @@ package cn.chenhuanming.octopus.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author chenhuanming
@@ -9,6 +10,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class Job {
     private Address address;
     private String company;

@@ -1,5 +1,7 @@
 package cn.chenhuanming.octopus.model;
 
+import cn.chenhuanming.octopus.model.formatter.Formatter;
+
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
@@ -32,13 +34,13 @@ public interface Field extends FieldCellStyle {
      * format content which is wrote into excel or read from excel
      * @return
      */
-    CellFormatter getFormatter();
+    Formatter getFormatter();
 
     /**
      * format value if is date type
      * @return
      */
-    CellFormatter<Date> getDateFormat();
+    Formatter<Date> getDateFormat();
 
     /**
      * method that access value from data

@@ -50,5 +50,21 @@ public class CellUtils {
         RegionUtil.setBorderRight(cellStyle.getBorderRightEnum(), region, sheet);
     }
 
+    public static String getCellValue(Sheet sheet, int row, int col, String defaultValue) {
+        Cell cell = sheet.getRow(row).getCell(col);
+
+        switch (cell.getCellTypeEnum()) {
+            case STRING:
+                return cell.getStringCellValue();
+            case FORMULA:
+            case NUMERIC:
+                return String.valueOf(cell.getNumericCellValue());
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue());
+            default:
+                return defaultValue;
+        }
+    }
+
 
 }

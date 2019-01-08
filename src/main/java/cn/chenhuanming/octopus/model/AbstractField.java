@@ -1,5 +1,6 @@
 package cn.chenhuanming.octopus.model;
 
+import cn.chenhuanming.octopus.model.formatter.Formatter;
 import lombok.Data;
 import org.apache.poi.ss.usermodel.*;
 
@@ -18,8 +19,8 @@ public abstract class AbstractField implements Field {
     protected String name;
     protected String description;
     protected String defaultValue;
-    protected CellFormatter<Date> dateFormat;
-    protected CellFormatter formatter;
+    protected Formatter<Date> dateFormat;
+    protected Formatter formatter;
     protected short fontSize;
     protected java.awt.Color color;
     protected boolean bold;

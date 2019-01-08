@@ -1,5 +1,6 @@
 package cn.chenhuanming.octopus.model;
 
+import cn.chenhuanming.octopus.model.formatter.FormatterContainer;
 import lombok.Data;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
  */
 @Data
 public class DefaultConfig implements Config {
-    private Class clazz;
-    private CellFormatterMap cellFormatterMap;
+    private Class classType;
+    private FormatterContainer formatterContainer;
     private List<Field> fields;
 }

@@ -7,8 +7,8 @@
     <Field name="name" description="name"></Field>
     <Header name="job" description="job">
         <Field name="company" description="company name"></Field>
-        <Field name="address" description="address" formatter="cn.chenhuanming.octopus.formatter.AddressFormatter">
-        </Field>
+        <Field name="address" description="address"
+               formatter="cn.chenhuanming.octopus.formatter.AddressFormatter"></Field>
     </Header>
 
     <Formatters>

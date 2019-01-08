@@ -6,7 +6,7 @@ package cn.chenhuanming.octopus.model;
  */
 public abstract class CachedConfigReader implements ConfigReader {
 
-    private volatile Config config;
+    protected volatile Config config;
 
     @Override
     public Config getConfig() {

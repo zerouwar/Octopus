@@ -3,6 +3,7 @@ package cn.chenhuanming.octopus.core;
 
 import cn.chenhuanming.octopus.exception.DrawSheetException;
 import cn.chenhuanming.octopus.model.*;
+import cn.chenhuanming.octopus.model.formatter.Formatter;
 import cn.chenhuanming.octopus.util.CellUtils;
 import cn.chenhuanming.octopus.util.ReflectionUtils;
 import com.google.common.base.Strings;
@@ -40,8 +41,8 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
         Config config = configReader.getConfig();
 
         Class dataType = data.iterator().next().getClass();
-        if (config.getClazz() != dataType) {
-            throw new IllegalArgumentException("class of config is " + config.getClazz().getName() + " but type of data is " + dataType.getName());
+        if (config.getClassType() != dataType) {
+            throw new IllegalArgumentException("class of config is " + config.getClassType().getName() + " but type of data is " + dataType.getName());
         }
 
         CellPosition end = headerWriter.drawHeader(sheet, startPoint, config.getFields());
@@ -63,54 +64,53 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
         return 0;
     }
 
-    protected int draw(Sheet sheet, final int row, final int col, Field field, Object o) {
+    private int draw(Sheet sheet, final int row, final int col, Field field, Object o) {
         if (field.isLeaf()) {
-            String value = field.getDefaultValue();
-            if (o != null) {
-
-                if (field.getFormatter() != null) {
-                    value = field.getFormatter().format(ReflectionUtils.invokeGetter(field.getPicker(), o));
-                    CellUtils.setCellValue(sheet, row, col, value, field.getCellStyle(sheet.getWorkbook()));
-                    return col + 1;
-                }
-
-                CellFormatter cellFormatter = configReader.getConfig().getCellFormatterMap().get(field.getPicker().getReturnType());
-
-                if (field.getPicker().getReturnType() == String.class || cellFormatter == null) {
-                    value = ReflectionUtils.invokeGetter(field.getPicker(), o, field.getDefaultValue());
-                    CellUtils.setCellValue(sheet, row, col, value, field.getCellStyle(sheet.getWorkbook()));
-                    return col + 1;
-                }
-                if (field.getPicker().getReturnType() == Date.class && field.getDateFormat() != null) {
-                    value = field.getDateFormat().format((Date) ReflectionUtils.invokeGetter(field.getPicker(), o));
-                    if (Strings.isNullOrEmpty(value)) {
-                        value = field.getDefaultValue();
-
-                    }
-                    CellUtils.setCellValue(sheet, row, col, value, field.getCellStyle(sheet.getWorkbook()));
-                    return col + 1;
-                }
-
-                value = cellFormatter.format(ReflectionUtils.invokeGetter(field.getPicker(), o));
-                if (Strings.isNullOrEmpty(value)) {
-                    value = field.getDefaultValue();
-                }
-                CellUtils.setCellValue(sheet, row, col, value, field.getCellStyle(sheet.getWorkbook()));
-                return col + 1;
-
-            }
-            return col + 1;
+            return drawColumn(sheet, row, col, field, o);
         }
 
         Object p = null;
         if (o != null) {
-            p = ReflectionUtils.invokeGetter(field.getPicker(), o);
+            p = ReflectionUtils.invokeReadMethod(field.getPicker(), o);
         }
         int c = col;
         for (Field child : field.getChildren()) {
             c = draw(sheet, row, c, child, p);
         }
         return c;
+    }
+
+    protected int drawColumn(Sheet sheet, final int row, final int col, Field field, Object o) {
+        if (o == null) {
+            return col + 1;
+        }
+        String value;
+
+        if (field.getFormatter() != null) {
+            value = field.getFormatter().format(ReflectionUtils.invokeReadMethod(field.getPicker(), o));
+            CellUtils.setCellValue(sheet, row, col, value, field.getCellStyle(sheet.getWorkbook()));
+            return col + 1;
+        }
+
+        Formatter formatter = configReader.getConfig().getFormatterContainer().get(field.getPicker().getReturnType());
+
+        if (field.getPicker().getReturnType() == String.class || formatter == null) {
+            value = ReflectionUtils.invokeReadMethod(field.getPicker(), o, field.getDefaultValue());
+            CellUtils.setCellValue(sheet, row, col, value, field.getCellStyle(sheet.getWorkbook()));
+            return col + 1;
+        }
+        if (field.getPicker().getReturnType() == Date.class && field.getDateFormat() != null) {
+            value = field.getDateFormat().format((Date) ReflectionUtils.invokeReadMethod(field.getPicker(), o));
+        } else {
+            value = formatter.format(ReflectionUtils.invokeReadMethod(field.getPicker(), o));
+        }
+
+        if (Strings.isNullOrEmpty(value)) {
+            value = field.getDefaultValue();
+        }
+        CellUtils.setCellValue(sheet, row, col, value, field.getCellStyle(sheet.getWorkbook()));
+        return col + 1;
+
     }
 
     protected boolean canWrite(Sheet sheet, Collection<T> collection) {

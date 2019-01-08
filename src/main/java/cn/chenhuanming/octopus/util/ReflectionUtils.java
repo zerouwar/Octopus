@@ -1,9 +1,9 @@
 package cn.chenhuanming.octopus.util;
 
-import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 
 /**
@@ -22,12 +22,12 @@ public class ReflectionUtils {
      * @param defaultValue
      * @return
      */
-    public static String invokeGetter(Method method, Object o, String defaultValue) {
+    public static String invokeReadMethod(Method method, Object o, String defaultValue) {
         if (method == null || o == null) {
             return defaultValue;
         }
         String value = defaultValue;
-        Object o1 = invokeGetter(method, o);
+        Object o1 = invokeReadMethod(method, o);
         if (o1 != null) {
             value = String.valueOf(o1);
         }
@@ -40,9 +40,10 @@ public class ReflectionUtils {
      *
      * @param method
      * @param o
-     * @return
+     * @return return value fo read method
+     * return null if failed or method is null
      */
-    public static Object invokeGetter(Method method, Object o) {
+    public static Object invokeReadMethod(Method method, Object o) {
         if (method == null) {
             return null;
         }
@@ -54,26 +55,36 @@ public class ReflectionUtils {
         }
     }
 
-    public static Method getterMethod(Class clazz, String fieldName) {
+    public static Method readMethod(Class clazz, String fieldName) {
         if (clazz == null) {
             return null;
         }
         try {
-            return clazz.getMethod("get" + upperFirstLetter(fieldName));
+            return new PropertyDescriptor(fieldName, clazz).getReadMethod();
         } catch (Exception e) {
             LOGGER.debug("failed to fetch getter method for field " + fieldName, e);
             return null;
         }
     }
 
-    private static String upperFirstLetter(String name) {
-        if (Strings.isNullOrEmpty(name)) {
-            throw new IllegalArgumentException("name can not be empty");
+    public static Method writeMethod(Class clazz, String fieldName) {
+        if (clazz == null) {
+            return null;
         }
-        char[] chars = name.toCharArray();
-        if (chars[0] >= 'a' && chars[0] < 'z') {
-            chars[0] -= 32;
+        try {
+            return new PropertyDescriptor(fieldName, clazz).getWriteMethod();
+        } catch (Exception e) {
+            LOGGER.debug("failed to fetch setter method for field " + fieldName, e);
+            return null;
         }
-        return new String(chars);
+    }
+
+    public static <T> T newInstance(Class<T> clazz) {
+        try {
+            return clazz.newInstance();
+        } catch (Exception e) {
+            LOGGER.error("can not new instance through default constructor:" + clazz.getName());
+            return null;
+        }
     }
 }
