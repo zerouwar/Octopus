@@ -6,8 +6,8 @@ import cn.chenhuanming.octopus.model.formatter.Formatter;
 import cn.chenhuanming.octopus.model.formatter.FormatterContainer;
 import cn.chenhuanming.octopus.util.ColorUtils;
 import cn.chenhuanming.octopus.util.ReflectionUtils;
-import com.google.common.base.Strings;
-import com.google.common.io.ByteStreams;
+import cn.chenhuanming.octopus.util.StringUtils;
+import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -20,7 +20,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 /**
  * read config from xml file,construct {@link DefaultConfig}
@@ -36,7 +38,7 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
 
     public XmlConfigReader(InputStream is) {
         try {
-            configBytes = ByteStreams.toByteArray(is);
+            configBytes = IOUtils.toByteArray(is);
             is.close();
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
@@ -59,14 +61,14 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
             throw new IllegalArgumentException("xml config file: must has a root tag named " + XMLConfig.Root.name);
         }
         String className = root.getAttribute(XMLConfig.Root.Attribute.CLASS);
-        if (Strings.isNullOrEmpty(className)) {
+        if (StringUtils.isEmpty(className)) {
             throw new IllegalArgumentException("xml config file: tag " + XMLConfig.Root.name + "must has " + XMLConfig.Root.Attribute.CLASS + " attribute");
         }
 
-        Class<?> clazz = null;
+        Class<?> classType = null;
         try {
-            clazz = Class.forName(className);
-            config.setClassType(clazz);
+            classType = Class.forName(className);
+            config.setClassType(classType);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException(e);
         }
@@ -74,7 +76,7 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
         Node formattersNode = root.getElementsByTagName(XMLConfig.Formatter.name).item(0);
         config.setFormatterContainer(readFormatter(formattersNode));
 
-        Field field = getField(root, clazz);
+        Field field = getField(root, classType);
 
         config.setFields(field.getChildren());
 
@@ -82,16 +84,16 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
     }
 
     private FormatterContainer readFormatter(Node formatNode) {
-        DefaultFormatterContainer formatter = new DefaultFormatterContainer();
+        DefaultFormatterContainer container = new DefaultFormatterContainer();
 
         String dateFormat = getAttribute(formatNode, XMLConfig.Formatter.Attribute.DATE_FORMAT);
-        if (Strings.isNullOrEmpty(dateFormat)) {
-            formatter.addFormat(Date.class, new DateFormatter("yyyy-MM-dd HH:mm:ss"));
+        if (StringUtils.isEmpty(dateFormat)) {
+            container.addFormat(Date.class, new DateFormatter("yyyy-MM-dd HH:mm:ss"));
         } else {
-            formatter.addFormat(Date.class, new DateFormatter(dateFormat));
+            container.addFormat(Date.class, new DateFormatter(dateFormat));
         }
 
-        if (formatNode.hasChildNodes()) {
+        if (formatNode != null && formatNode.hasChildNodes()) {
             NodeList children = formatNode.getChildNodes();
             for (int i = 0; i < children.getLength(); i++) {
                 Node item = children.item(i);
@@ -104,14 +106,14 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
                 try {
                     Class target = Class.forName(targetClass);
                     Class format = Class.forName(formatClass);
-                    formatter.addFormat(target, (Formatter) format.newInstance());
+                    container.addFormat(target, (Formatter) format.newInstance());
                 } catch (Exception e) {
                     throw new IllegalArgumentException(e);
                 }
 
             }
         }
-        return formatter;
+        return container;
     }
 
     private Field getField(Node node, Class classType) {
@@ -119,7 +121,13 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
 
         setBaseConfig(field, node);
 
+        setCellStyleConfig(field, node);
+
         setInvoker(field, classType);
+
+        if (node.getNodeName().equals(XMLConfig.Field.name)) {
+            setImportValidation(field, node);
+        }
 
         NodeList children = node.getChildNodes();
 
@@ -134,65 +142,84 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
         return field;
     }
 
-    private void setBaseConfig(AbstractField field, Node node) {
+    private void setBaseConfig(DefaultField field, Node node) {
         String name = getAttribute(node, XMLConfig.Field.Attribute.NAME);
-        if (!Strings.isNullOrEmpty(name)) {
+        if (!StringUtils.isEmpty(name)) {
             field.setName(name);
         }
         String desc = getAttribute(node, XMLConfig.Field.Attribute.DESCRIPTION);
-        if (!Strings.isNullOrEmpty(desc)) {
+        if (!StringUtils.isEmpty(desc)) {
             field.setDescription(desc);
         }
-        String fontSize = getAttribute(node, XMLConfig.Field.Attribute.FONT_SIZE);
-        if (!Strings.isNullOrEmpty(fontSize)) {
-            field.setFontSize(Short.parseShort(fontSize));
-        }
-        String color = getAttribute(node, XMLConfig.Field.Attribute.COLOR);
-        if (!Strings.isNullOrEmpty(color)) {
-            field.setColor(ColorUtils.hex2Rgb(color));
-        }
-        String isBold = getAttribute(node, XMLConfig.Field.Attribute.IS_BOLD);
-        if (!Strings.isNullOrEmpty(isBold)) {
-            field.setBold(Boolean.parseBoolean(isBold));
-        }
-        String backgroundColor = getAttribute(node, XMLConfig.Field.Attribute.BACKGROUND_COLOR);
-        if (!Strings.isNullOrEmpty(backgroundColor)) {
-            field.setBackgroundColor(ColorUtils.hex2Rgb(backgroundColor));
-        }
+
         String dateFormat = getAttribute(node, XMLConfig.Field.Attribute.DATE_FORMAT);
-        if (!Strings.isNullOrEmpty(dateFormat)) {
+        if (!StringUtils.isEmpty(dateFormat)) {
             field.setDateFormat(new DateFormatter(dateFormat));
         }
 
         //read formatter
         String formatterStr = getAttribute(node, XMLConfig.Field.Attribute.FORMATTER);
-        if (!Strings.isNullOrEmpty(formatterStr)) {
+        if (!StringUtils.isEmpty(formatterStr)) {
             try {
                 Class formatterClass = Class.forName(formatterStr);
                 if (!Formatter.class.isAssignableFrom(formatterClass)) {
-                    LOGGER.warn(formatterStr + " is not subclass of cn.chenhuanming.octopus.model.formatter.Formatter");
+                    LOGGER.error(formatterStr + " is not subclass of cn.chenhuanming.octopus.model.formatter.Formatter");
                 } else {
                     field.setFormatter((Formatter) formatterClass.newInstance());
                 }
             } catch (Exception e) {
-                LOGGER.warn(formatterStr + " may not have a empty constructor");
+                LOGGER.warn(formatterStr + " may not have a default constructor");
             }
         }
     }
 
+    private void setCellStyleConfig(DefaultField field, Node node) {
+        String fontSize = getAttribute(node, XMLConfig.Field.Attribute.FONT_SIZE);
+        if (!StringUtils.isEmpty(fontSize)) {
+            field.setFontSize(Short.parseShort(fontSize));
+        }
+        String color = getAttribute(node, XMLConfig.Field.Attribute.COLOR);
+        if (!StringUtils.isEmpty(color)) {
+            field.setColor(ColorUtils.hex2Rgb(color));
+        }
+        String isBold = getAttribute(node, XMLConfig.Field.Attribute.IS_BOLD);
+        if (!StringUtils.isEmpty(isBold)) {
+            field.setBold(Boolean.parseBoolean(isBold));
+        }
+        String backgroundColor = getAttribute(node, XMLConfig.Field.Attribute.BACKGROUND_COLOR);
+        if (!StringUtils.isEmpty(backgroundColor)) {
+            field.setBackgroundColor(ColorUtils.hex2Rgb(backgroundColor));
+        }
+    }
+
     private void setInvoker(DefaultField field, Class classType) {
-        if (classType == null || Strings.isNullOrEmpty(field.getName())) {
+        if (classType == null || StringUtils.isEmpty(field.getName())) {
             return;
         }
         //set picker
-        Method picker;
-        picker = ReflectionUtils.readMethod(classType, field.getName());
+        Method picker = ReflectionUtils.readMethod(classType, field.getName());
         field.setPicker(picker);
 
         //set pusher
-        Method pusher;
-        pusher = ReflectionUtils.writeMethod(classType, field.getName());
+        Method pusher = ReflectionUtils.writeMethod(classType, field.getName());
         field.setPusher(pusher);
+    }
+
+    private void setImportValidation(DefaultField field, Node node) {
+        String isBlankable = getAttribute(node, XMLConfig.Field.Attribute.IS_BLANKABLE);
+        if (!StringUtils.isEmpty(isBlankable)) {
+            field.setBlankable(Boolean.parseBoolean(isBlankable));
+        }
+
+        String regex = getAttribute(node, XMLConfig.Field.Attribute.REGEX);
+        if (!StringUtils.isEmpty(regex)) {
+            field.setRegex(Pattern.compile(regex));
+        }
+        String options = getAttribute(node, XMLConfig.Field.Attribute.OPTIONS);
+        if (!StringUtils.isEmpty(options) && options.length() >= 2) {
+            String[] split = options.split(String.valueOf(options.charAt(0)));
+            field.setOptions(Arrays.asList(Arrays.copyOfRange(split, 1, split.length)));
+        }
     }
 
 }

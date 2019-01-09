@@ -8,7 +8,7 @@ import java.util.Collection;
  * Created at 2018/12/19
  */
 public interface ExcelWriter {
-    <T> ExcelWriter write(String sheetName, SheetWriter<T> sheetWriter, Collection<T> collection) throws IOException;
+    <T> ExcelWriter write(String sheetName, SheetWriter<T> sheetWriter, Collection<T> collection);
 
     void close() throws IOException;
 }

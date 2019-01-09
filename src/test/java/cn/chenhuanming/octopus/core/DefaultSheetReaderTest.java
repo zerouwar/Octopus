@@ -8,6 +8,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -18,20 +19,26 @@ import java.io.InputStream;
  * Created at 2019-01-07
  */
 public class DefaultSheetReaderTest {
-    @Test
-    public void test() throws IOException, InvalidFormatException {
-        InputStream is = this.getClass().getClassLoader().getResourceAsStream("export.xlsx");
 
+    private Sheet sheet;
+
+    @Before
+    public void prepare() throws IOException, InvalidFormatException {
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream("export.xlsx");
+        Workbook workbook = WorkbookFactory.create(is);
+        this.sheet = workbook.getSheetAt(0);
+    }
+
+    @Test
+    public void test() {
         ConfigReader configReader = new XmlConfigReader(this.getClass().getClassLoader().getResourceAsStream("employee.xml"));
 
-        Workbook workbook = WorkbookFactory.create(is);
-        Sheet sheet = workbook.getSheetAt(0);
+        final SheetReader<Employee> sheetReader = new DefaultSheetReader<>(sheet, configReader, new DefaultCellPosition(2, 0));
 
-        SheetReader<Employee> sheetReader = new DefaultSheetReader<>(sheet, configReader, new DefaultCellPosition(2, 0));
+        for (Employee employee : sheetReader) {
+            System.out.println(employee);
+        }
 
-        Employee employee = sheetReader.get(0);
-
-        System.out.println(employee);
     }
 
 }

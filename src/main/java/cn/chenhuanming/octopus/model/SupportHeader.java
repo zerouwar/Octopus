@@ -1,8 +1,9 @@
 package cn.chenhuanming.octopus.model;
 
 import lombok.Data;
-import org.apache.poi.ss.usermodel.*;
+import lombok.EqualsAndHashCode;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.*;
 
 import java.awt.Color;
 import java.lang.reflect.Method;
@@ -14,7 +15,8 @@ import java.util.List;
  * Created at 2018/12/14
  */
 @Data
-public class SupportHeader extends AbstractField {
+@EqualsAndHashCode(callSuper = false)
+public class SupportHeader extends DefaultField {
     private Field field;
     private int height;
     private int width;
@@ -37,7 +39,7 @@ public class SupportHeader extends AbstractField {
             headChildren.add(header);
         }
 
-        //all height of chilren is max height value of them
+        //height of all children is the max value of them
         for (SupportHeader child : headChildren) {
             child.setHeight(h);
         }

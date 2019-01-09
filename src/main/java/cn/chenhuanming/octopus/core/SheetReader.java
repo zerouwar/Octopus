@@ -5,4 +5,6 @@ package cn.chenhuanming.octopus.core;
  */
 public interface SheetReader<T> extends Iterable<T>{
     T get(int i);
+
+    int size();
 }

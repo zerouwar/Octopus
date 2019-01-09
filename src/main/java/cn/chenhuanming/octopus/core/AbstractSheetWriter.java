@@ -1,12 +1,11 @@
 package cn.chenhuanming.octopus.core;
 
 
-import cn.chenhuanming.octopus.exception.DrawSheetException;
 import cn.chenhuanming.octopus.model.*;
 import cn.chenhuanming.octopus.model.formatter.Formatter;
 import cn.chenhuanming.octopus.util.CellUtils;
 import cn.chenhuanming.octopus.util.ReflectionUtils;
-import com.google.common.base.Strings;
+import cn.chenhuanming.octopus.util.StringUtils;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +32,7 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSheetWriter.class);
 
     @Override
-    public CellPosition write(Sheet sheet, Collection<T> data) throws DrawSheetException {
+    public CellPosition write(Sheet sheet, Collection<T> data) {
         if (!canWrite(sheet, data)) {
             return CellUtils.POSITION_ZERO_ZERO;
         }
@@ -105,7 +104,7 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
             value = formatter.format(ReflectionUtils.invokeReadMethod(field.getPicker(), o));
         }
 
-        if (Strings.isNullOrEmpty(value)) {
+        if (StringUtils.isEmpty(value)) {
             value = field.getDefaultValue();
         }
         CellUtils.setCellValue(sheet, row, col, value, field.getCellStyle(sheet.getWorkbook()));

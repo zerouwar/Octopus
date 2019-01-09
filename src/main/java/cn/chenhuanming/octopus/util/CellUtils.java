@@ -2,10 +2,7 @@ package cn.chenhuanming.octopus.util;
 
 import cn.chenhuanming.octopus.model.CellPosition;
 import cn.chenhuanming.octopus.model.DefaultCellPosition;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
 
@@ -63,6 +60,14 @@ public class CellUtils {
                 return String.valueOf(cell.getBooleanCellValue());
             default:
                 return defaultValue;
+        }
+    }
+
+    public static boolean isDate(Cell cell) {
+        try {
+            return DateUtil.isCellDateFormatted(cell);
+        } catch (Exception e) {
+            return false;
         }
     }
 

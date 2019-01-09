@@ -1,10 +1,10 @@
 package cn.chenhuanming.octopus.core;
 
+import cn.chenhuanming.octopus.exception.ParseException;
 import cn.chenhuanming.octopus.model.CellPosition;
 import cn.chenhuanming.octopus.model.ConfigReader;
 import cn.chenhuanming.octopus.model.Field;
 import cn.chenhuanming.octopus.model.formatter.Formatter;
-import cn.chenhuanming.octopus.model.formatter.ParseException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +24,23 @@ public abstract class AbstractSheetReader<T> implements SheetReader<T> {
     protected CellPosition startPoint;
 
     public AbstractSheetReader(Sheet sheet, ConfigReader configReader, CellPosition startPoint) {
+        if (sheet == null || configReader == null || startPoint == null) {
+            throw new NullPointerException();
+        }
         this.sheet = sheet;
         this.configReader = configReader;
         this.startPoint = startPoint;
+    }
+
+    @Override
+    public T get(int i) {
+        T t = newInstance(configReader.getConfig().getClassType());
+
+        int col = startPoint.getCol();
+        for (Field field : configReader.getConfig().getFields()) {
+            col = read(startPoint.getRow() + i, col, field, t);
+        }
+        return t;
     }
 
     /**
@@ -36,24 +50,20 @@ public abstract class AbstractSheetReader<T> implements SheetReader<T> {
      * @param field
      * @param o
      */
-    protected void setValue(String str, Field field, Object o) {
+    protected void setValue(String str, Field field, Object o) throws ParseException {
         Method pusher = field.getPusher();
 
         Object value = null;
 
-        try {
-            if (field.getFormatter() != null) {
-                value = field.getFormatter().parse(str);
+        if (field.getFormatter() != null) {
+            value = field.getFormatter().parse(str);
+        } else {
+            Formatter globalFormatter = configReader.getConfig().getFormatterContainer().get(pusher.getParameterTypes()[0]);
+            if (globalFormatter != null) {
+                value = globalFormatter.parse(str);
             } else {
-                Formatter globalFormatter = configReader.getConfig().getFormatterContainer().get(pusher.getParameterTypes()[0]);
-                if (globalFormatter != null) {
-                    value = globalFormatter.parse(str);
-                } else {
-                    value = str;
-                }
+                value = str;
             }
-        } catch (ParseException e) {
-            LOGGER.debug(field.getName() + " parse failed:" + str);
         }
 
         try {
@@ -62,19 +72,35 @@ public abstract class AbstractSheetReader<T> implements SheetReader<T> {
             }
         } catch (Exception e) {
             LOGGER.error("can not set value:" + field.getName(), e);
+            throw new ParseException("invoke method failed", e);
+        }
+    }
+
+    protected T newInstance(Class classType) {
+        try {
+            return (T) configReader.getConfig().getClassType().newInstance();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("wrong type or no default constructor", e);
         }
     }
 
     @Override
-    public Iterator<T> iterator() {
-        return new SheetIterator<T>(sheet.getLastRowNum(), startPoint.getRow());
+    public int size() {
+        return sheet.getLastRowNum() + 1;
     }
 
-    private class SheetIterator<T> implements Iterator<T> {
+    abstract int read(int row, int col, Field field, Object o);
+
+    @Override
+    public Iterator<T> iterator() {
+        return new RowIterator<T>(sheet.getLastRowNum() - startPoint.getRow(), 0);
+    }
+
+    private class RowIterator<T> implements Iterator<T> {
         private int last;
         private int cursor;
 
-        public SheetIterator(int last, int cursor) {
+        public RowIterator(int last, int cursor) {
             this.last = last;
             this.cursor = cursor;
         }

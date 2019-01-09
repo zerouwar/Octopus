@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Root class="cn.chenhuanming.octopus.entity.Employee">
 
-    <Header name="id" description="id">
-        <Field name="value" description="value"></Field>
+    <Header name="id" description="ID">
+        <Field name="value"
+               description="Value"/>
     </Header>
-    <Field name="name" description="name"></Field>
-    <Header name="job" description="job">
-        <Field name="company" description="company name"></Field>
-        <Field name="address" description="address"
-               formatter="cn.chenhuanming.octopus.formatter.AddressFormatter"></Field>
+    <Field name="name"
+           description="Name"/>
+    <Header name="job" description="Job">
+        <Field name="company"
+               description="Company Name"/>
+        <Field name="address"
+               description="Address"
+               formatter="cn.chenhuanming.octopus.formatter.AddressFormatter"/>
     </Header>
-
-    <Formatters>
-        <Format class=""/>
-    </Formatters>
+    <Field name="entryDate"
+           description="Entry Date"/>
+    <Field name="working"
+           description="Working/Leaved"
+           options="/Working/Leaved"
+           formatter="cn.chenhuanming.octopus.formatter.WorkingFormatter"/>
 
 </Root>

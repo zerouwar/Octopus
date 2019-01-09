@@ -32,8 +32,9 @@ public class DefaultFormatterContainer implements FormatterContainer {
         formatMap.put(clazz, formatter);
     }
 
+
     @Override
-    public Formatter get(Class c) {
-        return formatMap.get(c);
+    public <T> Formatter<T> get(Class<T> tClass) {
+        return formatMap.get(tClass);
     }
 }

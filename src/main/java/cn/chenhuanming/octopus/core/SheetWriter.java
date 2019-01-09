@@ -1,6 +1,5 @@
 package cn.chenhuanming.octopus.core;
 
-import cn.chenhuanming.octopus.exception.DrawSheetException;
 import cn.chenhuanming.octopus.model.CellPosition;
 import org.apache.poi.ss.usermodel.Sheet;
 
@@ -14,6 +13,6 @@ import java.util.Collection;
  */
 public interface SheetWriter<T> {
 
-    CellPosition write(Sheet sheet, Collection<T> data) throws DrawSheetException;
+    CellPosition write(Sheet sheet, Collection<T> data);
 
 }

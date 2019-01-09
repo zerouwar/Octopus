@@ -12,7 +12,7 @@ public class ShortFormatter extends AbstractFormatter<Short> {
 
 
     @Override
-    Short parseImpl(String str) throws Exception {
+    public Short parseImpl(String str) throws Exception {
         return Short.valueOf(str);
     }
 }

@@ -1,12 +1,18 @@
 package cn.chenhuanming.octopus.core;
 
 
+import cn.chenhuanming.octopus.exception.ParseException;
 import cn.chenhuanming.octopus.model.CellPosition;
 import cn.chenhuanming.octopus.model.ConfigReader;
 import cn.chenhuanming.octopus.model.Field;
+import cn.chenhuanming.octopus.model.formatter.Formatter;
 import cn.chenhuanming.octopus.util.CellUtils;
 import cn.chenhuanming.octopus.util.ReflectionUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Sheet;
+
+import java.util.Date;
 
 
 /**
@@ -20,27 +26,23 @@ public class DefaultSheetReader<T> extends AbstractSheetReader<T> {
     }
 
     @Override
-    public T get(int i) {
-        T t = null;
-        try {
-            t = (T) configReader.getConfig().getClassType().newInstance();
-        } catch (Exception e) {
-            throw new IllegalArgumentException("wrong type or no default constructor", e);
-        }
-
-        int col = startPoint.getCol();
-        for (Field field : configReader.getConfig().getFields()) {
-            col = read(startPoint.getRow() + i, col, field, t);
-        }
-        return t;
-
-    }
-
-    private int read(int row, int col, final Field field, Object o) {
+    int read(int row, int col, Field field, Object o) {
         if (field.isLeaf()) {
-            String str = CellUtils.getCellValue(sheet, row, col, field.getDefaultValue());
 
-            setValue(str, field, o);
+            try {
+                Cell cell = sheet.getRow(row).getCell(col);
+                String str;
+                if (CellUtils.isDate(cell)) {
+                    Formatter<Date> dateFormatter = configReader.getConfig().getFormatterContainer().get(Date.class);
+                    str = dateFormatter.format(DateUtil.getJavaDate(cell.getNumericCellValue()));
+                } else {
+                    str = CellUtils.getCellValue(sheet, row, col, field.getDefaultValue());
+                }
+
+                setValue(str, field, o);
+            } catch (ParseException e) {
+                failWhenParse(row, col, field, e);
+            }
 
             return col + 1;
         }
@@ -57,5 +59,9 @@ public class DefaultSheetReader<T> extends AbstractSheetReader<T> {
             }
         }
         return col;
+    }
+
+    protected void failWhenParse(int row, int col, final Field field, ParseException e) {
+        LOGGER.error("failed to read value from " + field.getName() + " in excel(" + (row + 1) + "," + col + ")", e);
     }
 }

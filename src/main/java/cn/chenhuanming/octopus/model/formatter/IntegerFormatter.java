@@ -13,7 +13,7 @@ public class IntegerFormatter extends AbstractFormatter<Integer> {
 
 
     @Override
-    Integer parseImpl(String str) throws Exception {
+    public Integer parseImpl(String str) throws Exception {
         return Integer.valueOf(str);
     }
 }

@@ -63,6 +63,9 @@ public abstract class AbstractXMLConfigReader extends CachedConfigReader {
                 String BACKGROUND_COLOR = "backgroundColor";
                 String DATE_FORMAT = "dateFormat";
                 String FORMATTER = "formatter";
+                String IS_BLANKABLE = "isBlankable";
+                String REGEX = "regex";
+                String OPTIONS = "options";
             }
         }
 

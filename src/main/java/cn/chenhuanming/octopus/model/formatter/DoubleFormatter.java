@@ -6,7 +6,7 @@ package cn.chenhuanming.octopus.model.formatter;
  */
 public class DoubleFormatter extends AbstractFormatter<Double> {
     @Override
-    Double parseImpl(String str) throws Exception {
+    public Double parseImpl(String str) throws Exception {
         return Double.valueOf(str);
     }
 

@@ -17,8 +17,7 @@ import java.util.List;
 public class DefaultHeaderWriter implements HeaderWriter {
     @Override
     public CellPosition drawHeader(Sheet sheet, CellPosition startPoint, List<Field> fields) throws DrawSheetException {
-        DefaultField fake = new DefaultField();
-        fake.setChildren(fields);
+        DefaultField fake = new DefaultField(fields);
 
         SupportHeader fakeHeader = new SupportHeader(fake);
 

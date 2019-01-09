@@ -1,6 +1,6 @@
 package cn.chenhuanming.octopus.model.formatter;
 
-import com.google.common.base.Strings;
+import cn.chenhuanming.octopus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,8 +31,8 @@ public class DateFormatter extends AbstractFormatter<Date> {
     }
 
     @Override
-    Date parseImpl(String str) throws Exception {
-        if (Strings.isNullOrEmpty(str)) {
+    public Date parseImpl(String str) throws Exception {
+        if (StringUtils.isEmpty(str)) {
             return null;
         }
         return FORMAT.parse(str);

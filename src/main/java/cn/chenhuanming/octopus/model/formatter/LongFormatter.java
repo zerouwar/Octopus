@@ -6,7 +6,7 @@ package cn.chenhuanming.octopus.model.formatter;
  */
 public class LongFormatter extends AbstractFormatter<Long> {
     @Override
-    Long parseImpl(String str) throws Exception {
+    public Long parseImpl(String str) throws Exception {
         return Long.valueOf(str);
     }
 

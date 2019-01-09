@@ -1,6 +1,5 @@
 package cn.chenhuanming.octopus.core;
 
-import cn.chenhuanming.octopus.exception.DrawSheetException;
 import cn.chenhuanming.octopus.model.CellPosition;
 import cn.chenhuanming.octopus.model.ConfigReader;
 import cn.chenhuanming.octopus.util.CellUtils;
@@ -22,7 +21,7 @@ public class DefaultSheetWriter<T> extends AbstractSheetWriter<T> {
     }
 
     @Override
-    public CellPosition write(Sheet sheet, Collection<T> data) throws DrawSheetException {
+    public CellPosition write(Sheet sheet, Collection<T> data) {
         CellPosition end = super.write(sheet, data);
         adjustColumnWidth(sheet, end);
 

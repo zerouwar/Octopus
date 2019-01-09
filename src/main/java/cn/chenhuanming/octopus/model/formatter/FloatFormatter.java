@@ -6,7 +6,7 @@ package cn.chenhuanming.octopus.model.formatter;
  */
 public class FloatFormatter extends AbstractFormatter<Float> {
     @Override
-    Float parseImpl(String str) throws Exception {
+    public Float parseImpl(String str) throws Exception {
         return Float.valueOf(str);
     }
 

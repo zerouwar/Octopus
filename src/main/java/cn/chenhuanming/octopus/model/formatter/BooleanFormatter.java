@@ -6,7 +6,7 @@ package cn.chenhuanming.octopus.model.formatter;
  */
 public class BooleanFormatter extends AbstractFormatter<Boolean> {
     @Override
-    Boolean parseImpl(String str) throws Exception {
+    public Boolean parseImpl(String str) throws Exception {
         return Boolean.valueOf(str);
     }
 
