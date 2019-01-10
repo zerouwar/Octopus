@@ -1,6 +1,5 @@
 package cn.chenhuanming.octopus.core;
 
-import cn.chenhuanming.octopus.exception.DrawSheetException;
 import cn.chenhuanming.octopus.model.*;
 import cn.chenhuanming.octopus.util.CellUtils;
 import lombok.AllArgsConstructor;
@@ -16,7 +15,7 @@ import java.util.List;
  */
 public class DefaultHeaderWriter implements HeaderWriter {
     @Override
-    public CellPosition drawHeader(Sheet sheet, CellPosition startPoint, List<Field> fields) throws DrawSheetException {
+    public CellPosition drawHeader(Sheet sheet, CellPosition startPoint, List<Field> fields) {
         DefaultField fake = new DefaultField(fields);
 
         SupportHeader fakeHeader = new SupportHeader(fake);
