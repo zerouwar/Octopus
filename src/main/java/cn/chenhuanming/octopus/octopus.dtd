@@ -1,0 +1,34 @@
+<!ELEMENT Root (Header*,Field*,Formatters*)>
+        <!ELEMENT Header (Field+)>
+        <!ELEMENT Field (#PCDATA)>
+        <!ELEMENT Formatters (Formatter+)>
+        <!ELEMENT Formatter (#PCDATA)>
+
+
+        <!ATTLIST Root class CDATA #REQUIRED>
+
+        <!ATTLIST Header name CDATA #REQUIRED>
+        <!ATTLIST Header description CDATA #REQUIRED>
+        <!ATTLIST Header fontSize CDATA #IMPLIED>
+        <!ATTLIST Header color CDATA #IMPLIED>
+        <!ATTLIST Header isBold (true|false) #IMPLIED>
+        <!ATTLIST Header backgroundColor CDATA #IMPLIED>
+        <!ATTLIST Header dateFormat CDATA #IMPLIED>
+        <!ATTLIST Header formatter CDATA #IMPLIED>
+
+        <!ATTLIST Field name CDATA #REQUIRED>
+        <!ATTLIST Field description CDATA #REQUIRED>
+        <!ATTLIST Field fontSize CDATA #IMPLIED>
+        <!ATTLIST Field color CDATA #IMPLIED>
+        <!ATTLIST Field isBold (true|false) #IMPLIED>
+        <!ATTLIST Field backgroundColor CDATA #IMPLIED>
+        <!ATTLIST Field dateFormat CDATA #IMPLIED>
+        <!ATTLIST Field formatter CDATA #IMPLIED>
+        <!ATTLIST Field isBlankable (true|false) #IMPLIED>
+        <!ATTLIST Field regex CDATA #IMPLIED>
+        <!ATTLIST Field options CDATA #IMPLIED>
+
+
+        <!ATTLIST Formatters dateFormat CDATA #IMPLIED>
+        <!ATTLIST Formatter target CDATA #REQUIRED>
+        <!ATTLIST Formatter class CDATA #REQUIRED>

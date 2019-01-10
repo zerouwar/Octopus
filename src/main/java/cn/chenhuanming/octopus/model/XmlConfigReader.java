@@ -2,7 +2,6 @@ package cn.chenhuanming.octopus.model;
 
 import cn.chenhuanming.octopus.model.formatter.DateFormatter;
 import cn.chenhuanming.octopus.model.formatter.DefaultFormatterContainer;
-import cn.chenhuanming.octopus.model.formatter.Formatter;
 import cn.chenhuanming.octopus.model.formatter.FormatterContainer;
 import cn.chenhuanming.octopus.util.ColorUtils;
 import cn.chenhuanming.octopus.util.ReflectionUtils;
@@ -73,7 +72,7 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
             throw new IllegalArgumentException(e);
         }
 
-        Node formattersNode = root.getElementsByTagName(XMLConfig.Formatter.name).item(0);
+        Node formattersNode = root.getElementsByTagName(XMLConfig.Formatters.name).item(0);
         config.setFormatterContainer(readFormatter(formattersNode));
 
         Field field = getField(root, classType);
@@ -86,7 +85,7 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
     private FormatterContainer readFormatter(Node formatNode) {
         DefaultFormatterContainer container = new DefaultFormatterContainer();
 
-        String dateFormat = getAttribute(formatNode, XMLConfig.Formatter.Attribute.DATE_FORMAT);
+        String dateFormat = getAttribute(formatNode, XMLConfig.Formatters.Attribute.DATE_FORMAT);
         if (StringUtils.isEmpty(dateFormat)) {
             container.addFormat(Date.class, new DateFormatter("yyyy-MM-dd HH:mm:ss"));
         } else {
@@ -97,16 +96,16 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
             NodeList children = formatNode.getChildNodes();
             for (int i = 0; i < children.getLength(); i++) {
                 Node item = children.item(i);
-                if (item.getNodeType() == Node.ELEMENT_NODE || !item.getNodeName().equals(XMLConfig.Formatter.Format.name)) {
+                if (item.getNodeType() == Node.ELEMENT_NODE || !item.getNodeName().equals(XMLConfig.Formatters.Formatter.name)) {
                     continue;
                 }
-                String targetClass = getAttribute(item, XMLConfig.Formatter.Format.Attribute.TARGET);
-                String formatClass = getAttribute(item, XMLConfig.Formatter.Format.Attribute.CLASS);
+                String targetClass = getAttribute(item, XMLConfig.Formatters.Formatter.Attribute.TARGET);
+                String formatClass = getAttribute(item, XMLConfig.Formatters.Formatter.Attribute.CLASS);
 
                 try {
                     Class target = Class.forName(targetClass);
                     Class format = Class.forName(formatClass);
-                    container.addFormat(target, (Formatter) format.newInstance());
+                    container.addFormat(target, (cn.chenhuanming.octopus.model.formatter.Formatter) format.newInstance());
                 } catch (Exception e) {
                     throw new IllegalArgumentException(e);
                 }
@@ -162,10 +161,10 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
         if (!StringUtils.isEmpty(formatterStr)) {
             try {
                 Class formatterClass = Class.forName(formatterStr);
-                if (!Formatter.class.isAssignableFrom(formatterClass)) {
-                    LOGGER.error(formatterStr + " is not subclass of cn.chenhuanming.octopus.model.formatter.Formatter");
+                if (!cn.chenhuanming.octopus.model.formatter.Formatter.class.isAssignableFrom(formatterClass)) {
+                    LOGGER.error(formatterStr + " is not subclass of cn.chenhuanming.octopus.model.formatter.Formatters");
                 } else {
-                    field.setFormatter((Formatter) formatterClass.newInstance());
+                    field.setFormatter((cn.chenhuanming.octopus.model.formatter.Formatter) formatterClass.newInstance());
                 }
             } catch (Exception e) {
                 LOGGER.warn(formatterStr + " may not have a default constructor");

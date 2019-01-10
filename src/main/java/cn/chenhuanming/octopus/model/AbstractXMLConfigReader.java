@@ -40,14 +40,17 @@ public abstract class AbstractXMLConfigReader extends CachedConfigReader {
             String name = "Header";
 
             interface Attribute {
-                String NAME = "name";
-                String DESCRIPTION = "description";
-                String FONT_SIZE = "fontSize";
-                String COLOR = "color";
-                String IS_BOLD = "isBold";
-                String BACKGROUND_COLOR = "backgroundColor";
-                String DATE_FORMAT = "dateFormat";
-                String FORMATTER = "formatter";
+                /**
+                 * like Field.Attribute,including:
+                 * String NAME = "name";
+                 * String DESCRIPTION = "description";
+                 * String FONT_SIZE = "fontSize";
+                 * String COLOR = "color";
+                 * String IS_BOLD = "isBold";
+                 * String BACKGROUND_COLOR = "backgroundColor";
+                 * String DATE_FORMAT = "dateFormat";
+                 * String FORMATTER = "formatter";
+                 */
             }
         }
 
@@ -69,11 +72,11 @@ public abstract class AbstractXMLConfigReader extends CachedConfigReader {
             }
         }
 
-        interface Formatter {
+        interface Formatters {
             String name = "Formatters";
 
-            interface Format {
-                String name = "formatter";
+            interface Formatter {
+                String name = "Formatter";
 
                 interface Attribute {
                     String TARGET = "target";
