@@ -21,9 +21,9 @@ public class DefaultSheetWriterTest extends AbstractWriterTest {
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
         FileOutputStream os = new FileOutputStream(rootPath + "/export.xlsx");
 
-        DefaultSheetWriter writer = new DefaultSheetWriter(new XmlConfigReader(this.getClass().getClassLoader().getResourceAsStream("employee.xml")));
+        DefaultSheetWriter writer = new DefaultSheetWriter(new XmlConfigReader(this.getClass().getClassLoader().getResourceAsStream("applicants.xml")));
 
-        writer.write(workbook.createSheet(), employeeList);
+        writer.write(workbook.createSheet(), applicantsList);
 
         workbook.write(os);
     }

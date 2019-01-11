@@ -25,7 +25,7 @@ public class SupportHeaderWriterTest {
 
         HeaderWriter headerWriter = new DefaultHeaderWriter();
 
-        ConfigReader configReader = new XmlConfigReader(this.getClass().getClassLoader().getResourceAsStream("employee.xml"));
+        ConfigReader configReader = new XmlConfigReader(this.getClass().getClassLoader().getResourceAsStream("applicants.xml"));
 
         headerWriter.drawHeader(workbook.createSheet(), new DefaultCellPosition(0, 0), configReader.getConfig().getFields());
 

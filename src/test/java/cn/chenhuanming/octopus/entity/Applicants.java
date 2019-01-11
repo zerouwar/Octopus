@@ -11,11 +11,10 @@ import java.util.Date;
  */
 @Data
 @NoArgsConstructor
-public class Employee {
-    private ID id;
+public class Applicants {
+    private int id;
     private String name;
     private Job job;
     private Date entryDate;
     private boolean working = true;
-
 }

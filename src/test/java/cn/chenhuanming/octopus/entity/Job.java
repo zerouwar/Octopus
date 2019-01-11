@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Job {
-    private Address address;
-    private String company;
+    private Company company;
+    private String JobDescription;
+    private String rank;
 }

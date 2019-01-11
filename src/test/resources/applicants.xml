@@ -2,10 +2,10 @@
 <Root
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/Octopus/master/octopus.xsd"
-        class="cn.chenhuanming.octopus.entity.Employee">
+        class="cn.chenhuanming.octopus.entity.Applicants">
 
     <Header name="id" description="ID">
-        <Field name="value"
+        <Field name="id"
                description="Value"
                color="#74f441"/>
     </Header>
@@ -16,10 +16,17 @@
            border="0,1,0,1"/>
 
     <Header name="job" description="Job" header-color="#4286f4">
-        <Field name="company"
-               description="Company Name"/>
-        <Field name="address"
-               description="Address"
+        <Header name="company"
+                description="Company Name">
+            <Field name="name" description="Company Name"/>
+            <Header name="address" description="Address">
+                <Field name="city" description="City"/>
+                <Field name="detail" description="detail"/>
+            </Header>
+        </Header>
+        <Field name="JobDescription" description="JD"/>
+        <Field name="rank"
+               description="Rank"
                color="#f44271"
                foreground-color="#eaeae5"
                formatter="cn.chenhuanming.octopus.formatter.AddressFormatter"/>
