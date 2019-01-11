@@ -1,5 +1,6 @@
 package cn.chenhuanming.octopus.model;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -17,6 +18,10 @@ public interface FieldCellStyle {
     boolean isBold();
 
     Color getForegroundColor();
+
+    BorderStyle[] getBorder();
+
+    Color[] getBorderColor();
 
     CellStyle getCellStyle(Workbook book);
 }

@@ -6,7 +6,6 @@ import cn.chenhuanming.octopus.model.formatter.FormatterContainer;
 import cn.chenhuanming.octopus.util.ColorUtils;
 import cn.chenhuanming.octopus.util.ReflectionUtils;
 import cn.chenhuanming.octopus.util.StringUtils;
-import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -15,8 +14,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import javax.xml.transform.stream.StreamSource;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -31,24 +29,18 @@ import java.util.regex.Pattern;
  */
 public class XmlConfigReader extends AbstractXMLConfigReader {
 
-    private byte[] configBytes;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlConfigReader.class);
 
     public XmlConfigReader(InputStream is) {
-        try {
-            configBytes = IOUtils.toByteArray(is);
-            is.close();
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e);
-        }
+        super(is);
     }
 
     @Override
     protected Config readConfig() {
         Document document;
         try {
-            document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(configBytes));
+            validateXML(new StreamSource(is));
+            document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
@@ -191,6 +183,14 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
         if (!StringUtils.isEmpty(foregroundColor)) {
             field.setForegroundColor(ColorUtils.hex2Rgb(foregroundColor));
         }
+        String border = getAttribute(node, XMLConfig.Field.Attribute.BORDER);
+        if (!StringUtils.isEmpty(border)) {
+            field.setBorder(convertBorder(border));
+        }
+        String borderColor = getAttribute(node, XMLConfig.Field.Attribute.BORDER_COLOR);
+        if (!StringUtils.isEmpty(borderColor)) {
+            field.setBorderColor(convertBorderColor(borderColor));
+        }
     }
 
     private void setHeaderCellStyleConfig(DefaultField field, Node node) {
@@ -209,6 +209,14 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
         String foregroundColor = getAttribute(node, XMLConfig.Header.Attribute.HEADER_FOREGROUND_COLOR);
         if (!StringUtils.isEmpty(foregroundColor)) {
             field.setHeaderForegroundColor(ColorUtils.hex2Rgb(foregroundColor));
+        }
+        String border = getAttribute(node, XMLConfig.Header.Attribute.HEADER_BORDER);
+        if (!StringUtils.isEmpty(border)) {
+            field.setHeaderBorder(convertBorder(border));
+        }
+        String borderColor = getAttribute(node, XMLConfig.Header.Attribute.HEADER_BORDER_COLOR);
+        if (!StringUtils.isEmpty(borderColor)) {
+            field.setHeaderBorderColor(convertBorderColor(borderColor));
         }
     }
 

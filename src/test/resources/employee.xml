@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE Root SYSTEM "/Users/chenhuanming/Git/Octopus/src/main/java/cn/chenhuanming/octopus/octopus.dtd">
-<Root class="cn.chenhuanming.octopus.entity.Employee">
+<Root
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="/Users/chenhuanming/Git/Octopus/src/main/java/cn/chenhuanming/octopus/octopus.xsd"
+        class="cn.chenhuanming.octopus.entity.Employee">
 
     <Header name="id" description="ID">
         <Field name="value"
@@ -10,7 +12,8 @@
 
     <Field name="name"
            description="Name"
-           font-size="20"/>
+           font-size="20"
+           border="0,1,0,1"/>
 
     <Header name="job" description="Job" header-color="#4286f4">
         <Field name="company"
@@ -27,7 +30,7 @@
 
     <Field name="working"
            description="Working/Leaved"
-           options="/Working/Leaved"
+           options="Working|Leaved"
            formatter="cn.chenhuanming.octopus.formatter.WorkingFormatter"
            color="#42f4b9"/>
 

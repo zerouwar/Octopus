@@ -63,6 +63,25 @@ public class ColorUtils {
         }
     }
 
+    public static void setBorderColor(Workbook workbook, CellStyle cellStyle, Color[] color) {
+        if (color == null) {
+            return;
+        }
+        if (cellStyle instanceof XSSFCellStyle) {
+            ((XSSFCellStyle) cellStyle).setTopBorderColor(new XSSFColor(color[0]));
+            ((XSSFCellStyle) cellStyle).setRightBorderColor(new XSSFColor(color[1]));
+            ((XSSFCellStyle) cellStyle).setBottomBorderColor(new XSSFColor(color[2]));
+            ((XSSFCellStyle) cellStyle).setLeftBorderColor(new XSSFColor(color[3]));
+        } else if (cellStyle instanceof HSSFCellStyle && workbook instanceof HSSFWorkbook) {
+            cellStyle.setTopBorderColor(getSimilarColor((HSSFWorkbook) workbook, color[0]).getIndex());
+            cellStyle.setRightBorderColor(getSimilarColor((HSSFWorkbook) workbook, color[1]).getIndex());
+            cellStyle.setBottomBorderColor(getSimilarColor((HSSFWorkbook) workbook, color[2]).getIndex());
+            cellStyle.setLeftBorderColor(getSimilarColor((HSSFWorkbook) workbook, color[3]).getIndex());
+        } else {
+            LOGGER.error("unknown font type");
+        }
+    }
+
     private static HSSFColor getSimilarColor(HSSFWorkbook workbook, Color color) {
         HSSFPalette palette = workbook.getCustomPalette();
         HSSFColor result = palette.findSimilarColor(color.getRed(), color.getGreen(), color.getBlue());

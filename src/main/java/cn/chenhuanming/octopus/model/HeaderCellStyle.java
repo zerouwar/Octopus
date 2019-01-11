@@ -1,5 +1,6 @@
 package cn.chenhuanming.octopus.model;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -17,6 +18,10 @@ public interface HeaderCellStyle {
     boolean isHeaderBold();
 
     Color getHeaderForegroundColor();
+
+    BorderStyle[] getHeaderBorder();
+
+    Color[] getHeaderBorderColor();
 
     CellStyle getHeaderCellStyle(Workbook book);
 }
