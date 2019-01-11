@@ -34,7 +34,7 @@ public abstract class AbstractXMLConfigReader extends CachedConfigReader {
         }
     }
 
-    private static final String SCHEMA_URI = "/Users/chenhuanming/Git/Octopus/src/main/java/cn/chenhuanming/octopus/octopus.xsd";
+    private static final String SCHEMA_URI = "https://raw.githubusercontent.com/zerouwar/Octopus/master/octopus.xsd";
 
     protected void validateXML(Source source) throws Exception {
         SchemaFactory schemaFactory = SchemaFactory

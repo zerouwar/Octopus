@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Root
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="/Users/chenhuanming/Git/Octopus/src/main/java/cn/chenhuanming/octopus/octopus.xsd"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/Octopus/master/octopus.xsd"
         class="cn.chenhuanming.octopus.entity.Employee">
 
     <Header name="id" description="ID">
@@ -26,7 +26,8 @@
     </Header>
 
     <Field name="entryDate"
-           description="Entry Date"/>
+           description="Entry Date"
+           date-format="yyyy-MM-dd"/>
 
     <Field name="working"
            description="Working/Leaved"
