@@ -5,6 +5,7 @@ import cn.chenhuanming.octopus.model.DefaultCellPosition;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 /**
  * @author chenhuanming
@@ -39,7 +40,11 @@ public class CellUtils {
     public static void setMergeRegion(Sheet sheet, int row, int lastRow, int col, int lastCol, CellStyle cellStyle) {
 
         int i = sheet.addMergedRegion(new CellRangeAddress(row, lastRow, col, lastCol));
-        CellRangeAddress region = sheet.getMergedRegion(i - 1);
+
+        /**
+         * seems like a bug
+         */
+        CellRangeAddress region = sheet.getMergedRegion(sheet instanceof XSSFSheet ? i - 1 : i);
 
         RegionUtil.setBorderTop(cellStyle.getBorderTopEnum(), region, sheet);
         RegionUtil.setBorderLeft(cellStyle.getBorderLeftEnum(), region, sheet);

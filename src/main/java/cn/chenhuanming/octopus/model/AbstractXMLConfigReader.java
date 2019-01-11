@@ -40,33 +40,26 @@ public abstract class AbstractXMLConfigReader extends CachedConfigReader {
             String name = "Header";
 
             interface Attribute {
-                /**
-                 * like Field.Attribute,including:
-                 * String NAME = "name";
-                 * String DESCRIPTION = "description";
-                 * String FONT_SIZE = "fontSize";
-                 * String COLOR = "color";
-                 * String IS_BOLD = "isBold";
-                 * String BACKGROUND_COLOR = "backgroundColor";
-                 * String DATE_FORMAT = "dateFormat";
-                 * String FORMATTER = "formatter";
-                 */
+                String NAME = "name";
+                String DESCRIPTION = "description";
+                String HEADER_FONT_SIZE = "header-font-size";
+                String HEADER_COLOR = "header-color";
+                String IS_HEADER_BOLD = "header-is-bold";
+                String HEADER_FOREGROUND_COLOR = "header-foreground-color";
             }
         }
 
         interface Field {
             String name = "Field";
 
-            interface Attribute {
-                String NAME = "name";
-                String DESCRIPTION = "description";
-                String FONT_SIZE = "fontSize";
+            interface Attribute extends Header.Attribute {
+                String FONT_SIZE = "font-size";
                 String COLOR = "color";
-                String IS_BOLD = "isBold";
-                String BACKGROUND_COLOR = "backgroundColor";
-                String DATE_FORMAT = "dateFormat";
+                String IS_BOLD = "is-bold";
+                String FOREGROUND_COLOR = "foreground-color";
+                String DATE_FORMAT = "date-format";
                 String FORMATTER = "formatter";
-                String IS_BLANKABLE = "isBlankable";
+                String IS_BLANKABLE = "is-blankable";
                 String REGEX = "regex";
                 String OPTIONS = "options";
             }
@@ -85,7 +78,7 @@ public abstract class AbstractXMLConfigReader extends CachedConfigReader {
             }
 
             interface Attribute {
-                String DATE_FORMAT = "dateFormat";
+                String DATE_FORMAT = "date-format";
             }
         }
     }

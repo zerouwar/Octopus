@@ -35,10 +35,10 @@ public class DefaultHeaderWriter implements HeaderWriter {
         if (header.isLeaf()) {
             //set value into the bottom left cell
             if (header.getHeight() == 1) {
-                CellUtils.setCellValue(sheet, lastRow, col, header.getDescription(), header.getCellStyle(sheet.getWorkbook()));
+                CellUtils.setCellValue(sheet, lastRow, col, header.getDescription(), header.getHeaderCellStyle(sheet.getWorkbook()));
             } else {
                 //cost its need
-                CellStyle style = header.getCellStyle(sheet.getWorkbook());
+                CellStyle style = header.getHeaderCellStyle(sheet.getWorkbook());
                 CellUtils.setCellValue(sheet, lastRow - header.getHeight() + 1, col, header.getDescription(), style);
                 CellUtils.setMergeRegion(sheet, lastRow - header.getHeight() + 1, lastRow, col, col, style);
             }
@@ -55,7 +55,7 @@ public class DefaultHeaderWriter implements HeaderWriter {
 
         if (row >= 0) {
             CellUtils.setMergeRegionValue(sheet, row, lastRow - costRow, col, col + header.getWidth() - 1,
-                    header.getDescription(), header.getCellStyle(sheet.getWorkbook()));
+                    header.getDescription(), header.getHeaderCellStyle(sheet.getWorkbook()));
         }
 
         return new Cost(header.getHeight(), header.getWidth());

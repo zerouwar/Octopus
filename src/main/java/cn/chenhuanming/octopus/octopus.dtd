@@ -9,26 +9,30 @@
 
         <!ATTLIST Header name CDATA #REQUIRED>
         <!ATTLIST Header description CDATA #REQUIRED>
-        <!ATTLIST Header fontSize CDATA #IMPLIED>
-        <!ATTLIST Header color CDATA #IMPLIED>
-        <!ATTLIST Header isBold (true|false) #IMPLIED>
-        <!ATTLIST Header backgroundColor CDATA #IMPLIED>
-        <!ATTLIST Header dateFormat CDATA #IMPLIED>
+        <!ATTLIST Header header-font-size CDATA #IMPLIED>
+        <!ATTLIST Header header-color CDATA #IMPLIED>
+        <!ATTLIST Header header-is-bold (true|false) #IMPLIED>
+        <!ATTLIST Header header-foreground-color CDATA #IMPLIED>
+        <!ATTLIST Header date-format CDATA #IMPLIED>
         <!ATTLIST Header formatter CDATA #IMPLIED>
 
         <!ATTLIST Field name CDATA #REQUIRED>
         <!ATTLIST Field description CDATA #REQUIRED>
-        <!ATTLIST Field fontSize CDATA #IMPLIED>
+        <!ATTLIST Field header-font-size CDATA #IMPLIED>
+        <!ATTLIST Field header-color CDATA #IMPLIED>
+        <!ATTLIST Field header-is-bold (true|false) #IMPLIED>
+        <!ATTLIST Field header-foreground-color CDATA #IMPLIED>
+        <!ATTLIST Field font-size CDATA #IMPLIED>
         <!ATTLIST Field color CDATA #IMPLIED>
-        <!ATTLIST Field isBold (true|false) #IMPLIED>
-        <!ATTLIST Field backgroundColor CDATA #IMPLIED>
-        <!ATTLIST Field dateFormat CDATA #IMPLIED>
+        <!ATTLIST Field is-bold (true|false) #IMPLIED>
+        <!ATTLIST Field foreground-color CDATA #IMPLIED>
+        <!ATTLIST Field date-format CDATA #IMPLIED>
         <!ATTLIST Field formatter CDATA #IMPLIED>
-        <!ATTLIST Field isBlankable (true|false) #IMPLIED>
+        <!ATTLIST Field is-blankable (true|false) #IMPLIED>
         <!ATTLIST Field regex CDATA #IMPLIED>
         <!ATTLIST Field options CDATA #IMPLIED>
 
 
-        <!ATTLIST Formatters dateFormat CDATA #IMPLIED>
+        <!ATTLIST Formatters date-format CDATA #IMPLIED>
         <!ATTLIST Formatter target CDATA #REQUIRED>
         <!ATTLIST Formatter class CDATA #REQUIRED>

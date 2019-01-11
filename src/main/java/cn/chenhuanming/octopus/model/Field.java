@@ -10,7 +10,7 @@ import java.util.List;
  * @author chenhuanming
  * Created at 2018/12/7
  */
-public interface Field extends FieldCellStyle, ImportValidation {
+public interface Field extends FieldCellStyle, ImportValidation, HeaderCellStyle {
     /**
      * attribute name,will be used to access from data
      */

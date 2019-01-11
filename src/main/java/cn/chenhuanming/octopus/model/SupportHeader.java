@@ -1,14 +1,17 @@
 package cn.chenhuanming.octopus.model;
 
+import cn.chenhuanming.octopus.model.formatter.Formatter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Workbook;
 
-import java.awt.Color;
+import java.awt.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * @author chenhuanming
@@ -48,24 +51,6 @@ public class SupportHeader extends DefaultField {
     }
 
     @Override
-    public CellStyle getCellStyle(Workbook book) {
-        CellStyle style = book.createCellStyle();
-        Font font = book.createFont();
-        font.setFontHeightInPoints((short) (this.getFontSize() + 2));
-        font.setBold(true);
-        font.setColor((short) this.getColor().getRGB());
-        style.setFont(font);
-        style.setAlignment(HorizontalAlignment.CENTER);
-        style.setVerticalAlignment(VerticalAlignment.CENTER);
-        style.setFillBackgroundColor((short) this.getBackgroundColor().getRGB());
-        style.setBorderLeft(BorderStyle.THIN);
-        style.setBorderTop(BorderStyle.THIN);
-        style.setBorderRight(BorderStyle.THIN);
-        style.setBorderBottom(BorderStyle.THIN);
-        return style;
-    }
-
-    @Override
     public String getName() {
         return field.getName();
     }
@@ -78,11 +63,6 @@ public class SupportHeader extends DefaultField {
     @Override
     public String getDefaultValue() {
         return field.getDefaultValue();
-    }
-
-    @Override
-    public Method getPicker() {
-        return null;
     }
 
     @Override
@@ -115,7 +95,62 @@ public class SupportHeader extends DefaultField {
     }
 
     @Override
-    public Color getBackgroundColor() {
-        return field.getBackgroundColor();
+    public Color getForegroundColor() {
+        return field.getForegroundColor();
+    }
+
+    @Override
+    public Formatter<Date> getDateFormat() {
+        return field.getDateFormat();
+    }
+
+    @Override
+    public Formatter getFormatter() {
+        return field.getFormatter();
+    }
+
+    @Override
+    public Color getHeaderForegroundColor() {
+        return field.getHeaderForegroundColor();
+    }
+
+    @Override
+    public Color getHeaderColor() {
+        return field.getHeaderColor();
+    }
+
+    @Override
+    public short getHeaderFontSize() {
+        return field.getHeaderFontSize();
+    }
+
+    @Override
+    public List<String> getOptions() {
+        return field.getOptions();
+    }
+
+    @Override
+    public Method getPicker() {
+        return field.getPicker();
+    }
+
+    @Override
+    public Method getPusher() {
+        return field.getPusher();
+    }
+
+    @Override
+    public Pattern getRegex() {
+        return field.getRegex();
+    }
+
+    @Override
+    public CellStyle getCellStyle(Workbook book) {
+        return field.getCellStyle(book);
+    }
+
+    @Override
+    public CellStyle getHeaderCellStyle(Workbook book) {
+        return field.getHeaderCellStyle(book);
     }
 }

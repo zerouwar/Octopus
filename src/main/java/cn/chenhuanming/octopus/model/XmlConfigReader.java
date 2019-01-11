@@ -122,6 +122,8 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
 
         setCellStyleConfig(field, node);
 
+        setHeaderCellStyleConfig(field, node);
+
         setInvoker(field, classType);
 
         if (node.getNodeName().equals(XMLConfig.Field.name)) {
@@ -185,9 +187,28 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
         if (!StringUtils.isEmpty(isBold)) {
             field.setBold(Boolean.parseBoolean(isBold));
         }
-        String backgroundColor = getAttribute(node, XMLConfig.Field.Attribute.BACKGROUND_COLOR);
-        if (!StringUtils.isEmpty(backgroundColor)) {
-            field.setBackgroundColor(ColorUtils.hex2Rgb(backgroundColor));
+        String foregroundColor = getAttribute(node, XMLConfig.Field.Attribute.FOREGROUND_COLOR);
+        if (!StringUtils.isEmpty(foregroundColor)) {
+            field.setForegroundColor(ColorUtils.hex2Rgb(foregroundColor));
+        }
+    }
+
+    private void setHeaderCellStyleConfig(DefaultField field, Node node) {
+        String fontSize = getAttribute(node, XMLConfig.Header.Attribute.HEADER_FONT_SIZE);
+        if (!StringUtils.isEmpty(fontSize)) {
+            field.setHeaderFontSize(Short.parseShort(fontSize));
+        }
+        String color = getAttribute(node, XMLConfig.Header.Attribute.HEADER_COLOR);
+        if (!StringUtils.isEmpty(color)) {
+            field.setHeaderColor(ColorUtils.hex2Rgb(color));
+        }
+        String isBold = getAttribute(node, XMLConfig.Header.Attribute.IS_HEADER_BOLD);
+        if (!StringUtils.isEmpty(isBold)) {
+            field.setHeaderBold(Boolean.parseBoolean(isBold));
+        }
+        String foregroundColor = getAttribute(node, XMLConfig.Header.Attribute.HEADER_FOREGROUND_COLOR);
+        if (!StringUtils.isEmpty(foregroundColor)) {
+            field.setHeaderForegroundColor(ColorUtils.hex2Rgb(foregroundColor));
         }
     }
 

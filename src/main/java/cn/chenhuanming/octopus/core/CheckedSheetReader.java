@@ -9,10 +9,14 @@ import cn.chenhuanming.octopus.util.StringUtils;
 import org.apache.poi.ss.usermodel.Sheet;
 
 /**
+ * not thread-safe
  * @author chenhuanming
  * Created at 2019-01-09
  */
 public class CheckedSheetReader<T> extends DefaultSheetReader<CheckedData<T>> {
+    /**
+     * not thread-safe
+     */
     private CheckedData<T> checkedData;
 
     public CheckedSheetReader(Sheet sheet, ConfigReader configReader, CellPosition startPoint) {

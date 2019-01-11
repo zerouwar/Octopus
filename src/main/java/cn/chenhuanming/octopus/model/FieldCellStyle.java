@@ -16,7 +16,7 @@ public interface FieldCellStyle {
 
     boolean isBold();
 
-    Color getBackgroundColor();
+    Color getForegroundColor();
 
     CellStyle getCellStyle(Workbook book);
 }

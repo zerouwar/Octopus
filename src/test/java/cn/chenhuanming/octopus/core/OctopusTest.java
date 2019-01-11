@@ -13,11 +13,12 @@ import java.io.IOException;
 public class OctopusTest extends AbstractWriterTest {
 
     @Test
-    public void test() throws IOException {
+    public void export() throws IOException {
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
-        FileOutputStream os = new FileOutputStream(rootPath + "/excelWriterHelper.xlsx");
+        FileOutputStream os = new FileOutputStream(rootPath + "/octopusExport.xlsx");
 
         ConfigReader configReader = Octopus.getXMLConfigReader(this.getClass().getClassLoader().getResourceAsStream("employee.xml"));
+
         Octopus.writeOneSheet(os, configReader, "test", employeeList);
     }
 }

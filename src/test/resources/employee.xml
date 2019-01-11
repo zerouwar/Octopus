@@ -1,24 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Root SYSTEM "/Users/chenhuanming/Git/Octopus/src/main/java/cn/chenhuanming/octopus/octopus.dtd">
 <Root class="cn.chenhuanming.octopus.entity.Employee">
 
     <Header name="id" description="ID">
         <Field name="value"
-               description="Value"/>
+               description="Value"
+               color="#74f441"/>
     </Header>
+
     <Field name="name"
-           description="Name"/>
-    <Header name="job" description="Job">
+           description="Name"
+           font-size="20"/>
+
+    <Header name="job" description="Job" header-color="#4286f4">
         <Field name="company"
                description="Company Name"/>
         <Field name="address"
                description="Address"
+               color="#f44271"
+               foreground-color="#eaeae5"
                formatter="cn.chenhuanming.octopus.formatter.AddressFormatter"/>
     </Header>
+
     <Field name="entryDate"
            description="Entry Date"/>
+
     <Field name="working"
            description="Working/Leaved"
            options="/Working/Leaved"
-           formatter="cn.chenhuanming.octopus.formatter.WorkingFormatter"/>
+           formatter="cn.chenhuanming.octopus.formatter.WorkingFormatter"
+           color="#42f4b9"/>
 
 </Root>
