@@ -340,9 +340,9 @@ public void importCheckedData() throws IOException, InvalidFormatException {
 这里我们调用`Octopus.readFirstSheetWithValidation`，获取带校验结果的`SheetReader`，看一下导入的结果
 
 ```
-CheckedData(data=Company(name=Graham Motor Services, address=Address(city=Monroe, detail=666 Bonnair Ave), status=null), exceptions=[cn.chenhuanming.octopus.exception.NotAllowValueException])
+CheckedData(data=Company(name=Graham Motor Services, address=Address(city=Monroe, detail=666 Bonnair Ave), status=good), exceptions=[])
 CheckedData(data=Company(name=Social Circle Engineering, address=Address(city=Fort Gaines, detail=956 Third Ridge), status=null), exceptions=[cn.chenhuanming.octopus.exception.NotAllowValueException])
-CheckedData(data=Company(name=null, address=Address(city=Mcdonough, detail=1278 Midway Trail), status=null), exceptions=[cn.chenhuanming.octopus.exception.CanNotBeBlankException, cn.chenhuanming.octopus.exception.CanNotBeBlankException])
+CheckedData(data=Company(name=null, address=Address(city=Mcdonough, detail=1278 Midway Trail), status=null), exceptions=[cn.chenhuanming.octopus.exception.CanNotBeBlankException, cn.chenhuanming.octopus.exception.NotAllowValueException])
 ```
 
 可以看到每一个`CheckData`有一个`data`属性和一个`exceptions`列表。

@@ -245,8 +245,8 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
         }
         String options = getAttribute(node, XMLConfig.Field.Attribute.OPTIONS);
         if (!StringUtils.isEmpty(options) && options.length() >= 2) {
-            String[] split = options.split(String.valueOf(options.charAt(0)));
-            field.setOptions(Arrays.asList(Arrays.copyOfRange(split, 1, split.length)));
+            String[] split = options.split(SPLITTER);
+            field.setOptions(Arrays.asList(split));
         }
     }
 

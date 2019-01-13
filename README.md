@@ -349,9 +349,9 @@ public void importCheckedData() throws IOException, InvalidFormatException {
 We call `Octopus.readFirstSheetWithValidation` and get `SheetReader` with result of validation.Check the terminal
 
 ```
-CheckedData(data=Company(name=Graham Motor Services, address=Address(city=Monroe, detail=666 Bonnair Ave), status=null), exceptions=[cn.chenhuanming.octopus.exception.NotAllowValueException])
+CheckedData(data=Company(name=Graham Motor Services, address=Address(city=Monroe, detail=666 Bonnair Ave), status=good), exceptions=[])
 CheckedData(data=Company(name=Social Circle Engineering, address=Address(city=Fort Gaines, detail=956 Third Ridge), status=null), exceptions=[cn.chenhuanming.octopus.exception.NotAllowValueException])
-CheckedData(data=Company(name=null, address=Address(city=Mcdonough, detail=1278 Midway Trail), status=null), exceptions=[cn.chenhuanming.octopus.exception.CanNotBeBlankException, cn.chenhuanming.octopus.exception.CanNotBeBlankException])
+CheckedData(data=Company(name=null, address=Address(city=Mcdonough, detail=1278 Midway Trail), status=null), exceptions=[cn.chenhuanming.octopus.exception.CanNotBeBlankException, cn.chenhuanming.octopus.exception.NotAllowValueException])
 ```
 
 `CheckData` has `data` and `exceptions`.In `exceptions`,it saves all exceptions of every cell occurred in importing.All of them are subclass of `ParseException`
