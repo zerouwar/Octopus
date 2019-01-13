@@ -1,10 +1,20 @@
+
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Octopus](#octopus)
-	- [如何导入excel](#如何导入excel)
-	- [如何导出excel](#如何导出excel)
-
+    - [从Maven导入](##从Maven导入)
+	- [导出Excel](##导出Excel)
+	    - [从最简单的例子开始](###从最简单的例子开始)
+	    - [自动绘制表头](###自动绘制表头)
+	    - [转换数据](###转换数据)
+	- [导入Excel](##导入Excel)
+	    - [导入校验数据](###导入校验数据)
+    - [Q&A](##Q&A)
+        - [没有Java注解配置？](###没有Java注解配置？)
+        - [需要操作Apache POI？](###需要操作Apache-POI？)
+        - [有建议或者想法？](###有建议或者想法？)
 <!-- /TOC -->
+
 # Octopus
  `Octopus` 是一个简单的java excel导入导出工具。目的是不用接触Apache POI的API就可以完成简单的Excel导出导入。
  同时，可以自定义表格样式，导入检验数据和转换数据
@@ -30,6 +40,8 @@
 		</dependency>
 
 ## 导出Excel
+
+### 从最简单的例子开始
 我们从最简单的例子开始——导出一些地址数据。`Address`类只有两个属性
 
 ```java
@@ -111,6 +123,8 @@ public class AddressExample {
 
 下面是导出的Excel文件
 
+![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/simplest_example.png)
+
 ### 自动绘制表头
 Octopus支持导出复杂对象时自动绘制表头
 
@@ -189,9 +203,11 @@ public class CompanyExample {
 
 最后是导出的Excel文件
 
+![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/auto_drawing_header.png)
 
 Octopus可以处理更复杂的数据，你可以在`cn.chenhuanming.octopus.example.ApplicantExample`查看这个更复杂的例子
 
+![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/applicant_example.png)
 
 ### 转换数据
 有时你想转换导出的数据。例如，在上一个例子中，我们不想导出整个`Address`对象，把它当做一个字符串导出
@@ -231,6 +247,9 @@ public class AddressFormatter implements Formatter<Address> {
 ```
 
 最后导出的结果
+
+![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/convering_data.png)
+
 
 ## 导入Excel
 我们直接拿上一个例子的导出结果来演示导入，共用同一个`ConfigReader`，直接编写导入的代码
@@ -295,6 +314,7 @@ Company(name=Toccoa Development, address=Address(city=Ridgeville, detail=1790 La
 
 这是我们要导入的Excel，可以看到里面有非法数据
 
+![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/wrong_data.png)
 
 看一下怎么编写Java代码
 

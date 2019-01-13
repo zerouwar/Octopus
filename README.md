@@ -2,9 +2,17 @@
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Octopus](#octopus)
-	- [How to import excel](#how-to-import-excel)
-	- [How to export excel](#how-to-export-excel)
-
+    - [Import from Maven](##Import-from-Maven)
+	- [Export Excel](##Export Excel)
+	    - [Simplest Example](###Simplest-Example)
+	    - [Auto Drawing Header](###Auto-Drawing-Header)
+	    - [Converting Data](###Converting-Data)
+	- [Importing Excel](##Importing-Excel)
+	    - [Data Validation](###Data-Validation)
+    - [Q&A](##Q&A)
+        - [No Java Annotation Config?](###No-Java-Annotation-Config?)
+        - [Need Apache POI?](###Need-Apache-POI?)
+        - [Have Advice or idea?](###Have-Advice-or-idea?)
 <!-- /TOC -->
 
 [跳去中文版](https://github.com/zerouwar/Octopus/blob/master/README-zh.md)
@@ -19,21 +27,27 @@
 
 Add repository
 
-		<repositories>
-		    <repository>
-		        <id>chenhuanming-repo</id>
-		        <name>chenhuanming-repo</name>
-		        <url>https://raw.githubusercontent.com/zerouwar/my-maven-repo/master</url>
-		    </repository>
-		</repositories>
+```xml
+<repositories>
+    <repository>
+        <id>chenhuanming-repo</id>
+        <name>chenhuanming-repo</name>
+        <url>https://raw.githubusercontent.com/zerouwar/my-maven-repo/master</url>
+    </repository>
+</repositories>
+```
+
 
 Add dependency
 
-		<dependency>
-				<groupId>cn.chenhuanming</groupId>
-				<artifactId>octopus</artifactId>
-				<version>1.0.0</version>
-		</dependency>
+```xml
+<dependency>
+        <groupId>cn.chenhuanming</groupId>
+        <artifactId>octopus</artifactId>
+        <version>1.0.0</version>
+</dependency>
+```
+
 
 ## Export Excel
 
@@ -119,6 +133,8 @@ This is a complete unit test.In fact,exporting Excel only needs two steps:
 
 Here is exporting excel file
 
+![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/simplest_example.png)
+
 ### Auto Drawing Header
 Octopus supports exporting complicated object and drawing header automatically.
 
@@ -196,7 +212,11 @@ public class CompanyExample {
 
 This is the final exporting excel file
 
+![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/auto_drawing_header.png)
+
 Octopus can handle more complicated data,you can check this from `cn.chenhuanming.octopus.example.ApplicantExample` in test classpath
+
+![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/applicant_example.png)
 
 ### Converting Data
 Sometimes you want to convert exporting data.For example,in previous example,we don't want to export entire `Address`,just make this like a string.
@@ -237,6 +257,8 @@ public class AddressFormatter implements Formatter<Address> {
 ```
 
 Exporting excel will be like this
+
+![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/convering_data.png)
 
 ## Importing Excel
 We directly reuse previous example to see how to import a excel.Reuse `ConfigReader` object,just change Java code
@@ -302,6 +324,7 @@ Let's check out XML config
 
 Here is the excel we will import,there are three wrong.
 
+![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/wrong_data.png)
 
 And the Java code
 
@@ -343,13 +366,13 @@ Octopus will catch them,put into `exceptions` and fill with position of cell and
 
 ## Q&A
 
-### No Java Annotation Config？
+### No Java Annotation Config?
 For now,only XML config because XML and class file are separate.Sometimes you can not modify class file,especially when exporting excel,XML will be better choice. 
 If you are "anti-xml", can implements `ConfigReader`,it will not be hard.
 
-### Need use Apache POI？
-`Octopus` provides one-code-api,get rid of Apache API。If you really need use Apache POI,check core class `SheetWriter`和`SheetReader`
+### Need Apache POI?
+`Octopus` provides one-code-api,get rid of Apache API。If you really need Apache POI,check core class `SheetWriter`和`SheetReader`
 
-### Have Advice?
+### Have Advice or idea?
 email me **chenhuanming.cn@gmail.com**
 
