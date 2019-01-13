@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/Octopus/master/octopus.xsd"
+      class="cn.chenhuanming.octopus.entity.Company">
+
+
+    <Field name="name"
+           description="Name"
+           color="#ff0000"/>
+
+    <Field name="address"
+           description="Address"
+           formatter="cn.chenhuanming.octopus.formatter.AddressFormatter"
+    />
+
+</Root>

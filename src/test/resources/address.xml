@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/Octopus/master/octopus.xsd"
+      class="cn.chenhuanming.octopus.entity.Address">
+
+    <Field name="city" description="City"/>
+    <Field name="detail" description="Detail"/>
+
+</Root>

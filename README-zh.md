@@ -1,12 +1,23 @@
+
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Octopus](#octopus)
-	- [如何导入excel](#如何导入excel)
-	- [如何导出excel](#如何导出excel)
-
+    - [从Maven导入](##从Maven导入)
+	- [导出Excel](##导出Excel)
+	    - [从最简单的例子开始](###从最简单的例子开始)
+	    - [自动绘制表头](###自动绘制表头)
+	    - [转换数据](###转换数据)
+	- [导入Excel](##导入Excel)
+	    - [导入校验数据](###导入校验数据)
+    - [Q&A](##Q&A)
+        - [没有Java注解配置？](###没有Java注解配置？)
+        - [需要操作Apache POI？](###需要操作Apache-POI？)
+        - [有建议或者想法？](###有建议或者想法？)
 <!-- /TOC -->
+
 # Octopus
- `Octopus` 是一个简单的java excel导入导出工具.
+ `Octopus` 是一个简单的java excel导入导出工具。目的是不用接触Apache POI的API就可以完成简单的Excel导出导入。
+ 同时，可以自定义表格样式，导入检验数据和转换数据
 
 ## 更新
 0.0.2在分支`dev-refactor`开发中，更多查看[Wiki](https://github.com/zerouwar/Octopus/wiki/0.0.2-Feature)
@@ -28,167 +39,332 @@
 		<dependency>
 				<groupId>cn.chenhuanming</groupId>
 				<artifactId>octopus</artifactId>
-				<version>1.0-SNAPSHOT</version>
+				<version>1.0.0</version>
 		</dependency>
 
-## 如何导入excel
-下面是一个excel文件中sheet的数据，有四个学生信息.
+## 导出Excel
 
-| studentId | name  | sex |   inTime   | score |
-| --------- | ----- | --- | ---------- | ----- |
-| 20134123  | John  | M   | 2013-9-1   | 89    |
-| 20124524  | Joyce | F   | 20123-8-31 | 79    |
-| 20156243  |       | P   | 2015-5-15  | 94    |
-| 20116522  | Nemo  | F   | 2011-2-26  |       |
+### 从最简单的例子开始
+我们从最简单的例子开始——导出一些地址数据。`Address`类只有两个属性
 
-一个学生类，用来保存从excel中读取的学生信息.
+```java
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class Address {
+    private String city;
+    private String detail;
+}
+```
 
-    //lombok annotations
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @ToString
-    public class Student {
+在导出前，我们需要创建一个XML文件定义怎样去导出
 
-        @ModelLineNumber
-        private int lineNum;
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/Octopus/master/octopus.xsd"
+      class="cn.chenhuanming.octopus.entity.Address">
 
-        @ModelProperty(value = "id",blankable = false)
-        private String studentId;
+    <Field name="city" description="City"/>
+    <Field name="detail" description="Detail"/>
 
-        @ModelProperty(value = "name",defaultValue = "anonymous")
-        private String name;
+</Root>
+```  
 
-        @ModelProperty(value = "sex",wrongMsg = "sex must be M or F",pattern = "^M|F$")
-        private String sex;
+首先，创建`Root`根元素。这里引用*octopus.xsd*文件帮助我们编写XML
 
-        @ModelProperty(value = "admission",wrongMsg = "admission must be a date")
-        private LocalDate inTime;
+然后，赋值`class`属性，代表我们要导出的类全限定名
 
-        @ModelProperty(value = "score",wrongMsg = "score must be numeric",defaultValue = "100")
-        private Double score;
+最后，创建两个`Field`元素，代表要导出类的两个属性
 
-    }
+`name`属性值就是`Address`里的属性名，实际上Octopus调用其getter方法获取值，所以要确保有getter方法
 
-用代码读取excel，并输出学生信息：
+`description`属性会被用在绘制表头
 
-    InputStream is = getClass().getResourceAsStream("/test.xlsx");
-    Workbook workbook = WorkbookFactory.create(is);
-    Sheet sheet = workbook.getSheetAt(0);
+我们可以开始做最后一件事，编写Java代码
 
-    //read students with ReusableSheetReader
-    SheetReader<ModelEntity<Student>> students = new ReusableSheetReader<>(sheet,1,0,Student.class);
+```java
+public class AddressExample {
+    List<Address> addresses;
 
-    //print students information
-    for (ModelEntity<Student> student:students) {
-        System.out.println(student.toString());
-    }
-
-输出的学生信息
-
-    SimpleModelEntity(entity=Student(lineNum=2, studentId=20134123, name=John, sex=M, inTime=2013-09-01, score=89.0, gradeAndClazz=null), exceptions=[])
-    SimpleModelEntity(entity=Student(lineNum=3, studentId=20124524, name=Joyce, sex=F, inTime=null, score=79.0, gradeAndClazz=null), exceptions=[cn.chenhuanming.octopus.exception.DataFormatException: in cell (3,4) ,20123-8-31 can not be formatted to class java.time.LocalDate])
-    SimpleModelEntity(entity=Student(lineNum=4, studentId=20156243, name=anonymous, sex=null, inTime=2015-05-15, score=94.0, gradeAndClazz=null), exceptions=[cn.chenhuanming.octopus.exception.PatternNotMatchException: P and ^M|F$ don't match!])
-    SimpleModelEntity(entity=Student(lineNum=5, studentId=20116522, name=Nemo, sex=F, inTime=2011-02-26, score=100.0, gradeAndClazz=null), exceptions=[])
-
-通过`ModelEntity<Student>`，可以获取更多异常信息，例如`@ModelProperty`的配置信息和所发生的异常.
-
-***完整的测试用例：`src/test/cn/chenhuanming/octopus/core/SheetReaderTest`***
-
-## 如何导出excel
-为了说明导出的特性，我们给`Student`类增加一个属性`GradeAndClazz`用来表示年级和班级.下面是最终的`Student`类，可以用来导入导出.
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @ToString
-    public class Student {
-
-        @ModelLineNumber
-        private int lineNum;
-
-        @ModelProperty(value = "id",blankable = false)
-        private String studentId;
-
-        @ModelProperty(value = "name",defaultValue = "anonymous")
-        private String name;
-
-        @ModelProperty(value = "sex",wrongMsg = "sex must be M or F",pattern = "^M|F$")
-        private String sex;
-
-        //jackson annotation to format output
-        @JsonFormat(pattern = "yyyy-MM-dd")
-        @ModelProperty(value = "admission",wrongMsg = "admission must be a date")
-        private LocalDate inTime;
-
-        @ModelProperty(value = "score",wrongMsg = "score must be numeric",defaultValue = "100")
-        private Double score;
-
-        @ModelIgnore
-        private GradeAndClazz gradeAndClazz;
-
-        public Student(String studentId, String name, String sex, LocalDate inTime, Double score,GradeAndClazz gradeAndClazz) {
-            this.studentId = studentId;
-            this.name = name;
-            this.sex = sex;
-            this.inTime = inTime;
-            this.score = score;
-            this.gradeAndClazz = gradeAndClazz;
+    /**
+     * make testing data
+     */
+    @Before
+    public void prepare() {
+        addresses = new ArrayList<>();
+        DataFactory df = new DataFactory();
+        for (int i = 0; i < df.getNumberBetween(5, 10); i++) {
+            addresses.add(new Address(df.getCity(), df.getAddress()));
         }
     }
 
-`GradeAndClazz`类，只有年级和班级两个信息.
+    @Test
+    public void export() throws FileNotFoundException {
 
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    public class GradeAndClazz{
-        private String grade;
-        private String clazz;
+        //where to export
+        String rootPath = this.getClass().getClassLoader().getResource("").getPath();
+        FileOutputStream os = new FileOutputStream(rootPath + "/address.xlsx");
+
+        //read config from address.xml
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream("address.xml");
+        ConfigReader configReader = Octopus.getXMLConfigReader(is);
+
+        try {
+            Octopus.writeOneSheet(os, configReader, "address", addresses);
+        } catch (IOException e) {
+            System.out.println("export failed");
+        }
+    }
+}
+```
+
+这是一个完整的单元测试代码，不过导出Excel其实只要两步：
+
+1. 从XML配置文件中创建一个`ConfigReader`对象
+2. 调用`Octopus.writeOneSheet()`，传入导出的文件，configReader，工作表的名字和数据
+
+下面是导出的Excel文件
+
+![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/simplest_example.png)
+
+### 自动绘制表头
+Octopus支持导出复杂对象时自动绘制表头
+
+这次我们来导出一些公司数据，这里是`Company`类
+
+```java
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class Company {
+    private String name;
+    private Address address;
+}
+```
+
+然后我们创建一个 *company.xml* 配置文件
+
+```xml
+<Root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/Octopus/master/octopus.xsd"
+      class="cn.chenhuanming.octopus.entity.Address">
+
+
+    <Field name="name"
+           description="Name"
+           color="#ff0000"/>
+
+    <Header name="address" description="Address">
+        <Field name="city" description="City"/>
+        <Field name="detail" description="Detail"/>
+    </Header>
+
+</Root>
+```
+
+我们用`Header`元素代表要导出`Company`的一个复杂属性，同时设置字体颜色是红色
+
+Java代码基本跟之前的一样
+
+```java
+public class CompanyExample {
+    List<Company> companies;
+
+    /**
+     * make testing data
+     */
+    @Before
+    public void prepare() {
+        companies = new ArrayList<>();
+        DataFactory df = new DataFactory();
+        for (int i = 0; i < df.getNumberBetween(5, 10); i++) {
+            companies.add(new Company(df.getBusinessName(), new Address(df.getCity(), df.getAddress())));
+        }
     }
 
-需要一个xml来配置导出的属性和属性描述作为表头
+    @Test
+    public void export() throws FileNotFoundException {
 
-    <?xml version="1.0" encoding="UTF-8"?>
-    <ExportModel class="entity.Student">
-        <Field name="studentId" description="id"></Field>
-        <Field name="name" description="name"></Field>
-        <Field name="sex" description="sex"></Field>
-        <Field name="inTime" description="admission"></Field>
-        <Field name="score" description="score"></Field>
-        <Field name="gradeAndClazz" description="class info">
-            <Field name="grade" description="grade"></Field>
-            <Field name="clazz" description="class"></Field>
-        </Field>
-    </ExportModel>
+        //where to export
+        String rootPath = this.getClass().getClassLoader().getResource("").getPath();
+        FileOutputStream os = new FileOutputStream(rootPath + "/company.xlsx");
 
-用代码导出学生信息
+        //read config from company.xml
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream("company.xml");
+        ConfigReader configReader = Octopus.getXMLConfigReader(is);
 
-    //prepare workbook and stuednts objects
-    Workbook workbook = new XSSFWorkbook();
-    String rootPath = this.getClass().getClassLoader().getResource("").getPath();
-    FileOutputStream os = new FileOutputStream(rootPath+"/export.xlsx");
-    GradeAndClazz gradeAndClazz = new GradeAndClazz("2014","R6");
-    Student student1 = new Student("201223","John","M", LocalDate.now(),98.00,gradeAndClazz);
-    Student student2 = new Student("204354","Tony","M", LocalDate.now(),87.00,gradeAndClazz);
-    Student student3 = new Student("202432","Joyce","F", LocalDate.now(),90.00,gradeAndClazz);
+        try {
+            Octopus.writeOneSheet(os, configReader, "company", companies);
+        } catch (IOException e) {
+            System.out.println("export failed");
+        }
+    }
 
-    //write excel with OneSheetExcelWriter
-    ExcelWriter<Student> studentExcelWriter = new OneSheetExcelWriter<>(getClass().getClassLoader().getResourceAsStream("studentExport.xml"));
+}
+```
 
-    studentExcelWriter.write(workbook,Arrays.asList(student1,student2,student3));
-    workbook.write(os);
+最后是导出的Excel文件
 
-导出结果
+![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/auto_drawing_header.png)
 
-                                              |    class info      |
-    id        name    M     admission   score |---------|----------|
-                                              |  grade  |   class  |
-    ---------------------------------------------------------------|
-    201223    John    M     2017-07-06  98.0  |  2014   |   R6     |
-    204354    Tony    M     2017-07-06  87.0  |  2014   |   R6     |
-    202432    Joyce   F     2017-07-06  90.0  |  2014   |   R6     |
+Octopus可以处理更复杂的数据，你可以在`cn.chenhuanming.octopus.example.ApplicantExample`查看这个更复杂的例子
 
-可以看到，对于gradeAndClazz属性，会用一个合并单元格来表示.admission因为被`@JsonFormat`标记，因此会格式化输出日期。事实上`Octopus`会调用`jackson`来格式化json后再写入excel.
+![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/applicant_example.png)
 
-***详细例子在 `src/test/cn/chenhuanming/octopus/core/OneSheetExcelWriterTest`***
+### 转换数据
+有时你想转换导出的数据。例如，在上一个例子中，我们不想导出整个`Address`对象，把它当做一个字符串导出
+
+我们所需要做的只是实现一个`Formatter`
+
+```java
+public class AddressFormatter implements Formatter<Address> {
+    @Override
+    public String format(Address address) {
+        return address.getCity() + "," + address.getDetail();
+    }
+
+    @Override
+    public Address parse(String str) {
+        String[] split = str.split(",");
+        if (split.length != 2) {
+            return null;
+        }
+        return new Address(split[0], split[1]);
+    }
+}
+```
+
+`parse`方法用于导入Excel时，只要关注`format`方法。这里接受一个Address对象，返回一个字符串。
+
+最后，配置`AddressFormatter`到XML文件
+
+ ```xml
+<Field name="name"
+           description="Name"
+           color="#ff0000"/>
+
+<Field name="address"
+       description="Address"
+       formatter="cn.chenhuanming.octopus.formatter.AddressFormatter"/>
+```
+
+最后导出的结果
+
+![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/convering_data.png)
+
+
+## 导入Excel
+我们直接拿上一个例子的导出结果来演示导入，共用同一个`ConfigReader`，直接编写导入的代码
+
+```java
+//First get the excel file
+FileInputStream fis = new FileInputStream(rootPath + "/company2.xlsx");
+
+try {
+    SheetReader<Company> importData = Octopus.readFirstSheet(fis, configReader, new DefaultCellPosition(1, 0));
+
+    
+    for (Company company : importData) {
+        System.out.println(company);
+    }
+} catch (Exception e) {
+    System.out.println("import failed");
+}
+```
+
+在控制台可以看到打印导入结果，可以看到，之前的`AddressFormatter`也完成了数据的转换工作
+
+```
+Company(name=Graham Motor Services, address=Address(city=Monroe, detail=666 Bonnair Ave))
+Company(name=Social Circle Engineering, address=Address(city=Fort Gaines, detail=956 Third Ridge))
+Company(name=Enigma Cafe, address=Address(city=Mcdonough, detail=1278 Midway Trail))
+Company(name=Hapeville Studios, address=Address(city=Riceboro, detail=823 Tuscarawas Blvd))
+Company(name=Thalman Gymnasium, address=Address(city=Ebenezer, detail=1225 Blackwood Avenue))
+Company(name=Sparks Pro Services, address=Address(city=Darien, detail=1362 Woodlawn Lane))
+Company(name=Toccoa Development, address=Address(city=Ridgeville, detail=1790 Lawn Ave))
+```
+
+### 导入校验数据
+有时候我们对导入的数据有一定的要求，Octopus提供简单的数据校验配置
+
+首先给我们的`Company`增加一个`status`属性，只能是 *good*,*bad*和*closed* 三个值其中一个，同时`name`不可以为空，看一下XML配置文件
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/Octopus/master/octopus.xsd"
+      class="cn.chenhuanming.octopus.entity.Company">
+
+
+    <Field name="name"
+           description="Name"
+           color="#ff0000"
+           is-blankable="false"/>
+
+    <Field name="address"
+           description="Address"
+           formatter="cn.chenhuanming.octopus.formatter.AddressFormatter"
+    />
+
+    <Field name="status"
+           description="Status"
+           options="good|bad|closed"/>
+    <!--| split options -->
+    
+</Root>
+```
+
+这是我们要导入的Excel，可以看到里面有非法数据
+
+![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/wrong_data.png)
+
+看一下怎么编写Java代码
+
+```java
+@Test
+public void importCheckedData() throws IOException, InvalidFormatException {
+    InputStream is = this.getClass().getClassLoader().getResourceAsStream("wrongCompany.xlsx");
+
+    ConfigReader configReader = new XmlConfigReader(this.getClass().getClassLoader().getResourceAsStream("company3.xml"));
+
+    final SheetReader<CheckedData<Company>> sheetReader = Octopus.readFirstSheetWithValidation(is,configReader,new DefaultCellPosition(1,0));
+
+    for (CheckedData<Company> checkedData : sheetReader) {
+        System.out.println(checkedData);
+    }
+}
+```
+
+这里我们调用`Octopus.readFirstSheetWithValidation`，获取带校验结果的`SheetReader`，看一下导入的结果
+
+```
+CheckedData(data=Company(name=Graham Motor Services, address=Address(city=Monroe, detail=666 Bonnair Ave), status=null), exceptions=[cn.chenhuanming.octopus.exception.NotAllowValueException])
+CheckedData(data=Company(name=Social Circle Engineering, address=Address(city=Fort Gaines, detail=956 Third Ridge), status=null), exceptions=[cn.chenhuanming.octopus.exception.NotAllowValueException])
+CheckedData(data=Company(name=null, address=Address(city=Mcdonough, detail=1278 Midway Trail), status=null), exceptions=[cn.chenhuanming.octopus.exception.CanNotBeBlankException, cn.chenhuanming.octopus.exception.CanNotBeBlankException])
+```
+
+可以看到每一个`CheckData`有一个`data`属性和一个`exceptions`列表。
+这个异常列表存放着导入时每一个单元格可能出现的校验错误，异常类型都是`ParseException`
+
+除了`is-blankable`和`options`，还可以通过`regex`配置正则表达式检查。当校验错误时，会抛出对应的`ParseException`子类
+
+* `is-blankable`：抛出 `CanNotBeBlankException`
+* `options`：抛出 `NotAllowValueException`
+* `regex`：抛出 `PatternNotMatchException`
+
+你通过这些异常来进行跟进一步的处理。如果上面三种校验方式不能满足需求，在`Formatter`的`parse`抛出自定义的`ParseException`。Octopus会捕获它们放到`exceptions`列表中，并自动把单元格位置和你的配置内容塞到`ParseException`中
+
+***以上代码都可以在测试路径`cn.chenhuanming.octopus.example`找到，通过这些例子可以感受下Octopus的魅力***
+
+## Q&A
+
+### 没有Java注解配置？
+目前只提供XML配置，因为XML和类文件解耦，有时候你无法修改类代码时，尤其是导出场景，XML会是更好的选择。如果你是"anti-xml"，可以实现注解版`ConfigReader`，把注解配置转换成`Field`，这应该不会很难。
+
+### 需要操作Apache POI？
+`Octopus`类可以提供一行代码式的API，让你不用碰Apache POI的API。但是如果你确实需要用到Apache POI，可以先看一下Octopus核心类`SheetWriter`和`SheetReader`代码。
+
+### 有建议或者想法？
+email我**chenhuanming.cn@gmail.com**
+

@@ -1,130 +1,121 @@
 package cn.chenhuanming.octopus.core;
 
-import cn.chenhuanming.octopus.model.ExportField;
-import cn.chenhuanming.octopus.model.ExportModel;
-import cn.chenhuanming.octopus.util.CellUtil;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
+
+import cn.chenhuanming.octopus.model.*;
+import cn.chenhuanming.octopus.model.formatter.Formatter;
+import cn.chenhuanming.octopus.util.CellUtils;
+import cn.chenhuanming.octopus.util.ReflectionUtils;
+import cn.chenhuanming.octopus.util.StringUtils;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.CellRangeAddress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
-
-import static cn.chenhuanming.octopus.util.CellUtil.createCells;
+import java.util.Date;
 
 /**
- * All inherited class must call prepare() method in its constructor.
  * Created by chenhuanming on 2017-07-01.
+ *
  * @author chenhuanming
  */
 public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
-    protected int startRow;
-    protected int startCol;
-    protected ObjectMapper objectMapper;
-    protected ExportModel exportModel;
-    protected ExportModelGenerator exportModelGenerator;
+    protected ConfigReader configReader;
+    protected HeaderWriter headerWriter;
+    protected CellPosition startPoint;
 
-    public AbstractSheetWriter() {
-        startRow = 0;
-        startCol = 0;
+    public AbstractSheetWriter(ConfigReader configReader, HeaderWriter headerWriter, CellPosition startPoint) {
+        this.configReader = configReader;
+        this.headerWriter = headerWriter;
+        this.startPoint = startPoint;
     }
 
-    public AbstractSheetWriter(int startRow, int startCol) {
-        if (startRow < 0 || startCol < 0)
-            throw new IllegalArgumentException("startRow and startCol can not be less than 0");
-        this.startRow = startRow;
-        this.startCol = startCol;
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSheetWriter.class);
 
     @Override
-    public void write(Sheet sheet, CellStyle headStyle, CellStyle contentStyle, Collection<T> collection) {
-        if (collection==null)
-            throw new IllegalArgumentException("collection can not be null!");
-        if(exportModel==null)
-            throw new IllegalArgumentException("sheetWriter is not prepared and exportModel is null!");
-        if(objectMapper==null)
-            throw new IllegalArgumentException("objectMapper can not be null!");
-        setHead(sheet, headStyle);
-        setContent(sheet,contentStyle,collection);
-    }
-
-    private void setHead(Sheet sheet, CellStyle headStyle) {
-        createCells(startRow,startRow+exportModel.getHeight(),startCol,startCol+exportModel.getWidth(),sheet,headStyle);
-        int colIndex = startCol;
-        for (int i = 0; i < exportModel.getFields().size(); i++) {
-            ExportField field = exportModel.getFields().get(i);
-            setHeadField(startRow, colIndex, sheet, field);
-            colIndex += field.getWidth();
+    public CellPosition write(Sheet sheet, Collection<T> data) {
+        if (!canWrite(sheet, data)) {
+            return CellUtils.POSITION_ZERO_ZERO;
         }
-    }
 
-    private void setHeadField(int rowIndex, int colIndex, Sheet sheet, ExportField field) {
-        if (field.getHeight() != 1 || field.getWidth() != 1) {
-            int mergeHeight = field.getHeight();
-            if(!field.getFields().isEmpty()){
-                mergeHeight = field.getHeight() - field.getFields().get(0).getHeight();
+        Config config = configReader.getConfig();
+
+        Class dataType = data.iterator().next().getClass();
+        if (config.getClassType() != dataType) {
+            throw new IllegalArgumentException("class of config is " + config.getClassType().getName() + " but type of data is " + dataType.getName());
+        }
+
+        CellPosition end = headerWriter.drawHeader(sheet, startPoint, config.getFields());
+
+        int row = end.getRow() + 1;
+        int col = getStartColnum();
+
+        for (T t : data) {
+            for (Field field : config.getFields()) {
+                col = draw(sheet, row, col, field, t);
             }
-            sheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex + mergeHeight - 1, colIndex, colIndex + field.getWidth() - 1));
-            for (int i = 0; i < field.getFields().size(); i++) {
-                ExportField f = field.getFields().get(i);
-                setHeadField(rowIndex + mergeHeight, i==0?colIndex:colIndex + field.getFields().get(i-1).getWidth(), sheet, f);
-            }
+            col = getStartColnum();
+            row++;
         }
-        Row head = sheet.getRow(rowIndex);
-        Cell cell = head.getCell(colIndex);
-        cell.setCellValue(field.getDescription());
+        return new DefaultCellPosition(row, end.getCol());
+    }
+
+    protected int getStartColnum() {
+        return 0;
+    }
+
+    private int draw(Sheet sheet, final int row, final int col, Field field, Object o) {
+        if (field.isLeaf()) {
+            return drawColumn(sheet, row, col, field, o);
+        }
+
+        Object p = null;
+        if (o != null) {
+            p = ReflectionUtils.invokeReadMethod(field.getPicker(), o);
+        }
+        int c = col;
+        for (Field child : field.getChildren()) {
+            c = draw(sheet, row, c, child, p);
+        }
+        return c;
+    }
+
+    protected int drawColumn(Sheet sheet, final int row, final int col, Field field, Object o) {
+        if (o == null) {
+            return col + 1;
+        }
+        String value;
+
+        if (field.getFormatter() != null) {
+            value = field.getFormatter().format(ReflectionUtils.invokeReadMethod(field.getPicker(), o));
+            CellUtils.setCellValue(sheet, row, col, value, field.getCellStyle(sheet.getWorkbook()));
+            return col + 1;
+        }
+
+        Formatter formatter = configReader.getConfig().getFormatterContainer().get(field.getPicker().getReturnType());
+
+        if (field.getPicker().getReturnType() == String.class || formatter == null) {
+            value = ReflectionUtils.invokeReadMethod(field.getPicker(), o, field.getDefaultValue());
+            CellUtils.setCellValue(sheet, row, col, value, field.getCellStyle(sheet.getWorkbook()));
+            return col + 1;
+        }
+        if (field.getPicker().getReturnType() == Date.class && field.getDateFormat() != null) {
+            value = field.getDateFormat().format((Date) ReflectionUtils.invokeReadMethod(field.getPicker(), o));
+        } else {
+            value = formatter.format(ReflectionUtils.invokeReadMethod(field.getPicker(), o));
+        }
+
+        if (StringUtils.isEmpty(value)) {
+            value = field.getDefaultValue();
+        }
+        CellUtils.setCellValue(sheet, row, col, value, field.getCellStyle(sheet.getWorkbook()));
+        return col + 1;
 
     }
 
-    private void setContent(Sheet sheet, CellStyle contentStyle, Collection<?> collection) {
-        JsonNode root;
-        CellUtil.createCells(startRow+exportModel.getHeight(),startRow+exportModel.getHeight()+collection.size(),startCol,startCol+exportModel.getWidth(),sheet,contentStyle);
-
-        try {
-            String string = objectMapper.writeValueAsString(collection);
-            root = objectMapper.readTree(string);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new IllegalArgumentException(e);
+    protected boolean canWrite(Sheet sheet, Collection<T> collection) {
+        if (collection != null && collection.size() > 0) {
+            return true;
         }
-        int rowIndex = startRow + exportModel.getHeight();
-        for (JsonNode node : root) {
-            Row row = sheet.getRow(rowIndex++);
-            int colIndex = startCol;
-            for (int i = 0; i < exportModel.getFields().size(); i++) {
-                ExportField field = exportModel.getFields().get(i);
-                colIndex = i==0?colIndex:colIndex + exportModel.getFields().get(i-1).getWidth();
-                setContentField(row,node.get(field.getName()),contentStyle,field,colIndex);
-            }
-        }
+        return false;
     }
-
-    private void setContentField(Row row, JsonNode node, CellStyle contentStyle, ExportField field, int col){
-        if(field.getFields().isEmpty()){
-            Cell cell = row.getCell(col);
-            cell.setCellValue(node.asText());
-        }else {
-            for (int i = 0; i < field.getFields().size(); i++) {
-                ExportField f = field.getFields().get(i);
-                setContentField(row,node.get(f.getName()),contentStyle,f,col+i);
-            }
-        }
-    }
-
-    protected void prepare(){
-        exportModelGenerator = exportModelGenerator();
-        if (exportModelGenerator == null)
-            throw new IllegalArgumentException("exportModelGenerator is not initialized");
-        this.exportModel = exportModelGenerator.generate();
-        this.objectMapper = ObjectMapper();
-        if (objectMapper == null)
-            throw new IllegalArgumentException("objectMapper is not initialized");
-    }
-
-    protected abstract ObjectMapper ObjectMapper();
-
-    protected abstract ExportModelGenerator exportModelGenerator();
 }

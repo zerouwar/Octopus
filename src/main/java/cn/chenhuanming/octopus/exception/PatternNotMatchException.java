@@ -1,19 +1,18 @@
 package cn.chenhuanming.octopus.exception;
 
-import cn.chenhuanming.octopus.model.ImportModelProperty;
 import lombok.Getter;
-import org.apache.poi.ss.usermodel.Cell;
+
+import java.util.regex.Pattern;
 
 /**
- * pattern不匹配
  * @author chenhuanming
+ * Created at 2019-01-09
  */
-@Getter
-public class PatternNotMatchException extends ExcelImportException {
-    private String pattern;
+public class PatternNotMatchException extends ParseException {
+    @Getter
+    private final Pattern pattern;
 
-    public PatternNotMatchException(ImportModelProperty handle, Cell cell) {
-        super(cn.chenhuanming.octopus.util.CellUtil.getStringValue(cell)+" and " +handle.getPattern().get().pattern()+" don't match!", handle,cell);
-        this.pattern = handle.getPattern().get().pattern();
+    public PatternNotMatchException(Pattern pattern) {
+        this.pattern = pattern;
     }
 }
