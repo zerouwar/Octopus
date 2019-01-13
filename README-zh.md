@@ -59,7 +59,7 @@ public class Address {
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/Octopus/master/octopus.xsd"
+      xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/my-maven-repo/master/cn/chenhuanming/octopus/1.0.0/octopus.xsd"
       class="cn.chenhuanming.octopus.entity.Address">
 
     <Field name="city" description="City"/>
@@ -144,7 +144,7 @@ public class Company {
 
 ```xml
 <Root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/Octopus/master/octopus.xsd"
+      xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/my-maven-repo/master/cn/chenhuanming/octopus/1.0.0/octopus.xsd"
       class="cn.chenhuanming.octopus.entity.Address">
 
 
@@ -290,7 +290,7 @@ Company(name=Toccoa Development, address=Address(city=Ridgeville, detail=1790 La
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/Octopus/master/octopus.xsd"
+      xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/my-maven-repo/master/cn/chenhuanming/octopus/1.0.0/octopus.xsd"
       class="cn.chenhuanming.octopus.entity.Company">
 
 
