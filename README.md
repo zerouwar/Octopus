@@ -7,12 +7,12 @@
 	    - [Simplest Example](##simplest-example)
 	    - [Auto Drawing Header](##auto-drawing-header)
 	    - [Converting Data](##converting-data)
-	- [Importing Excel](#importing-excel)
-	    - [Data Validation](##data-validation)
+	- [Import Excel](#import-excel)
+	    - [Data Validation](#data-validation)
     - [Q&A](##Q&A)
-        - [No Java Annotation Config?](##no-java-annotation-config?)
-        - [Need Apache POI?](##need-apache-pOI?)
-        - [Have Advice or idea?](##have-advice-or-idea?)
+        - [No Java Annotation Config?](##no-java-annotation-config)
+        - [Need Apache POI?](##need-apache-pOI)
+        - [Have Advice or idea?](##have-advice-or-idea)
 <!-- /TOC -->
 
 [跳去中文版](https://github.com/zerouwar/Octopus/blob/master/README-zh.md)
@@ -260,7 +260,7 @@ Exporting excel will be like this
 
 ![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/convering_data.png)
 
-## Importing Excel
+## Import Excel
 We directly reuse previous example to see how to import a excel.Reuse `ConfigReader` object,just change Java code
 
 ```java
