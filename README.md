@@ -2,8 +2,8 @@
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Octopus](#octopus)
-    - [Import from Maven](##Import-from-Maven)
-	- [Export Excel](##Export Excel)
+    - [Import from Maven](##Import-from-maven)
+	- [Export Excel](##export-excel)
 	    - [Simplest Example](###Simplest-Example)
 	    - [Auto Drawing Header](###Auto-Drawing-Header)
 	    - [Converting Data](###Converting-Data)
