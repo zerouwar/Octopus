@@ -37,7 +37,7 @@ public class CheckedSheetReaderTest {
 
     @Test
     public void wrong() throws IOException, InvalidFormatException {
-        InputStream is = this.getClass().getClassLoader().getResourceAsStream("wrong.xlsx");
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream("export.xlsx");
         Workbook workbook = WorkbookFactory.create(is);
         Sheet sheet = workbook.getSheetAt(0);
 
