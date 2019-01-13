@@ -19,6 +19,9 @@
  `Octopus` 是一个简单的java excel导入导出工具。目的是不用接触Apache POI的API就可以完成简单的Excel导出导入。
  同时，可以自定义表格样式，导入检验数据和转换数据
 
+## 更新
+0.0.2在分支`dev-refactor`开发中，更多查看[Wiki](https://github.com/zerouwar/Octopus/wiki/0.0.2-Feature)
+
 ## 从Maven导入
 
 增加仓库

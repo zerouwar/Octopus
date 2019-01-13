@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="Root">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element ref="Header" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element ref="Field" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:choice>
+                <xs:element ref="Formatters" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute name="class" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Header">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element ref="Header" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element ref="Field" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attributeGroup ref="headerAttributes"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Field">
+        <xs:complexType>
+            <xs:attributeGroup ref="headerAttributes"/>
+            <xs:attributeGroup ref="fieldAttributes"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Formatters">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Formatter"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Formatter">
+        <xs:complexType>
+            <xs:attribute name="target" type="xs:string" use="required"/>
+            <xs:attribute name="class" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:attributeGroup name="fieldAttributes">
+        <xs:attribute name="font-size" type="xs:positiveInteger" default="14"/>
+        <xs:attribute name="foreground-color" type="color"/>
+        <xs:attribute name="color" type="color"/>
+        <xs:attribute name="is-bold" type="xs:boolean" default="false"/>
+        <xs:attribute name="border" type="border" default="0,0,0,0"/>
+        <xs:attribute name="border-color" type="borderColor"/>
+        <xs:attribute name="is-blankable" type="xs:boolean" default="true"/>
+        <xs:attribute name="regex" type="xs:string"/>
+        <xs:attribute name="options" type="options"/>
+
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="headerAttributes">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string" use="required"/>
+        <xs:attribute name="header-font-size " type="xs:positiveInteger" default="15"/>
+        <xs:attribute name="header-foreground-color" type="color"/>
+        <xs:attribute name="header-color" type="color"/>
+        <xs:attribute name="is-header-bold" type="xs:boolean"/>
+        <xs:attribute name="header-border" type="border"/>
+        <xs:attribute name="header-border-color" type="borderColor"/>
+
+        <xs:attribute name="date-format" type="xs:string"/>
+        <xs:attribute name="formatter" type="xs:string"/>
+    </xs:attributeGroup>
+
+    <!--define type-->
+    <xs:simpleType name="color">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="#[0-9a-f]{6}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="borderColor">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="#[0-9a-f]{6},#[0-9a-f]{6},#[0-9a-f]{6},#[0-9a-f]{6}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="border">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[0-1]?[0-9],[0-1]?[0-9],[0-1]?[0-9],[0-1]?[0-9]"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="options">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="(\|?[^|]+){2,}"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
