@@ -2,25 +2,22 @@
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Octopus](#octopus)
-    - [从Maven导入](##从Maven导入)
-	- [导出Excel](##导出Excel)
-	    - [从最简单的例子开始](###从最简单的例子开始)
-	    - [自动绘制表头](###自动绘制表头)
-	    - [转换数据](###转换数据)
-	- [导入Excel](##导入Excel)
-	    - [导入校验数据](###导入校验数据)
-    - [Q&A](##Q&A)
-        - [没有Java注解配置？](###没有Java注解配置？)
-        - [需要操作Apache POI？](###需要操作Apache-POI？)
-        - [有建议或者想法？](###有建议或者想法？)
+    - [从Maven导入](#从maven导入)
+	- [导出Excel](#导出excel)
+	    - [从最简单的例子开始](#从最简单的例子开始)
+	    - [自动绘制表头](#自动绘制表头)
+	    - [转换数据](#转换数据)
+	- [导入Excel](#导入excel)
+	    - [导入校验数据](#导入校验数据)
+    - [Q&A](#qa)
+        - [没有Java注解配置？](#没有java注解配置)
+        - [需要操作Apache POI？](#需要操作apache-poi)
+        - [有建议或者想法？](#有建议或者想法)
 <!-- /TOC -->
 
 # Octopus
  `Octopus` 是一个简单的java excel导入导出工具。目的是不用接触Apache POI的API就可以完成简单的Excel导出导入。
  同时，可以自定义表格样式，导入检验数据和转换数据
-
-## 更新
-0.0.2在分支`dev-refactor`开发中，更多查看[Wiki](https://github.com/zerouwar/Octopus/wiki/0.0.2-Feature)
 
 ## 从Maven导入
 
