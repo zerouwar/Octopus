@@ -23,6 +23,9 @@
  At the meantime,you can customize cell style,validate importing data according some rule
  and convert data you want
 
+**Talk less,directly see a picutre**
+![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/applicant_example.png)
+
 ## Import from Maven
 
 Add repository
