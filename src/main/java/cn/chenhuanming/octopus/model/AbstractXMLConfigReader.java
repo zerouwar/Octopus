@@ -26,6 +26,8 @@ public abstract class AbstractXMLConfigReader extends CachedConfigReader {
 
     protected final ByteArrayInputStream is;
 
+    protected static final String SPLITTER = "\\|";
+
     public AbstractXMLConfigReader(InputStream is) {
         try {
             this.is = new ByteArrayInputStream(IOUtils.toByteArray(is));

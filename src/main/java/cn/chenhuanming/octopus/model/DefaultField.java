@@ -35,7 +35,7 @@ public class DefaultField extends FieldStyle implements Field {
     public DefaultField() {
         description = "";
         defaultValue = null;
-
+        blankable = true;
         children = new ArrayList<>();
     }
 
