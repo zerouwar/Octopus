@@ -15,7 +15,7 @@ import java.util.List;
  * Created at 2019-01-09
  */
 public class AbstractWriterTest {
-    List<Applicants> applicantsList;
+    protected List<Applicants> applicantsList;
 
     @Before
     public void before() {

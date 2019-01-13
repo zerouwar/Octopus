@@ -1,6 +1,7 @@
 package cn.chenhuanming.octopus.formatter;
 
 import cn.chenhuanming.octopus.entity.Address;
+import cn.chenhuanming.octopus.exception.ParseException;
 import cn.chenhuanming.octopus.model.formatter.Formatter;
 
 /**
@@ -14,7 +15,7 @@ public class AddressFormatter implements Formatter<Address> {
     }
 
     @Override
-    public Address parse(String str) {
+    public Address parse(String str) throws ParseException {
         String[] split = str.split(",");
         if (split.length != 2) {
             return null;

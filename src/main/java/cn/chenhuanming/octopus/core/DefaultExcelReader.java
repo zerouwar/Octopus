@@ -11,7 +11,7 @@ import org.apache.poi.ss.usermodel.Workbook;
  * Created at 2019-01-09
  */
 public class DefaultExcelReader<T> implements ExcelReader<T> {
-    private Workbook workbook;
+    protected Workbook workbook;
 
     public DefaultExcelReader(Workbook workbook) {
         if (workbook == null) {

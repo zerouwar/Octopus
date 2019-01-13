@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Root
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/Octopus/master/octopus.xsd"
-        class="cn.chenhuanming.octopus.entity.Applicants">
+<Root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/Octopus/master/octopus.xsd"
+      class="cn.chenhuanming.octopus.entity.Applicants">
 
-    <Header name="id" description="ID">
-        <Field name="id"
-               description="Value"
-               color="#74f441"/>
-    </Header>
+    <Field name="id"
+           description="Value"
+           color="#74f441"/>
 
     <Field name="name"
            description="Name"
@@ -28,8 +25,7 @@
         <Field name="rank"
                description="Rank"
                color="#f44271"
-               foreground-color="#eaeae5"
-               formatter="cn.chenhuanming.octopus.formatter.AddressFormatter"/>
+               foreground-color="#eaeae5"/>
     </Header>
 
     <Field name="entryDate"

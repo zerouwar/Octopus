@@ -55,6 +55,9 @@ public class CellUtils {
     public static String getCellValue(Sheet sheet, int row, int col, String defaultValue) {
         Cell cell = sheet.getRow(row).getCell(col);
 
+        if (cell == null) {
+            return defaultValue;
+        }
         switch (cell.getCellTypeEnum()) {
             case STRING:
                 return cell.getStringCellValue();
