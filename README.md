@@ -9,9 +9,9 @@
 	    - [Converting Data](#converting-data)
 	- [Import Excel](#import-excel)
 	    - [Data Validation](#data-validation)
-    - [Q&A](#Q&A)
+    - [Q&A](#qa)
         - [No Java Annotation Config?](#no-java-annotation-config)
-        - [Need Apache POI?](#need-apache-pOI)
+        - [Need Apache POI?](#need-apache-poi)
         - [Have Advice or idea?](#have-advice-or-idea)
 <!-- /TOC -->
 
@@ -362,7 +362,7 @@ Besides `is-blankable` and `options`,you can apply regular expression validation
 You can handle more with these exceptions.If it can not be satisfied with you,you can throws `ParseException` in `paese` method of `Formatters`.
 Octopus will catch them,put into `exceptions` and fill with position of cell and config info at the same time.
 
-***All example could be founud at `cn.chenhuanming.octopus.example`，you can run and check these examples *** 
+***All example could be founud at `cn.chenhuanming.octopus.example`，you can run and check these examples*** 
 
 ## Q&A
 
