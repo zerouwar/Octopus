@@ -1,8 +1,8 @@
-package cn.chenhuanming.octopus.core;
+package cn.chenhuanming.octopus.reader;
 
+import cn.chenhuanming.octopus.config.ConfigReader;
 import cn.chenhuanming.octopus.model.CellPosition;
 import cn.chenhuanming.octopus.model.CheckedData;
-import cn.chenhuanming.octopus.model.ConfigReader;
 import org.apache.poi.ss.usermodel.Workbook;
 
 /**

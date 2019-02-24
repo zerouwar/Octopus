@@ -1,7 +1,7 @@
-package cn.chenhuanming.octopus.core;
+package cn.chenhuanming.octopus.writer;
 
+import cn.chenhuanming.octopus.config.ConfigReader;
 import cn.chenhuanming.octopus.model.CellPosition;
-import cn.chenhuanming.octopus.model.ConfigReader;
 import cn.chenhuanming.octopus.util.CellUtils;
 import org.apache.poi.ss.usermodel.Sheet;
 
@@ -29,7 +29,7 @@ public class DefaultSheetWriter<T> extends AbstractSheetWriter<T> {
     }
 
     private void adjustColumnWidth(Sheet sheet, CellPosition end) {
-        for (int col = getStartColnum(); col <= end.getCol(); col++) {
+        for (int col = getStartColumn(); col <= end.getCol(); col++) {
             sheet.autoSizeColumn(col, true);
         }
     }

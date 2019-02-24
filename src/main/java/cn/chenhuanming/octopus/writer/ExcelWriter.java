@@ -1,4 +1,4 @@
-package cn.chenhuanming.octopus.core;
+package cn.chenhuanming.octopus.writer;
 
 import java.io.IOException;
 import java.util.Collection;

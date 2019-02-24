@@ -1,4 +1,4 @@
-package cn.chenhuanming.octopus.model;
+package cn.chenhuanming.octopus.config;
 
 import cn.chenhuanming.octopus.model.formatter.DateFormatter;
 import cn.chenhuanming.octopus.model.formatter.DefaultFormatterContainer;
@@ -42,7 +42,7 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
             validateXML(new StreamSource(is));
             document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
         } catch (Exception e) {
-            throw new IllegalArgumentException(e);
+            throw new IllegalArgumentException("xml file is not valid", e);
         }
 
         Element root = document.getDocumentElement();

@@ -1,4 +1,4 @@
-package cn.chenhuanming.octopus.core;
+package cn.chenhuanming.octopus.reader;
 
 /**
  * Created by Administrator on 2017-06-10.

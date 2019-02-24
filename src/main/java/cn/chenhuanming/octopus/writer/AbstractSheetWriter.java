@@ -1,7 +1,12 @@
-package cn.chenhuanming.octopus.core;
+package cn.chenhuanming.octopus.writer;
 
 
-import cn.chenhuanming.octopus.model.*;
+import cn.chenhuanming.octopus.config.Config;
+import cn.chenhuanming.octopus.config.ConfigReader;
+import cn.chenhuanming.octopus.config.Field;
+import cn.chenhuanming.octopus.model.CellPosition;
+import cn.chenhuanming.octopus.model.DefaultCellPosition;
+import cn.chenhuanming.octopus.model.WorkbookContext;
 import cn.chenhuanming.octopus.model.formatter.Formatter;
 import cn.chenhuanming.octopus.util.CellUtils;
 import cn.chenhuanming.octopus.util.ReflectionUtils;
@@ -47,25 +52,26 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
         CellPosition end = headerWriter.drawHeader(sheet, startPoint, config.getFields());
 
         int row = end.getRow() + 1;
-        int col = getStartColnum();
+        int col = getStartColumn();
+        WorkbookContext bookResource = new WorkbookContext(sheet.getWorkbook());
 
         for (T t : data) {
             for (Field field : config.getFields()) {
-                col = draw(sheet, row, col, field, t);
+                col = draw(sheet, row, col, field, t, bookResource);
             }
-            col = getStartColnum();
+            col = getStartColumn();
             row++;
         }
         return new DefaultCellPosition(row, end.getCol());
     }
 
-    protected int getStartColnum() {
+    protected int getStartColumn() {
         return 0;
     }
 
-    private int draw(Sheet sheet, final int row, final int col, Field field, Object o) {
+    private int draw(Sheet sheet, final int row, final int col, Field field, Object o, WorkbookContext bookResource) {
         if (field.isLeaf()) {
-            return drawColumn(sheet, row, col, field, o);
+            return drawColumn(sheet, row, col, field, o, bookResource);
         }
 
         Object p = null;
@@ -74,12 +80,12 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
         }
         int c = col;
         for (Field child : field.getChildren()) {
-            c = draw(sheet, row, c, child, p);
+            c = draw(sheet, row, c, child, p, bookResource);
         }
         return c;
     }
 
-    protected int drawColumn(Sheet sheet, final int row, final int col, Field field, Object o) {
+    protected int drawColumn(Sheet sheet, final int row, final int col, Field field, Object o, WorkbookContext bookResource) {
         if (o == null) {
             return col + 1;
         }
@@ -87,7 +93,7 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
 
         if (field.getFormatter() != null) {
             value = field.getFormatter().format(ReflectionUtils.invokeReadMethod(field.getPicker(), o));
-            CellUtils.setCellValue(sheet, row, col, value, field.getCellStyle(sheet.getWorkbook()));
+            CellUtils.setCellValue(sheet, row, col, value, bookResource.getCellStyle(field));
             return col + 1;
         }
 
@@ -95,7 +101,7 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
 
         if (field.getPicker().getReturnType() == String.class || formatter == null) {
             value = ReflectionUtils.invokeReadMethod(field.getPicker(), o, field.getDefaultValue());
-            CellUtils.setCellValue(sheet, row, col, value, field.getCellStyle(sheet.getWorkbook()));
+            CellUtils.setCellValue(sheet, row, col, value, bookResource.getCellStyle(field));
             return col + 1;
         }
         if (field.getPicker().getReturnType() == Date.class && field.getDateFormat() != null) {
@@ -107,7 +113,7 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
         if (StringUtils.isEmpty(value)) {
             value = field.getDefaultValue();
         }
-        CellUtils.setCellValue(sheet, row, col, value, field.getCellStyle(sheet.getWorkbook()));
+        CellUtils.setCellValue(sheet, row, col, value, bookResource.getCellStyle(field));
         return col + 1;
 
     }

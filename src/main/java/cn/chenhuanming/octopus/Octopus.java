@@ -1,15 +1,23 @@
-package cn.chenhuanming.octopus.core;
+package cn.chenhuanming.octopus;
 
+import cn.chenhuanming.octopus.config.ConfigReader;
+import cn.chenhuanming.octopus.config.XmlConfigReader;
 import cn.chenhuanming.octopus.exception.SheetNotFoundException;
 import cn.chenhuanming.octopus.model.CellPosition;
 import cn.chenhuanming.octopus.model.CheckedData;
-import cn.chenhuanming.octopus.model.ConfigReader;
-import cn.chenhuanming.octopus.model.XmlConfigReader;
+import cn.chenhuanming.octopus.reader.CheckedExcelReader;
+import cn.chenhuanming.octopus.reader.DefaultExcelReader;
+import cn.chenhuanming.octopus.reader.ExcelReader;
+import cn.chenhuanming.octopus.reader.SheetReader;
+import cn.chenhuanming.octopus.writer.DefaultExcelWriter;
+import cn.chenhuanming.octopus.writer.DefaultSheetWriter;
+import cn.chenhuanming.octopus.writer.ExcelWriter;
+import cn.chenhuanming.octopus.writer.SheetWriter;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +55,7 @@ public final class Octopus {
      * @throws IOException when writing excel file failed
      */
     public static <T> void writeOneSheet(OutputStream os, ConfigReader configReader, String sheetName, Collection<T> data) throws IOException {
-        ExcelWriter writer = new DefaultExcelWriter(new XSSFWorkbook(), os);
+        ExcelWriter writer = new DefaultExcelWriter(new SXSSFWorkbook(), os);
         writer.write(sheetName, new DefaultSheetWriter<T>(configReader), data);
         writer.close();
     }

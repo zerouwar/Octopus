@@ -1,5 +1,7 @@
 package cn.chenhuanming.octopus.model;
 
+import cn.chenhuanming.octopus.config.DefaultField;
+import cn.chenhuanming.octopus.config.SupportHeader;
 import org.junit.Test;
 
 /**

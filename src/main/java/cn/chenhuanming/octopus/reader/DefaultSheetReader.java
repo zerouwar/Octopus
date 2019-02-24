@@ -1,10 +1,10 @@
-package cn.chenhuanming.octopus.core;
+package cn.chenhuanming.octopus.reader;
 
 
+import cn.chenhuanming.octopus.config.ConfigReader;
+import cn.chenhuanming.octopus.config.Field;
 import cn.chenhuanming.octopus.exception.ParseException;
 import cn.chenhuanming.octopus.model.CellPosition;
-import cn.chenhuanming.octopus.model.ConfigReader;
-import cn.chenhuanming.octopus.model.Field;
 import cn.chenhuanming.octopus.model.formatter.Formatter;
 import cn.chenhuanming.octopus.util.CellUtils;
 import cn.chenhuanming.octopus.util.ReflectionUtils;

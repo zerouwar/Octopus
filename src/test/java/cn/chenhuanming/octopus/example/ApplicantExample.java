@@ -1,8 +1,8 @@
 package cn.chenhuanming.octopus.example;
 
+import cn.chenhuanming.octopus.Octopus;
+import cn.chenhuanming.octopus.config.ConfigReader;
 import cn.chenhuanming.octopus.core.AbstractWriterTest;
-import cn.chenhuanming.octopus.core.Octopus;
-import cn.chenhuanming.octopus.model.ConfigReader;
 import org.junit.Test;
 
 import java.io.FileOutputStream;

@@ -2,9 +2,14 @@ package cn.chenhuanming.octopus.util;
 
 import cn.chenhuanming.octopus.model.CellPosition;
 import cn.chenhuanming.octopus.model.DefaultCellPosition;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 /**
@@ -44,7 +49,7 @@ public class CellUtils {
         /**
          * seems like a bug
          */
-        CellRangeAddress region = sheet.getMergedRegion(sheet instanceof XSSFSheet ? i - 1 : i);
+        CellRangeAddress region = sheet.getMergedRegion(sheet instanceof XSSFSheet || sheet instanceof SXSSFSheet ? i - 1 : i);
 
         RegionUtil.setBorderTop(cellStyle.getBorderTopEnum(), region, sheet);
         RegionUtil.setBorderLeft(cellStyle.getBorderLeftEnum(), region, sheet);

@@ -1,6 +1,11 @@
-package cn.chenhuanming.octopus.core;
+package cn.chenhuanming.octopus.writer;
 
-import cn.chenhuanming.octopus.model.*;
+import cn.chenhuanming.octopus.config.DefaultField;
+import cn.chenhuanming.octopus.config.Field;
+import cn.chenhuanming.octopus.config.SupportHeader;
+import cn.chenhuanming.octopus.model.CellPosition;
+import cn.chenhuanming.octopus.model.DefaultCellPosition;
+import cn.chenhuanming.octopus.model.WorkbookContext;
 import cn.chenhuanming.octopus.util.CellUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,19 +31,21 @@ public class DefaultHeaderWriter implements HeaderWriter {
         int lastRow = row + fakeHeader.getHeight() - 1;
         int lastCol = col + fakeHeader.getWidth() - 1;
 
-        drawHeaderImpl(sheet, row, lastRow, col, lastCol, fakeHeader);
+        WorkbookContext bookResource = new WorkbookContext(sheet.getWorkbook());
+
+        drawHeaderImpl(sheet, row, lastRow, col, lastCol, fakeHeader, bookResource);
 
         return new DefaultCellPosition(lastRow, lastCol);
     }
 
-    private Cost drawHeaderImpl(Sheet sheet, int row, int lastRow, int col, int lastCol, SupportHeader header) {
+    private Cost drawHeaderImpl(Sheet sheet, int row, int lastRow, int col, int lastCol, SupportHeader header, WorkbookContext bookResource) {
+        CellStyle style = bookResource.getHeaderStyle(header);
         if (header.isLeaf()) {
             //set value into the bottom left cell
             if (header.getHeight() == 1) {
-                CellUtils.setCellValue(sheet, lastRow, col, header.getDescription(), header.getHeaderCellStyle(sheet.getWorkbook()));
+                CellUtils.setCellValue(sheet, lastRow, col, header.getDescription(), style);
             } else {
                 //cost its need
-                CellStyle style = header.getHeaderCellStyle(sheet.getWorkbook());
                 CellUtils.setCellValue(sheet, lastRow - header.getHeight() + 1, col, header.getDescription(), style);
                 CellUtils.setMergeRegion(sheet, lastRow - header.getHeight() + 1, lastRow, col, col, style);
             }
@@ -48,14 +55,14 @@ public class DefaultHeaderWriter implements HeaderWriter {
         int costRow = 0;
         int c = col;
         for (SupportHeader headerChildren : header.getHeaderChildren()) {
-            Cost cost = drawHeaderImpl(sheet, row + 1, lastRow, c, col + header.getWidth() - 1, headerChildren);
+            Cost cost = drawHeaderImpl(sheet, row + 1, lastRow, c, col + header.getWidth() - 1, headerChildren, bookResource);
             c += cost.getColNum();
             costRow = cost.getRowNum();
         }
 
         if (row >= 0) {
             CellUtils.setMergeRegionValue(sheet, row, lastRow - costRow, col, col + header.getWidth() - 1,
-                    header.getDescription(), header.getHeaderCellStyle(sheet.getWorkbook()));
+                    header.getDescription(), style);
         }
 
         return new Cost(header.getHeight(), header.getWidth());

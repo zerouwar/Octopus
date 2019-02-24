@@ -1,4 +1,4 @@
-package cn.chenhuanming.octopus.model;
+package cn.chenhuanming.octopus.config;
 
 import cn.chenhuanming.octopus.model.formatter.FormatterContainer;
 

@@ -1,10 +1,8 @@
-package cn.chenhuanming.octopus.model;
+package cn.chenhuanming.octopus.config;
 
 import cn.chenhuanming.octopus.model.formatter.Formatter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Workbook;
 
 import java.awt.*;
 import java.lang.reflect.Method;
@@ -144,13 +142,4 @@ public class SupportHeader extends DefaultField {
         return field.getRegex();
     }
 
-    @Override
-    public CellStyle getCellStyle(Workbook book) {
-        return field.getCellStyle(book);
-    }
-
-    @Override
-    public CellStyle getHeaderCellStyle(Workbook book) {
-        return field.getHeaderCellStyle(book);
-    }
 }
