@@ -1,8 +1,7 @@
-package cn.chenhuanming.octopus.model.formatter;
+package cn.chenhuanming.octopus.formatter;
 
 import cn.chenhuanming.octopus.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -12,9 +11,8 @@ import java.util.Date;
  * @author chenhuanming
  * Created at 2018/12/17
  */
+@Slf4j
 public class DateFormatter extends AbstractFormatter<Date> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DateFormatter.class);
 
     private final DateFormat FORMAT;
 

@@ -1,7 +1,5 @@
 package cn.chenhuanming.octopus.formatter;
 
-import cn.chenhuanming.octopus.model.formatter.AbstractFormatter;
-
 /**
  * @author chenhuanming
  * Created at 2019-01-09

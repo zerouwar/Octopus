@@ -1,7 +1,7 @@
 package cn.chenhuanming.octopus.core;
 
-import cn.chenhuanming.octopus.config.ConfigReader;
-import cn.chenhuanming.octopus.config.XmlConfigReader;
+import cn.chenhuanming.octopus.config.ConfigFactory;
+import cn.chenhuanming.octopus.config.XmlConfigFactory;
 import cn.chenhuanming.octopus.entity.Applicants;
 import cn.chenhuanming.octopus.model.DefaultCellPosition;
 import cn.chenhuanming.octopus.reader.DefaultSheetReader;
@@ -33,9 +33,9 @@ public class DefaultSheetReaderTest {
 
     @Test
     public void test() {
-        ConfigReader configReader = new XmlConfigReader(this.getClass().getClassLoader().getResourceAsStream("applicants.xml"));
+        ConfigFactory configFactory = new XmlConfigFactory(this.getClass().getClassLoader().getResourceAsStream("applicants.xml"));
 
-        final SheetReader<Applicants> sheetReader = new DefaultSheetReader<>(sheet, configReader, new DefaultCellPosition(2, 0));
+        final SheetReader<Applicants> sheetReader = new DefaultSheetReader<>(sheet, configFactory, new DefaultCellPosition(2, 0));
 
         for (Applicants applicants : sheetReader) {
             System.out.println(applicants);

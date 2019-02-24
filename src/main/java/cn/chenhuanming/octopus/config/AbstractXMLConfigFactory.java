@@ -22,13 +22,13 @@ import java.net.URL;
  * @author chenhuanming
  * Created at 2018/12/17
  */
-public abstract class AbstractXMLConfigReader extends CachedConfigReader {
+public abstract class AbstractXMLConfigFactory extends CachedConfigFactory {
 
     protected final ByteArrayInputStream is;
 
     protected static final String SPLITTER = "\\|";
 
-    public AbstractXMLConfigReader(InputStream is) {
+    public AbstractXMLConfigFactory(InputStream is) {
         try {
             this.is = new ByteArrayInputStream(IOUtils.toByteArray(is));
         } catch (IOException e) {

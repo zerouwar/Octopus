@@ -1,13 +1,12 @@
 package cn.chenhuanming.octopus.config;
 
-import cn.chenhuanming.octopus.model.formatter.DateFormatter;
-import cn.chenhuanming.octopus.model.formatter.DefaultFormatterContainer;
-import cn.chenhuanming.octopus.model.formatter.FormatterContainer;
+import cn.chenhuanming.octopus.formatter.DateFormatter;
+import cn.chenhuanming.octopus.formatter.DefaultFormatterContainer;
+import cn.chenhuanming.octopus.formatter.FormatterContainer;
 import cn.chenhuanming.octopus.util.ColorUtils;
 import cn.chenhuanming.octopus.util.ReflectionUtils;
 import cn.chenhuanming.octopus.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -27,11 +26,10 @@ import java.util.regex.Pattern;
  * @author chenhuanming
  * Created at 2018/12/10
  */
-public class XmlConfigReader extends AbstractXMLConfigReader {
+@Slf4j
+public class XmlConfigFactory extends AbstractXMLConfigFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(XmlConfigReader.class);
-
-    public XmlConfigReader(InputStream is) {
+    public XmlConfigFactory(InputStream is) {
         super(is);
     }
 
@@ -97,7 +95,7 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
                 try {
                     Class target = Class.forName(targetClass);
                     Class format = Class.forName(formatClass);
-                    container.addFormat(target, (cn.chenhuanming.octopus.model.formatter.Formatter) format.newInstance());
+                    container.addFormat(target, (cn.chenhuanming.octopus.formatter.Formatter) format.newInstance());
                 } catch (Exception e) {
                     throw new IllegalArgumentException(e);
                 }
@@ -155,13 +153,13 @@ public class XmlConfigReader extends AbstractXMLConfigReader {
         if (!StringUtils.isEmpty(formatterStr)) {
             try {
                 Class formatterClass = Class.forName(formatterStr);
-                if (!cn.chenhuanming.octopus.model.formatter.Formatter.class.isAssignableFrom(formatterClass)) {
-                    LOGGER.error(formatterStr + " is not subclass of cn.chenhuanming.octopus.model.formatter.Formatters");
+                if (!cn.chenhuanming.octopus.formatter.Formatter.class.isAssignableFrom(formatterClass)) {
+                    log.error(formatterStr + " is not subclass of cn.chenhuanming.octopus.formatter.Formatters");
                 } else {
-                    field.setFormatter((cn.chenhuanming.octopus.model.formatter.Formatter) formatterClass.newInstance());
+                    field.setFormatter((cn.chenhuanming.octopus.formatter.Formatter) formatterClass.newInstance());
                 }
             } catch (Exception e) {
-                LOGGER.warn(formatterStr + " may not have a default constructor");
+                log.warn(formatterStr + " may not have a default constructor");
             }
         }
     }

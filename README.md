@@ -118,10 +118,10 @@ public class AddressExample {
 
         //read config from address.xml
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("address.xml");
-        ConfigReader configReader = Octopus.getXMLConfigReader(is);
+        ConfigReader configFactory = Octopus.getXMLConfigReader(is);
 
         try {
-            Octopus.writeOneSheet(os, configReader, "address", addresses);
+            Octopus.writeOneSheet(os, configFactory, "address", addresses);
         } catch (IOException e) {
             System.out.println("export failed");
         }
@@ -132,7 +132,7 @@ public class AddressExample {
 This is a complete unit test.In fact,exporting Excel only needs two steps:
 
 1. Create a `ConfigReader` instance from XML config file
-2. Call `Octopus.writeOneSheet()` and pass exporting file,configReader,name of sheet and data
+2. Call `Octopus.writeOneSheet()` and pass exporting file,configFactory,name of sheet and data
 
 Here is exporting excel file
 
@@ -201,10 +201,10 @@ public class CompanyExample {
 
         //read config from company.xml
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("company.xml");
-        ConfigReader configReader = Octopus.getXMLConfigReader(is);
+        ConfigReader configFactory = Octopus.getXMLConfigReader(is);
 
         try {
-            Octopus.writeOneSheet(os, configReader, "company", companies);
+            Octopus.writeOneSheet(os, configFactory, "company", companies);
         } catch (IOException e) {
             System.out.println("export failed");
         }
@@ -271,7 +271,7 @@ We directly reuse previous example to see how to import a excel.Reuse `ConfigRea
 FileInputStream fis = new FileInputStream(rootPath + "/company2.xlsx");
 
 try {
-    SheetReader<Company> importData = Octopus.readFirstSheet(fis, configReader, new DefaultCellPosition(1, 0));
+    SheetReader<Company> importData = Octopus.readFirstSheet(fis, configFactory, new DefaultCellPosition(1, 0));
 
     
     for (Company company : importData) {
@@ -336,9 +336,9 @@ And the Java code
 public void importCheckedData() throws IOException, InvalidFormatException {
     InputStream is = this.getClass().getClassLoader().getResourceAsStream("wrongCompany.xlsx");
 
-    ConfigReader configReader = new XmlConfigReader(this.getClass().getClassLoader().getResourceAsStream("company3.xml"));
+    ConfigReader configFactory = new XmlConfigReader(this.getClass().getClassLoader().getResourceAsStream("company3.xml"));
 
-    final SheetReader<CheckedData<Company>> sheetReader = Octopus.readFirstSheetWithValidation(is,configReader,new DefaultCellPosition(1,0));
+    final SheetReader<CheckedData<Company>> sheetReader = Octopus.readFirstSheetWithValidation(is,configFactory,new DefaultCellPosition(1,0));
 
     for (CheckedData<Company> checkedData : sheetReader) {
         System.out.println(checkedData);

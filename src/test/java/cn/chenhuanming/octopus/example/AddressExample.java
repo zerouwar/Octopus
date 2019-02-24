@@ -1,7 +1,7 @@
 package cn.chenhuanming.octopus.example;
 
 import cn.chenhuanming.octopus.Octopus;
-import cn.chenhuanming.octopus.config.ConfigReader;
+import cn.chenhuanming.octopus.config.ConfigFactory;
 import cn.chenhuanming.octopus.entity.Address;
 import org.fluttercode.datafactory.impl.DataFactory;
 import org.junit.Before;
@@ -42,10 +42,10 @@ public class AddressExample {
 
         //read config from address.xml
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("address.xml");
-        ConfigReader configReader = Octopus.getXMLConfigReader(is);
+        ConfigFactory configFactory = Octopus.getXMLConfigReader(is);
 
         try {
-            Octopus.writeOneSheet(os, configReader, "address", addresses);
+            Octopus.writeOneSheet(os, configFactory, "address", addresses);
         } catch (IOException e) {
             System.out.println("export failed");
         }

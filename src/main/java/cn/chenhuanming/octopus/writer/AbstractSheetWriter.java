@@ -2,18 +2,17 @@ package cn.chenhuanming.octopus.writer;
 
 
 import cn.chenhuanming.octopus.config.Config;
-import cn.chenhuanming.octopus.config.ConfigReader;
+import cn.chenhuanming.octopus.config.ConfigFactory;
 import cn.chenhuanming.octopus.config.Field;
+import cn.chenhuanming.octopus.formatter.Formatter;
 import cn.chenhuanming.octopus.model.CellPosition;
 import cn.chenhuanming.octopus.model.DefaultCellPosition;
 import cn.chenhuanming.octopus.model.WorkbookContext;
-import cn.chenhuanming.octopus.model.formatter.Formatter;
 import cn.chenhuanming.octopus.util.CellUtils;
 import cn.chenhuanming.octopus.util.ReflectionUtils;
 import cn.chenhuanming.octopus.util.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Date;
@@ -23,18 +22,17 @@ import java.util.Date;
  *
  * @author chenhuanming
  */
+@Slf4j
 public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
-    protected ConfigReader configReader;
+    protected ConfigFactory configFactory;
     protected HeaderWriter headerWriter;
     protected CellPosition startPoint;
 
-    public AbstractSheetWriter(ConfigReader configReader, HeaderWriter headerWriter, CellPosition startPoint) {
-        this.configReader = configReader;
+    public AbstractSheetWriter(ConfigFactory configFactory, HeaderWriter headerWriter, CellPosition startPoint) {
+        this.configFactory = configFactory;
         this.headerWriter = headerWriter;
         this.startPoint = startPoint;
     }
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSheetWriter.class);
 
     @Override
     public CellPosition write(Sheet sheet, Collection<T> data) {
@@ -42,7 +40,7 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
             return CellUtils.POSITION_ZERO_ZERO;
         }
 
-        Config config = configReader.getConfig();
+        Config config = configFactory.getConfig();
 
         Class dataType = data.iterator().next().getClass();
         if (config.getClassType() != dataType) {
@@ -97,7 +95,7 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
             return col + 1;
         }
 
-        Formatter formatter = configReader.getConfig().getFormatterContainer().get(field.getPicker().getReturnType());
+        Formatter formatter = configFactory.getConfig().getFormatterContainer().get(field.getPicker().getReturnType());
 
         if (field.getPicker().getReturnType() == String.class || formatter == null) {
             value = ReflectionUtils.invokeReadMethod(field.getPicker(), o, field.getDefaultValue());

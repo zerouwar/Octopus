@@ -1,16 +1,13 @@
 package cn.chenhuanming.octopus.config;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.apache.poi.ss.usermodel.BorderStyle;
 
 /**
  * @author chenhuanming
  * Created at 2019-01-11
  */
-@Getter
-@Setter(AccessLevel.PROTECTED)
+@Data
 public abstract class FieldStyle implements FieldCellStyle, HeaderCellStyle {
     /**
      * cell style

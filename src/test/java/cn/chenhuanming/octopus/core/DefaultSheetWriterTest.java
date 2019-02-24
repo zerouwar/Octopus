@@ -1,6 +1,6 @@
 package cn.chenhuanming.octopus.core;
 
-import cn.chenhuanming.octopus.config.XmlConfigReader;
+import cn.chenhuanming.octopus.config.XmlConfigFactory;
 import cn.chenhuanming.octopus.writer.DefaultSheetWriter;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -22,7 +22,7 @@ public class DefaultSheetWriterTest extends AbstractWriterTest {
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
         FileOutputStream os = new FileOutputStream(rootPath + "/export.xlsx");
 
-        DefaultSheetWriter writer = new DefaultSheetWriter(new XmlConfigReader(this.getClass().getClassLoader().getResourceAsStream("applicants.xml")));
+        DefaultSheetWriter writer = new DefaultSheetWriter(new XmlConfigFactory(this.getClass().getClassLoader().getResourceAsStream("applicants.xml")));
 
         writer.write(workbook.createSheet(), applicantsList);
 

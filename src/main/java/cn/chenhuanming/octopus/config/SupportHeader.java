@@ -1,6 +1,6 @@
 package cn.chenhuanming.octopus.config;
 
-import cn.chenhuanming.octopus.model.formatter.Formatter;
+import cn.chenhuanming.octopus.formatter.Formatter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

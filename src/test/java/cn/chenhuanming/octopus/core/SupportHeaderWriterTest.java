@@ -1,7 +1,7 @@
 package cn.chenhuanming.octopus.core;
 
-import cn.chenhuanming.octopus.config.ConfigReader;
-import cn.chenhuanming.octopus.config.XmlConfigReader;
+import cn.chenhuanming.octopus.config.ConfigFactory;
+import cn.chenhuanming.octopus.config.XmlConfigFactory;
 import cn.chenhuanming.octopus.model.DefaultCellPosition;
 import cn.chenhuanming.octopus.writer.DefaultHeaderWriter;
 import cn.chenhuanming.octopus.writer.HeaderWriter;
@@ -27,9 +27,9 @@ public class SupportHeaderWriterTest {
 
         HeaderWriter headerWriter = new DefaultHeaderWriter();
 
-        ConfigReader configReader = new XmlConfigReader(this.getClass().getClassLoader().getResourceAsStream("applicants.xml"));
+        ConfigFactory configFactory = new XmlConfigFactory(this.getClass().getClassLoader().getResourceAsStream("applicants.xml"));
 
-        headerWriter.drawHeader(workbook.createSheet(), new DefaultCellPosition(0, 0), configReader.getConfig().getFields());
+        headerWriter.drawHeader(workbook.createSheet(), new DefaultCellPosition(0, 0), configFactory.getConfig().getFields());
 
         workbook.write(os);
     }

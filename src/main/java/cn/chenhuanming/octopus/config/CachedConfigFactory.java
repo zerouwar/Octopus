@@ -4,7 +4,7 @@ package cn.chenhuanming.octopus.config;
  * @author chenhuanming
  * Created at 2018/12/10
  */
-public abstract class CachedConfigReader implements ConfigReader {
+public abstract class CachedConfigFactory implements ConfigFactory {
 
     protected volatile Config config;
 

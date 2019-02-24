@@ -1,4 +1,4 @@
-package cn.chenhuanming.octopus.model.formatter;
+package cn.chenhuanming.octopus.formatter;
 
 import java.util.HashMap;
 import java.util.Map;

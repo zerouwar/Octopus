@@ -1,4 +1,4 @@
-package cn.chenhuanming.octopus.model.formatter;
+package cn.chenhuanming.octopus.formatter;
 
 
 import cn.chenhuanming.octopus.exception.ParseException;

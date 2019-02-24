@@ -1,13 +1,14 @@
 package cn.chenhuanming.octopus.reader;
 
 
-import cn.chenhuanming.octopus.config.ConfigReader;
+import cn.chenhuanming.octopus.config.ConfigFactory;
 import cn.chenhuanming.octopus.config.Field;
 import cn.chenhuanming.octopus.exception.ParseException;
+import cn.chenhuanming.octopus.formatter.Formatter;
 import cn.chenhuanming.octopus.model.CellPosition;
-import cn.chenhuanming.octopus.model.formatter.Formatter;
 import cn.chenhuanming.octopus.util.CellUtils;
 import cn.chenhuanming.octopus.util.ReflectionUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -19,10 +20,11 @@ import java.util.Date;
  * @author chenhuanming
  * Created at 2019-01-06
  */
+@Slf4j
 public class DefaultSheetReader<T> extends AbstractSheetReader<T> {
 
-    public DefaultSheetReader(Sheet sheet, ConfigReader configReader, CellPosition startPoint) {
-        super(sheet, configReader, startPoint);
+    public DefaultSheetReader(Sheet sheet, ConfigFactory configFactory, CellPosition startPoint) {
+        super(sheet, configFactory, startPoint);
     }
 
     @Override
@@ -33,7 +35,7 @@ public class DefaultSheetReader<T> extends AbstractSheetReader<T> {
                 Cell cell = sheet.getRow(row).getCell(col);
                 String str;
                 if (CellUtils.isDate(cell)) {
-                    Formatter<Date> dateFormatter = configReader.getConfig().getFormatterContainer().get(Date.class);
+                    Formatter<Date> dateFormatter = configFactory.getConfig().getFormatterContainer().get(Date.class);
                     str = dateFormatter.format(DateUtil.getJavaDate(cell.getNumericCellValue()));
                 } else {
                     str = CellUtils.getCellValue(sheet, row, col, field.getDefaultValue());
@@ -54,7 +56,7 @@ public class DefaultSheetReader<T> extends AbstractSheetReader<T> {
                 try {
                     field.getPusher().invoke(o, instance);
                 } catch (Exception e) {
-                    LOGGER.error("failed to set " + instance + " into " + o, e);
+                    log.error("failed to set " + instance + " into " + o, e);
                 }
             }
         }
@@ -62,6 +64,6 @@ public class DefaultSheetReader<T> extends AbstractSheetReader<T> {
     }
 
     protected void failWhenParse(int row, int col, final Field field, ParseException e) {
-        LOGGER.error("failed to read value from " + field.getName() + " in excel(" + (row + 1) + "," + col + ")", e);
+        log.error("failed to read value from " + field.getName() + " in excel(" + (row + 1) + "," + col + ")", e);
     }
 }

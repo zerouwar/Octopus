@@ -1,13 +1,12 @@
 package cn.chenhuanming.octopus.reader;
 
-import cn.chenhuanming.octopus.config.ConfigReader;
+import cn.chenhuanming.octopus.config.ConfigFactory;
 import cn.chenhuanming.octopus.config.Field;
 import cn.chenhuanming.octopus.exception.ParseException;
+import cn.chenhuanming.octopus.formatter.Formatter;
 import cn.chenhuanming.octopus.model.CellPosition;
-import cn.chenhuanming.octopus.model.formatter.Formatter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.Iterator;
@@ -16,28 +15,28 @@ import java.util.Iterator;
  * @author chenhuanming
  * Created at 2018/12/20
  */
+@Slf4j
 public abstract class AbstractSheetReader<T> implements SheetReader<T> {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractSheetReader.class);
 
     protected Sheet sheet;
-    protected ConfigReader configReader;
+    protected ConfigFactory configFactory;
     protected CellPosition startPoint;
 
-    public AbstractSheetReader(Sheet sheet, ConfigReader configReader, CellPosition startPoint) {
-        if (sheet == null || configReader == null || startPoint == null) {
+    public AbstractSheetReader(Sheet sheet, ConfigFactory configFactory, CellPosition startPoint) {
+        if (sheet == null || configFactory == null || startPoint == null) {
             throw new NullPointerException();
         }
         this.sheet = sheet;
-        this.configReader = configReader;
+        this.configFactory = configFactory;
         this.startPoint = startPoint;
     }
 
     @Override
     public T get(int i) {
-        T t = newInstance(configReader.getConfig().getClassType());
+        T t = newInstance(configFactory.getConfig().getClassType());
 
         int col = startPoint.getCol();
-        for (Field field : configReader.getConfig().getFields()) {
+        for (Field field : configFactory.getConfig().getFields()) {
             col = read(startPoint.getRow() + i, col, field, t);
         }
         return t;
@@ -58,7 +57,7 @@ public abstract class AbstractSheetReader<T> implements SheetReader<T> {
         if (field.getFormatter() != null) {
             value = field.getFormatter().parse(str);
         } else {
-            Formatter globalFormatter = configReader.getConfig().getFormatterContainer().get(pusher.getParameterTypes()[0]);
+            Formatter globalFormatter = configFactory.getConfig().getFormatterContainer().get(pusher.getParameterTypes()[0]);
             if (globalFormatter != null) {
                 value = globalFormatter.parse(str);
             } else {
@@ -71,14 +70,14 @@ public abstract class AbstractSheetReader<T> implements SheetReader<T> {
                 pusher.invoke(o, value);
             }
         } catch (Exception e) {
-            LOGGER.error("can not set value:" + field.getName(), e);
+            log.error("can not set value:" + field.getName(), e);
             throw new ParseException("invoke method failed", e);
         }
     }
 
     protected T newInstance(Class classType) {
         try {
-            return (T) configReader.getConfig().getClassType().newInstance();
+            return (T) configFactory.getConfig().getClassType().newInstance();
         } catch (Exception e) {
             throw new IllegalArgumentException("wrong type or no default constructor", e);
         }

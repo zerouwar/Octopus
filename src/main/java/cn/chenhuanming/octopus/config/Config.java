@@ -1,6 +1,6 @@
 package cn.chenhuanming.octopus.config;
 
-import cn.chenhuanming.octopus.model.formatter.FormatterContainer;
+import cn.chenhuanming.octopus.formatter.FormatterContainer;
 
 import java.util.List;
 

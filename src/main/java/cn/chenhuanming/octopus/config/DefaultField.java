@@ -1,9 +1,7 @@
 package cn.chenhuanming.octopus.config;
 
-import cn.chenhuanming.octopus.model.formatter.Formatter;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import cn.chenhuanming.octopus.formatter.Formatter;
+import lombok.Data;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -15,8 +13,7 @@ import java.util.regex.Pattern;
  * @author chenhuanming
  * Created at 2018/12/15
  */
-@Getter
-@Setter(AccessLevel.PROTECTED)
+@Data
 public class DefaultField extends FieldStyle implements Field {
 
     protected String name;

@@ -1,7 +1,7 @@
 package cn.chenhuanming.octopus.example;
 
 import cn.chenhuanming.octopus.Octopus;
-import cn.chenhuanming.octopus.config.ConfigReader;
+import cn.chenhuanming.octopus.config.ConfigFactory;
 import cn.chenhuanming.octopus.core.AbstractWriterTest;
 import org.junit.Test;
 
@@ -18,8 +18,8 @@ public class ApplicantExample extends AbstractWriterTest {
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
         FileOutputStream os = new FileOutputStream(rootPath + "/applicator.xlsx");
 
-        ConfigReader configReader = Octopus.getXMLConfigReader(this.getClass().getClassLoader().getResourceAsStream("applicants.xml"));
+        ConfigFactory configFactory = Octopus.getXMLConfigReader(this.getClass().getClassLoader().getResourceAsStream("applicants.xml"));
 
-        Octopus.writeOneSheet(os, configReader, "test", applicantsList);
+        Octopus.writeOneSheet(os, configFactory, "test", applicantsList);
     }
 }

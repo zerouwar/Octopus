@@ -1,6 +1,7 @@
 package cn.chenhuanming.octopus.util;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
@@ -13,8 +14,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 
@@ -22,11 +21,8 @@ import java.awt.*;
  * @author chenhuanming
  * Created at 2018/12/13
  */
+@Slf4j
 public class ColorUtils {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ColorUtils.class);
-
-    private static final short HSSF_COLOR_INDEX = 0x20;
 
     /**
      * @param colorStr e.g. "#FFFFFF"
@@ -45,7 +41,7 @@ public class ColorUtils {
         } else if (font instanceof HSSFFont && workbook instanceof HSSFWorkbook) {
             font.setColor(getSimilarColor((HSSFWorkbook) workbook, color).getIndex());
         } else {
-            LOGGER.error("unknown font type");
+            log.error("unknown font type");
         }
     }
 
@@ -59,7 +55,7 @@ public class ColorUtils {
         } else if (cellStyle instanceof HSSFCellStyle && workbook instanceof HSSFWorkbook) {
             cellStyle.setFillForegroundColor(getSimilarColor((HSSFWorkbook) workbook, color).getIndex());
         } else {
-            LOGGER.error("unknown font type");
+            log.error("unknown font type");
         }
     }
 
@@ -78,7 +74,7 @@ public class ColorUtils {
             cellStyle.setBottomBorderColor(getSimilarColor((HSSFWorkbook) workbook, color[2]).getIndex());
             cellStyle.setLeftBorderColor(getSimilarColor((HSSFWorkbook) workbook, color[3]).getIndex());
         } else {
-            LOGGER.error("unknown font type");
+            log.error("unknown font type");
         }
     }
 

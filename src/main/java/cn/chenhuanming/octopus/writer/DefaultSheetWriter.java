@@ -1,9 +1,10 @@
 package cn.chenhuanming.octopus.writer;
 
-import cn.chenhuanming.octopus.config.ConfigReader;
+import cn.chenhuanming.octopus.config.ConfigFactory;
 import cn.chenhuanming.octopus.model.CellPosition;
 import cn.chenhuanming.octopus.util.CellUtils;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 
 import java.util.Collection;
 
@@ -12,12 +13,12 @@ import java.util.Collection;
  * Created at 2018/12/16
  */
 public class DefaultSheetWriter<T> extends AbstractSheetWriter<T> {
-    public DefaultSheetWriter(ConfigReader configReader, HeaderWriter headerWriter, CellPosition startPoint) {
-        super(configReader, headerWriter, startPoint);
+    public DefaultSheetWriter(ConfigFactory configFactory, HeaderWriter headerWriter, CellPosition startPoint) {
+        super(configFactory, headerWriter, startPoint);
     }
 
-    public DefaultSheetWriter(ConfigReader configReader) {
-        this(configReader, new DefaultHeaderWriter(), CellUtils.POSITION_ZERO_ZERO);
+    public DefaultSheetWriter(ConfigFactory configFactory) {
+        this(configFactory, new DefaultHeaderWriter(), CellUtils.POSITION_ZERO_ZERO);
     }
 
     @Override
@@ -29,6 +30,9 @@ public class DefaultSheetWriter<T> extends AbstractSheetWriter<T> {
     }
 
     private void adjustColumnWidth(Sheet sheet, CellPosition end) {
+        if (sheet instanceof SXSSFSheet) {
+            ((SXSSFSheet) sheet).trackAllColumnsForAutoSizing();
+        }
         for (int col = getStartColumn(); col <= end.getCol(); col++) {
             sheet.autoSizeColumn(col, true);
         }

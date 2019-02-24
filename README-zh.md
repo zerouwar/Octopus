@@ -109,10 +109,10 @@ public class AddressExample {
 
         //read config from address.xml
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("address.xml");
-        ConfigReader configReader = Octopus.getXMLConfigReader(is);
+        ConfigReader configFactory = Octopus.getXMLConfigReader(is);
 
         try {
-            Octopus.writeOneSheet(os, configReader, "address", addresses);
+            Octopus.writeOneSheet(os, configFactory, "address", addresses);
         } catch (IOException e) {
             System.out.println("export failed");
         }
@@ -123,7 +123,7 @@ public class AddressExample {
 这是一个完整的单元测试代码，不过导出Excel其实只要两步：
 
 1. 从XML配置文件中创建一个`ConfigReader`对象
-2. 调用`Octopus.writeOneSheet()`，传入导出的文件，configReader，工作表的名字和数据
+2. 调用`Octopus.writeOneSheet()`，传入导出的文件，configFactory，工作表的名字和数据
 
 下面是导出的Excel文件
 
@@ -193,10 +193,10 @@ public class CompanyExample {
 
         //read config from company.xml
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("company.xml");
-        ConfigReader configReader = Octopus.getXMLConfigReader(is);
+        ConfigReader configFactory = Octopus.getXMLConfigReader(is);
 
         try {
-            Octopus.writeOneSheet(os, configReader, "company", companies);
+            Octopus.writeOneSheet(os, configFactory, "company", companies);
         } catch (IOException e) {
             System.out.println("export failed");
         }
@@ -263,7 +263,7 @@ public class AddressFormatter implements Formatter<Address> {
 FileInputStream fis = new FileInputStream(rootPath + "/company2.xlsx");
 
 try {
-    SheetReader<Company> importData = Octopus.readFirstSheet(fis, configReader, new DefaultCellPosition(1, 0));
+    SheetReader<Company> importData = Octopus.readFirstSheet(fis, configFactory, new DefaultCellPosition(1, 0));
 
     
     for (Company company : importData) {
@@ -327,9 +327,9 @@ Company(name=Toccoa Development, address=Address(city=Ridgeville, detail=1790 La
 public void importCheckedData() throws IOException, InvalidFormatException {
     InputStream is = this.getClass().getClassLoader().getResourceAsStream("wrongCompany.xlsx");
 
-    ConfigReader configReader = new XmlConfigReader(this.getClass().getClassLoader().getResourceAsStream("company3.xml"));
+    ConfigReader configFactory = new XmlConfigReader(this.getClass().getClassLoader().getResourceAsStream("company3.xml"));
 
-    final SheetReader<CheckedData<Company>> sheetReader = Octopus.readFirstSheetWithValidation(is,configReader,new DefaultCellPosition(1,0));
+    final SheetReader<CheckedData<Company>> sheetReader = Octopus.readFirstSheetWithValidation(is,configFactory,new DefaultCellPosition(1,0));
 
     for (CheckedData<Company> checkedData : sheetReader) {
         System.out.println(checkedData);
