@@ -2,6 +2,7 @@ package cn.chenhuanming.octopus.reader;
 
 import cn.chenhuanming.octopus.config.ConfigFactory;
 import cn.chenhuanming.octopus.config.Field;
+import cn.chenhuanming.octopus.config.ImportValidation;
 import cn.chenhuanming.octopus.exception.CanNotBeBlankException;
 import cn.chenhuanming.octopus.exception.NotAllowValueException;
 import cn.chenhuanming.octopus.exception.ParseException;
@@ -14,6 +15,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 
 /**
  * not thread-safe
+ *
  * @author chenhuanming
  * Created at 2019-01-09
  */
@@ -37,16 +39,17 @@ public class CheckedSheetReader<T> extends DefaultSheetReader<CheckedData<T>> {
 
     @Override
     protected void setValue(String str, Field field, Object o) throws ParseException {
-        if (!field.isBlankable() && StringUtils.isEmpty(str)) {
+        ImportValidation validation = field.getImportValidation();
+        if (!validation.isBlankable() && StringUtils.isEmpty(str)) {
             throw new CanNotBeBlankException();
         }
 
-        if (field.getOptions() != null && field.getOptions().size() > 0 && !field.getOptions().contains(str)) {
-            throw new NotAllowValueException(field.getOptions());
+        if (validation.getOptions() != null && validation.getOptions().size() > 0 && !validation.getOptions().contains(str)) {
+            throw new NotAllowValueException(validation.getOptions());
         }
 
-        if (field.getRegex() != null && !field.getRegex().matcher(str).matches()) {
-            throw new PatternNotMatchException(field.getRegex());
+        if (validation.getRegex() != null && !validation.getRegex().matcher(str).matches()) {
+            throw new PatternNotMatchException(validation.getRegex());
         }
 
         super.setValue(str, field, o);

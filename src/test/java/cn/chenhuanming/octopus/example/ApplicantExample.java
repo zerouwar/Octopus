@@ -18,7 +18,7 @@ public class ApplicantExample extends AbstractWriterTest {
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
         FileOutputStream os = new FileOutputStream(rootPath + "/applicator.xlsx");
 
-        ConfigFactory configFactory = Octopus.getXMLConfigReader(this.getClass().getClassLoader().getResourceAsStream("applicants.xml"));
+        ConfigFactory configFactory = Octopus.getXMLConfigFactory(this.getClass().getClassLoader().getResourceAsStream("applicants.xml"));
 
         Octopus.writeOneSheet(os, configFactory, "test", applicantsList);
     }

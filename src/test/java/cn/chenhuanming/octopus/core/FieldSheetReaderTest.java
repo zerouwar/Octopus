@@ -20,7 +20,7 @@ import java.io.InputStream;
  * @author chenhuanming
  * Created at 2019-01-07
  */
-public class DefaultSheetReaderTest {
+public class FieldSheetReaderTest {
 
     private Sheet sheet;
 

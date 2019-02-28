@@ -2,6 +2,7 @@ package cn.chenhuanming.octopus.config;
 
 
 import cn.chenhuanming.octopus.util.ColorUtils;
+import cn.chenhuanming.octopus.util.StringUtils;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.util.IOUtils;
 import org.w3c.dom.NamedNodeMap;
@@ -36,7 +37,7 @@ public abstract class AbstractXMLConfigFactory extends CachedConfigFactory {
         }
     }
 
-    private static final String SCHEMA_URI = "https://raw.githubusercontent.com/zerouwar/my-maven-repo/master/cn/chenhuanming/octopus/1.0.0/octopus.xsd";
+    private static final String SCHEMA_URI = "file:/Users/chenhuanming/Git/Octopus/src/main/java/cn/chenhuanming/octopus/octopus.xsd";
 
     protected void validateXML(Source source) throws Exception {
         SchemaFactory schemaFactory = SchemaFactory
@@ -73,8 +74,10 @@ public abstract class AbstractXMLConfigFactory extends CachedConfigFactory {
     protected Color[] convertBorderColor(String borderColor) {
         Color[] result = new Color[4];
         String[] split = borderColor.split(",");
+
         for (int i = 0; i < split.length; i++) {
-            Color color = ColorUtils.hex2Rgb(split[i]);
+            String c = split[i];
+            Color color = ColorUtils.hex2Rgb(StringUtils.isEmpty(c) ? "#000000" : c);
             result[i] = color;
         }
         return result;
@@ -83,7 +86,7 @@ public abstract class AbstractXMLConfigFactory extends CachedConfigFactory {
     /**
      * xml config constant
      */
-    protected interface XMLConfig {
+    protected interface XMLConstant {
 
         interface Root {
             String name = "Root";

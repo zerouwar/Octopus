@@ -1,17 +1,17 @@
 package cn.chenhuanming.octopus.config;
 
 import cn.chenhuanming.octopus.formatter.FormatterContainer;
+import lombok.Data;
 
 import java.util.List;
 
 /**
  * @author chenhuanming
- * Created at 2018/12/17
+ * Created at 2018/12/7
  */
-public interface Config {
-    Class getClassType();
-
-    FormatterContainer getFormatterContainer();
-
-    List<Field> getFields();
+@Data
+public class Config {
+    private Class classType;
+    private FormatterContainer formatterContainer;
+    private List<Field> fields;
 }

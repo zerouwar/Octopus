@@ -49,7 +49,7 @@ public class CompanyExample {
 
         //read config from company.xml
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("company.xml");
-        ConfigFactory configFactory = Octopus.getXMLConfigReader(is);
+        ConfigFactory configFactory = Octopus.getXMLConfigFactory(is);
 
         try {
             Octopus.writeOneSheet(os, configFactory, "company", companies);
@@ -67,7 +67,7 @@ public class CompanyExample {
 
         //read config from company.xml
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("company2.xml");
-        ConfigFactory configFactory = Octopus.getXMLConfigReader(is);
+        ConfigFactory configFactory = Octopus.getXMLConfigFactory(is);
 
         try {
             Octopus.writeOneSheet(os, configFactory, "company2", companies);

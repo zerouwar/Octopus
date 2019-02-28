@@ -41,7 +41,7 @@ public final class Octopus {
      * @param is XML file
      * @return configFactory
      */
-    public static ConfigFactory getXMLConfigReader(InputStream is) {
+    public static ConfigFactory getXMLConfigFactory(InputStream is) {
         return new XmlConfigFactory(is);
     }
 
@@ -49,7 +49,7 @@ public final class Octopus {
      * write one sheet into excel file
      *
      * @param os           excel file
-     * @param configFactory get configFactory from @{{@link #getXMLConfigReader(InputStream)}}
+     * @param configFactory get configFactory from @{{@link #getXMLConfigFactory(InputStream)}}
      * @param sheetName    name of sheet
      * @param data         data
      * @throws IOException when writing excel file failed
@@ -64,7 +64,7 @@ public final class Octopus {
      * read data from first sheet of excel
      *
      * @param is            excel file
-     * @param configFactory  get configFactory from @{{@link #getXMLConfigReader(InputStream)}}
+     * @param configFactory  get configFactory from @{{@link #getXMLConfigFactory(InputStream)}}
      * @param startPosition where to start read,starting from 0
      * @param <T>           class type of data you want
      * @return data
@@ -82,7 +82,7 @@ public final class Octopus {
      *
      * @param is            excel file
      * @param index         position,starting from 0
-     * @param configFactory  get configFactory from @{{@link #getXMLConfigReader(InputStream)}}
+     * @param configFactory  get configFactory from @{{@link #getXMLConfigFactory(InputStream)}}
      * @param startPosition where to start read,starting from 0
      * @param <T>           class type of data you want
      * @return data
@@ -100,7 +100,7 @@ public final class Octopus {
      *
      * @param is            excel file
      * @param sheetName     name of sheet in the excel
-     * @param configFactory  get configFactory from @{{@link #getXMLConfigReader(InputStream)}}
+     * @param configFactory  get configFactory from @{{@link #getXMLConfigFactory(InputStream)}}
      * @param startPosition where to start read,starting from 0
      * @param <T>           class type of data you want
      * @return data

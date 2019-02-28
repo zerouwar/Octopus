@@ -109,7 +109,7 @@ public class AddressExample {
 
         //read config from address.xml
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("address.xml");
-        ConfigReader configFactory = Octopus.getXMLConfigReader(is);
+        ConfigFactory configFactory = Octopus.getXMLConfigFactory(is);
 
         try {
             Octopus.writeOneSheet(os, configFactory, "address", addresses);
@@ -122,7 +122,7 @@ public class AddressExample {
 
 这是一个完整的单元测试代码，不过导出Excel其实只要两步：
 
-1. 从XML配置文件中创建一个`ConfigReader`对象
+1. 从XML配置文件中创建一个`ConfigFactory`对象
 2. 调用`Octopus.writeOneSheet()`，传入导出的文件，configFactory，工作表的名字和数据
 
 下面是导出的Excel文件
@@ -193,7 +193,7 @@ public class CompanyExample {
 
         //read config from company.xml
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("company.xml");
-        ConfigReader configFactory = Octopus.getXMLConfigReader(is);
+        ConfigFactory configFactory = Octopus.getXMLConfigFactory(is);
 
         try {
             Octopus.writeOneSheet(os, configFactory, "company", companies);
@@ -256,7 +256,7 @@ public class AddressFormatter implements Formatter<Address> {
 
 
 ## 导入Excel
-我们直接拿上一个例子的导出结果来演示导入，共用同一个`ConfigReader`，直接编写导入的代码
+我们直接拿上一个例子的导出结果来演示导入，共用同一个`ConfigFactory`，直接编写导入的代码
 
 ```java
 //First get the excel file
@@ -327,7 +327,7 @@ Company(name=Toccoa Development, address=Address(city=Ridgeville, detail=1790 La
 public void importCheckedData() throws IOException, InvalidFormatException {
     InputStream is = this.getClass().getClassLoader().getResourceAsStream("wrongCompany.xlsx");
 
-    ConfigReader configFactory = new XmlConfigReader(this.getClass().getClassLoader().getResourceAsStream("company3.xml"));
+    ConfigFactory configFactory = new XmlConfigFactory(this.getClass().getClassLoader().getResourceAsStream("company3.xml"));
 
     final SheetReader<CheckedData<Company>> sheetReader = Octopus.readFirstSheetWithValidation(is,configFactory,new DefaultCellPosition(1,0));
 
@@ -361,7 +361,7 @@ CheckedData(data=Company(name=null, address=Address(city=Mcdonough, detail=1278 
 ## Q&A
 
 ### 没有Java注解配置？
-目前只提供XML配置，因为XML和类文件解耦，有时候你无法修改类代码时，尤其是导出场景，XML会是更好的选择。如果你是"anti-xml"，可以实现注解版`ConfigReader`，把注解配置转换成`Field`，这应该不会很难。后面我有空再弄注解配置吧~
+目前只提供XML配置，因为XML和类文件解耦，有时候你无法修改类代码时，尤其是导出场景，XML会是更好的选择。如果你是"anti-xml"，可以实现注解版`ConfigFactory`，把注解配置转换成`Field`，这应该不会很难。后面我有空再弄注解配置吧~
 
 ### 需要操作Apache POI？
 `Octopus`类可以提供一行代码式的API，让你不用碰Apache POI的API。但是如果你确实需要用到Apache POI，可以先看一下Octopus核心类`SheetWriter`和`SheetReader`代码。我在设计的时候尽量考虑扩展，并且完全基于接口实现，实在不行可以选择继承重写，属性基本都是protected，或者直接自己实现接口

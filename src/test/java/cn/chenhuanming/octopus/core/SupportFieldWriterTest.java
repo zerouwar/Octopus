@@ -16,7 +16,7 @@ import java.io.IOException;
  * @author chenhuanming
  * Created at 2018/12/15
  */
-public class SupportHeaderWriterTest {
+public class SupportFieldWriterTest {
 
     @Test
     public void drawHeader() throws IOException {

@@ -25,10 +25,15 @@ import java.awt.*;
 public class ColorUtils {
 
     /**
+     * hex color to {@link java.awt.Color}
+     *
      * @param colorStr e.g. "#FFFFFF"
-     * @return
+     * @return null if colorStr is null
      */
     public static Color hex2Rgb(String colorStr) {
+        if (colorStr == null) {
+            return null;
+        }
         return new Color(
                 Integer.valueOf(colorStr.substring(1, 3), 16),
                 Integer.valueOf(colorStr.substring(3, 5), 16),
@@ -36,6 +41,9 @@ public class ColorUtils {
     }
 
     public static void setColor(Workbook workbook, Font font, Color color) {
+        if (color == null) {
+            return;
+        }
         if (font instanceof XSSFFont) {
             ((XSSFFont) font).setColor(new XSSFColor(color));
         } else if (font instanceof HSSFFont && workbook instanceof HSSFWorkbook) {

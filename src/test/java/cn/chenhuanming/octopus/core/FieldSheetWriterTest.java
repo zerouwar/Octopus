@@ -13,7 +13,7 @@ import java.io.IOException;
  * @author chenhuanming
  * Created at 2018/12/13
  */
-public class DefaultSheetWriterTest extends AbstractWriterTest {
+public class FieldSheetWriterTest extends AbstractWriterTest {
 
     @Test
     public void test() throws IOException {

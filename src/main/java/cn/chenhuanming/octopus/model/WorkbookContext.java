@@ -1,6 +1,7 @@
 package cn.chenhuanming.octopus.model;
 
 import cn.chenhuanming.octopus.config.Field;
+import cn.chenhuanming.octopus.config.FieldCellStyle;
 import cn.chenhuanming.octopus.util.ColorUtils;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -14,7 +15,7 @@ import java.util.Map;
 
 /**
  * context of one workbook
- * manage limited resources of workbook,such as color,cellStyle
+ * manage limited resources of workbook,such as color,fieldCellStyle
  *
  * @author chenhuanming
  * Created at 2019-02-18
@@ -35,14 +36,17 @@ public class WorkbookContext {
         if (style == null) {
             style = book.createCellStyle();
             Font font = book.createFont();
-            font.setFontHeightInPoints(field.getFontSize());
-            font.setBold(field.isBold());
-            ColorUtils.setColor(book, font, field.getColor());
-            style.setFont(font);
-            ColorUtils.setForegroundColor(book, style, field.getForegroundColor());
+            FieldCellStyle fieldCellStyle = field.getFieldCellStyle();
 
-            setStyleBorder(style, field.getBorder());
-            ColorUtils.setBorderColor(book, style, field.getBorderColor());
+
+            font.setFontHeightInPoints(fieldCellStyle.getFontSize());
+            font.setBold(fieldCellStyle.isBold());
+            ColorUtils.setColor(book, font, fieldCellStyle.getColor());
+            style.setFont(font);
+            ColorUtils.setForegroundColor(book, style, fieldCellStyle.getForegroundColor());
+
+            setStyleBorder(style, fieldCellStyle.getBorder());
+            ColorUtils.setBorderColor(book, style, fieldCellStyle.getBorderColor());
 
             style.setAlignment(HorizontalAlignment.CENTER);
             style.setVerticalAlignment(VerticalAlignment.CENTER);
@@ -57,16 +61,19 @@ public class WorkbookContext {
         if (style == null) {
             style = book.createCellStyle();
             Font font = book.createFont();
-            font.setFontHeightInPoints(field.getHeaderFontSize());
-            font.setBold(field.isHeaderBold());
-            ColorUtils.setColor(book, font, field.getHeaderColor());
+            FieldCellStyle fieldCellStyle = field.getHeaderFieldCellStyle();
+
+
+            font.setFontHeightInPoints(fieldCellStyle.getFontSize());
+            font.setBold(fieldCellStyle.isBold());
+            ColorUtils.setColor(book, font, fieldCellStyle.getColor());
             style.setFont(font);
             style.setAlignment(HorizontalAlignment.CENTER);
             style.setVerticalAlignment(VerticalAlignment.CENTER);
-            ColorUtils.setForegroundColor(book, style, field.getHeaderForegroundColor());
+            ColorUtils.setForegroundColor(book, style, fieldCellStyle.getForegroundColor());
 
-            setStyleBorder(style, field.getHeaderBorder());
-            ColorUtils.setBorderColor(book, style, field.getHeaderBorderColor());
+            setStyleBorder(style, fieldCellStyle.getBorder());
+            ColorUtils.setBorderColor(book, style, fieldCellStyle.getBorderColor());
             cellStyleMap.put(field, style);
             return style;
         }

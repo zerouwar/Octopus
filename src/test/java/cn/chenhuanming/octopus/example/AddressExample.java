@@ -42,7 +42,7 @@ public class AddressExample {
 
         //read config from address.xml
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("address.xml");
-        ConfigFactory configFactory = Octopus.getXMLConfigReader(is);
+        ConfigFactory configFactory = Octopus.getXMLConfigFactory(is);
 
         try {
             Octopus.writeOneSheet(os, configFactory, "address", addresses);
