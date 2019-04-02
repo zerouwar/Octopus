@@ -36,7 +36,7 @@ public abstract class AbstractXMLConfigReader extends CachedConfigReader {
         }
     }
 
-    private static final String SCHEMA_URI = "https://raw.githubusercontent.com/zerouwar/my-maven-repo/master/cn/chenhuanming/octopus/1.0.0/octopus.xsd";
+    private static final String SCHEMA_URI = "https://raw.githubusercontent.com/zerouwar/my-maven-repo/master/cn/chenhuanming/octopus/1.1.0/octopus.xsd";
 
     protected void validateXML(Source source) throws Exception {
         SchemaFactory schemaFactory = SchemaFactory

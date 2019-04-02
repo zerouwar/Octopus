@@ -47,7 +47,7 @@ Add dependency
 <dependency>
         <groupId>cn.chenhuanming</groupId>
         <artifactId>octopus</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
 </dependency>
 ```
 
@@ -71,7 +71,7 @@ Before exporting,we must create a XML config to define how and what to export
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/my-maven-repo/master/cn/chenhuanming/octopus/1.0.0/octopus.xsd"
+      xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/my-maven-repo/master/cn/chenhuanming/octopus/1.1.0/octopus.xsd"
       class="cn.chenhuanming.octopus.entity.Address">
 
     <Field name="city" description="City"/>
@@ -156,7 +156,7 @@ And we create a XML config file named *company.xml*
 
 ```xml
 <Root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/my-maven-repo/master/cn/chenhuanming/octopus/1.0.0/octopus.xsd"
+      xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/my-maven-repo/master/cn/chenhuanming/octopus/1.1.0/octopus.xsd"
       class="cn.chenhuanming.octopus.entity.Address">
 
 
@@ -303,7 +303,7 @@ Let's check out XML config
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/my-maven-repo/master/cn/chenhuanming/octopus/1.0.0/octopus.xsd"
+      xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/my-maven-repo/master/cn/chenhuanming/octopus/1.1.0/octopus.xsd"
       class="cn.chenhuanming.octopus.entity.Company">
 
 
