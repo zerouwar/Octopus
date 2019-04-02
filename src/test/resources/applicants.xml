@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/zerouwar/my-maven-repo/master/cn/chenhuanming/octopus/1.0.0/octopus.xsd"
+      xsi:noNamespaceSchemaLocation="cn/chenhuanming/octopus/octopus.xsd"
       class="cn.chenhuanming.octopus.entity.Applicants">
 
     <Field name="id"
@@ -10,7 +10,8 @@
     <Field name="name"
            description="Name"
            font-size="20"
-           border="0,1,0,1"/>
+           border="0,2,0,2"
+           border-color=",#4242f4,,#4242f4"/>
 
     <Header name="job" description="Job" header-color="#4286f4">
         <Header name="company"

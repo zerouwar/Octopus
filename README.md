@@ -118,10 +118,10 @@ public class AddressExample {
 
         //read config from address.xml
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("address.xml");
-        ConfigReader configReader = Octopus.getXMLConfigReader(is);
+        ConfigFactory configFactory = Octopus.getXMLConfigFactory(is);
 
         try {
-            Octopus.writeOneSheet(os, configReader, "address", addresses);
+            Octopus.writeOneSheet(os, configFactory, "address", addresses);
         } catch (IOException e) {
             System.out.println("export failed");
         }
@@ -131,8 +131,8 @@ public class AddressExample {
 
 This is a complete unit test.In fact,exporting Excel only needs two steps:
 
-1. Create a `ConfigReader` instance from XML config file
-2. Call `Octopus.writeOneSheet()` and pass exporting file,configReader,name of sheet and data
+1. Create a `ConfigFactory` instance from XML config file
+2. Call `Octopus.writeOneSheet()` and pass exporting file,configFactory,name of sheet and data
 
 Here is exporting excel file
 
@@ -201,10 +201,10 @@ public class CompanyExample {
 
         //read config from company.xml
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("company.xml");
-        ConfigReader configReader = Octopus.getXMLConfigReader(is);
+        ConfigFactory configFactory = Octopus.getXMLConfigFactory(is);
 
         try {
-            Octopus.writeOneSheet(os, configReader, "company", companies);
+            Octopus.writeOneSheet(os, configFactory, "company", companies);
         } catch (IOException e) {
             System.out.println("export failed");
         }
@@ -264,16 +264,15 @@ Exporting excel will be like this
 ![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/convering_data.png)
 
 ## Import Excel
-We directly reuse previous example to see how to import a excel.Reuse `ConfigReader` object,just change Java code
+We directly reuse previous example to see how to import a excel.Reuse `ConfigFactory` object,just change Java code
 
 ```java
 //First get the excel file
 FileInputStream fis = new FileInputStream(rootPath + "/company2.xlsx");
 
 try {
-    SheetReader<Company> importData = Octopus.readFirstSheet(fis, configReader, new DefaultCellPosition(1, 0));
+    SheetReader<Company> importData = Octopus.readFirstSheet(fis, configFactory, new DefaultCellPosition(1, 0));
 
-    
     for (Company company : importData) {
         System.out.println(company);
     }
@@ -336,9 +335,9 @@ And the Java code
 public void importCheckedData() throws IOException, InvalidFormatException {
     InputStream is = this.getClass().getClassLoader().getResourceAsStream("wrongCompany.xlsx");
 
-    ConfigReader configReader = new XmlConfigReader(this.getClass().getClassLoader().getResourceAsStream("company3.xml"));
+    ConfigFactory configFactory = new XmlConfigFactory(this.getClass().getClassLoader().getResourceAsStream("company3.xml"));
 
-    final SheetReader<CheckedData<Company>> sheetReader = Octopus.readFirstSheetWithValidation(is,configReader,new DefaultCellPosition(1,0));
+    final SheetReader<CheckedData<Company>> sheetReader = Octopus.readFirstSheetWithValidation(is,configFactory,new DefaultCellPosition(1,0));
 
     for (CheckedData<Company> checkedData : sheetReader) {
         System.out.println(checkedData);
@@ -371,7 +370,7 @@ Octopus will catch them,put into `exceptions` and fill with position of cell and
 
 ### No Java Annotation Config?
 For now,only XML config because XML and class file are separate.Sometimes you can not modify class file,especially when exporting excel,XML will be better choice. 
-If you are "anti-xml", can implements `ConfigReader`,it will not be hard.
+If you are "anti-xml", can implements `ConfigFactory`,it will not be hard.
 
 ### Need Apache POI?
 `Octopus` provides one-code-api,get rid of Apache API。If you really need Apache POI,check core class `SheetWriter`和`SheetReader`

@@ -2,7 +2,6 @@ package cn.chenhuanming.octopus.formatter;
 
 import cn.chenhuanming.octopus.entity.Address;
 import cn.chenhuanming.octopus.exception.ParseException;
-import cn.chenhuanming.octopus.model.formatter.Formatter;
 
 /**
  * @author chenhuanming

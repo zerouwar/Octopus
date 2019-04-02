@@ -1,10 +1,12 @@
 package cn.chenhuanming.octopus.core;
 
+import cn.chenhuanming.octopus.config.ConfigFactory;
+import cn.chenhuanming.octopus.config.XmlConfigFactory;
 import cn.chenhuanming.octopus.entity.Applicants;
 import cn.chenhuanming.octopus.model.CheckedData;
-import cn.chenhuanming.octopus.model.ConfigReader;
 import cn.chenhuanming.octopus.model.DefaultCellPosition;
-import cn.chenhuanming.octopus.model.XmlConfigReader;
+import cn.chenhuanming.octopus.reader.CheckedSheetReader;
+import cn.chenhuanming.octopus.reader.SheetReader;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -26,9 +28,9 @@ public class CheckedSheetReaderTest {
         Workbook workbook = WorkbookFactory.create(is);
         Sheet sheet = workbook.getSheetAt(0);
 
-        ConfigReader configReader = new XmlConfigReader(this.getClass().getClassLoader().getResourceAsStream("applicants.xml"));
+        ConfigFactory configFactory = new XmlConfigFactory(this.getClass().getClassLoader().getResourceAsStream("applicants.xml"));
 
-        final SheetReader<CheckedData<Applicants>> sheetReader = new CheckedSheetReader<>(sheet, configReader, new DefaultCellPosition(2, 0));
+        final SheetReader<CheckedData<Applicants>> sheetReader = new CheckedSheetReader<>(sheet, configFactory, new DefaultCellPosition(2, 0));
 
         for (CheckedData<Applicants> checkedData : sheetReader) {
             System.out.println(checkedData);
@@ -41,9 +43,9 @@ public class CheckedSheetReaderTest {
         Workbook workbook = WorkbookFactory.create(is);
         Sheet sheet = workbook.getSheetAt(0);
 
-        ConfigReader configReader = new XmlConfigReader(this.getClass().getClassLoader().getResourceAsStream("applicants.xml"));
+        ConfigFactory configFactory = new XmlConfigFactory(this.getClass().getClassLoader().getResourceAsStream("applicants.xml"));
 
-        final SheetReader<CheckedData<Applicants>> sheetReader = new CheckedSheetReader<>(sheet, configReader, new DefaultCellPosition(2, 0));
+        final SheetReader<CheckedData<Applicants>> sheetReader = new CheckedSheetReader<>(sheet, configFactory, new DefaultCellPosition(2, 0));
 
         for (CheckedData<Applicants> checkedData : sheetReader) {
             System.out.println(checkedData);
