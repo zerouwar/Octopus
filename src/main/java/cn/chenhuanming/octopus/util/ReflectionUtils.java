@@ -1,7 +1,6 @@
 package cn.chenhuanming.octopus.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
@@ -10,9 +9,8 @@ import java.lang.reflect.Method;
  * @author chenhuanming
  * Created at 2018/12/13
  */
+@Slf4j
 public class ReflectionUtils {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionUtils.class);
 
     /**
      * call method and get the return string value,or return defaultValue
@@ -50,7 +48,7 @@ public class ReflectionUtils {
         try {
             return method.invoke(o);
         } catch (Exception e) {
-            LOGGER.debug("failed to invoke " + method.getClass() + "#" + method.getName(), e);
+            log.debug("failed to invoke " + method.getClass() + "#" + method.getName(), e);
             return null;
         }
     }
@@ -62,7 +60,7 @@ public class ReflectionUtils {
         try {
             return new PropertyDescriptor(fieldName, clazz).getReadMethod();
         } catch (Exception e) {
-            LOGGER.debug("failed to fetch getter method for field " + fieldName, e);
+            log.debug("failed to fetch getter method for field " + fieldName, e);
             return null;
         }
     }
@@ -74,7 +72,7 @@ public class ReflectionUtils {
         try {
             return new PropertyDescriptor(fieldName, clazz).getWriteMethod();
         } catch (Exception e) {
-            LOGGER.debug("failed to fetch setter method for field " + fieldName, e);
+            log.debug("failed to fetch setter method for field " + fieldName, e);
             return null;
         }
     }
@@ -83,7 +81,7 @@ public class ReflectionUtils {
         try {
             return clazz.newInstance();
         } catch (Exception e) {
-            LOGGER.error("can not new instance through default constructor:" + clazz.getName());
+            log.error("can not new instance through default constructor:" + clazz.getName());
             return null;
         }
     }

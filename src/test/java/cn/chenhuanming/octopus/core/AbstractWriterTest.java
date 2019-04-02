@@ -17,11 +17,14 @@ import java.util.List;
 public class AbstractWriterTest {
     protected List<Applicants> applicantsList;
 
+    protected Integer number = 5;
+
     @Before
     public void before() {
         applicantsList = new ArrayList<>();
         DataFactory df = new DataFactory();
-        for (int i = 0; i < df.getNumberBetween(5, 10); i++) {
+        number = number();
+        for (int i = 0; i < number; i++) {
             Applicants applicants = new Applicants();
             applicants.setId(df.getNumberBetween(0, 100));
             applicants.setName(df.getName());
@@ -33,5 +36,9 @@ public class AbstractWriterTest {
             applicantsList.add(applicants);
 
         }
+    }
+
+    protected int number() {
+        return 5;
     }
 }

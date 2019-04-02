@@ -9,6 +9,10 @@ public class StringUtils {
         return s == null || s.length() == 0;
     }
 
+    public static String defaultIfEmpty(String s, String defaultValue) {
+        return isEmpty(s) ? defaultValue : s;
+    }
+
     public static boolean isNotEmpty(String s) {
         return !isEmpty(s);
     }
