@@ -32,9 +32,7 @@ public class Field {
 
     /**
      * format value if it is date type
-     * use {@link #formatter} direct
      */
-    @Deprecated
     private Formatter<Date> dateFormat;
 
     /**
