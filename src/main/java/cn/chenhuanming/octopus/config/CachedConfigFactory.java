@@ -1,10 +1,13 @@
 package cn.chenhuanming.octopus.config;
 
+import cn.chenhuanming.octopus.formatter.Formatter;
 import cn.chenhuanming.octopus.util.ColorUtils;
 import cn.chenhuanming.octopus.util.StringUtils;
 import org.apache.poi.ss.usermodel.BorderStyle;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author chenhuanming
@@ -12,7 +15,7 @@ import java.awt.*;
  */
 public abstract class CachedConfigFactory implements ConfigFactory {
     protected static final String SPLITTER = "\\|";
-
+    protected Map<Class, Formatter> instanceMap = new HashMap<>();
     protected volatile Config config;
 
     @Override
@@ -55,4 +58,5 @@ public abstract class CachedConfigFactory implements ConfigFactory {
     public void refresh() {
         config = readConfig();
     }
+
 }

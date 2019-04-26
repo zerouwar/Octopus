@@ -1,6 +1,5 @@
 package cn.chenhuanming.octopus.writer;
 
-
 import cn.chenhuanming.octopus.config.Config;
 import cn.chenhuanming.octopus.config.ConfigFactory;
 import cn.chenhuanming.octopus.config.Field;
@@ -15,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.Collection;
-import java.util.Date;
 
 /**
  * Created by chenhuanming on 2017-07-01.
@@ -88,25 +86,22 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
             return col + 1;
         }
         String value;
-
-        if (field.getFormatter() != null) {
-            value = field.getFormatter().format(ReflectionUtils.invokeReadMethod(field.getPicker(), o));
+        Formatter formatter = field.getFormatter();
+        if (formatter != null) {
+            value = formatter.format(ReflectionUtils.invokeReadMethod(field.getPicker(), o));
             CellUtils.setCellValue(sheet, row, col, value, bookResource.getCellStyle(field));
             return col + 1;
         }
 
-        Formatter formatter = configFactory.getConfig().getFormatterContainer().get(field.getPicker().getReturnType());
+        formatter = configFactory.getConfig().getFormatterContainer().get(field.getPicker().getReturnType());
 
         if (field.getPicker().getReturnType() == String.class || formatter == null) {
             value = ReflectionUtils.invokeReadMethod(field.getPicker(), o, field.getDefaultValue());
             CellUtils.setCellValue(sheet, row, col, value, bookResource.getCellStyle(field));
             return col + 1;
         }
-        if (field.getPicker().getReturnType() == Date.class && field.getDateFormat() != null) {
-            value = field.getDateFormat().format((Date) ReflectionUtils.invokeReadMethod(field.getPicker(), o));
-        } else {
-            value = formatter.format(ReflectionUtils.invokeReadMethod(field.getPicker(), o));
-        }
+        //导出时要么是 Date 类型使用 dateFormatter 要么不是 Date 类型，使用 formatter 那么其实可以只用 formatter 字段表示
+        value = formatter.format(ReflectionUtils.invokeReadMethod(field.getPicker(), o));
 
         if (StringUtils.isEmpty(value)) {
             value = field.getDefaultValue();

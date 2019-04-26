@@ -1,5 +1,6 @@
 package cn.chenhuanming.octopus.config.annotation;
 
+import cn.chenhuanming.octopus.config.CachedConfigFactory;
 import cn.chenhuanming.octopus.config.Config;
 import cn.chenhuanming.octopus.config.Field;
 import cn.chenhuanming.octopus.config.FieldCellStyle;
@@ -10,25 +11,28 @@ import cn.chenhuanming.octopus.formatter.FormatterContainer;
 import cn.chenhuanming.octopus.util.ColorUtils;
 import cn.chenhuanming.octopus.util.ReflectionUtils;
 import cn.chenhuanming.octopus.util.StringUtils;
+import lombok.Getter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
  * @author : youthlin.chen @ 2019-04-26 12:00
  */
-public class AnnotationConfigFactory extends AbstractAnnotationConfigFactory {
-    private Map<Class, cn.chenhuanming.octopus.formatter.Formatter> instanceMap = new HashMap<>();
+public class AnnotationConfigFactory extends CachedConfigFactory {
+    @Getter
+    private final Class<?> modelClass;
 
     public AnnotationConfigFactory(Class modelClass) {
-        super(modelClass);
+        if (modelClass.getAnnotation(Sheet.class) == null) {
+            throw new IllegalArgumentException("the modelClass must have @Sheet annotation:" + modelClass);
+        }
+        this.modelClass = modelClass;
     }
 
     @Override
@@ -115,7 +119,9 @@ public class AnnotationConfigFactory extends AbstractAnnotationConfigFactory {
     private void setFormatter(Field field, cn.chenhuanming.octopus.config.annotation.Field fieldAnnotation) {
         String dateFormat = fieldAnnotation.dateFormat();
         if (StringUtils.isNotEmpty(dateFormat)) {
-            field.setDateFormat(new DateFormatter(dateFormat));
+            DateFormatter dateFormatter = new DateFormatter(dateFormat);
+            field.setDateFormat(dateFormatter);
+            field.setFormatter(dateFormatter);
         }
         Class<? extends cn.chenhuanming.octopus.formatter.Formatter> formatter = fieldAnnotation.formatter();
         if (!formatter.equals(cn.chenhuanming.octopus.formatter.Formatter.class)) {
@@ -184,15 +190,16 @@ public class AnnotationConfigFactory extends AbstractAnnotationConfigFactory {
             builder.borderColor(convertBorderColor(borderColor));
 
             field.setHeaderFieldCellStyle(builder.build());
+        } else {
+            throw new IllegalArgumentException("unknown annotation, @Header or @Field required:" + headerOrField);
         }
     }
 
     private void setInvoker(Field field, Class classType) {
-        //set picker //getter
+        //getter
         Method picker = ReflectionUtils.readMethod(classType, field.getName());
         field.setPicker(picker);
-
-        //set pusher //setter
+        //setter
         Method pusher = ReflectionUtils.writeMethod(classType, field.getName());
         field.setPusher(pusher);
     }

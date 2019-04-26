@@ -145,7 +145,9 @@ public class XmlConfigFactory extends AbstractXMLConfigFactory {
 
         String dateFormat = getAttribute(node, XMLConstant.Field.Attribute.DATE_FORMAT);
         if (!StringUtils.isEmpty(dateFormat)) {
-            field.setDateFormat(new DateFormatter(dateFormat));
+            DateFormatter dateFormatter = new DateFormatter(dateFormat);
+            field.setDateFormat(dateFormatter);
+            field.setFormatter(dateFormatter);
         }
 
         //read formatter
