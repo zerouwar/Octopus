@@ -3,6 +3,7 @@ package cn.chenhuanming.octopus.config;
 import cn.chenhuanming.octopus.formatter.DateFormatter;
 import cn.chenhuanming.octopus.formatter.DefaultFormatterContainer;
 import cn.chenhuanming.octopus.formatter.FormatterContainer;
+import cn.chenhuanming.octopus.util.CellUtils;
 import cn.chenhuanming.octopus.util.ColorUtils;
 import cn.chenhuanming.octopus.util.ReflectionUtils;
 import cn.chenhuanming.octopus.util.StringUtils;
@@ -182,10 +183,10 @@ public class XmlConfigFactory extends AbstractXMLConfigFactory {
         builder.foregroundColor(ColorUtils.hex2Rgb(StringUtils.defaultIfEmpty(foregroundColor, null)));
 
         String border = getAttribute(node, XMLConstant.Field.Attribute.BORDER);
-        builder.border(convertBorder(StringUtils.defaultIfEmpty(border, "0,0,0,0")));
+        builder.border(ConfigUtils.convertBorder(StringUtils.defaultIfEmpty(border, "0,0,0,0")));
 
         String borderColor = getAttribute(node, XMLConstant.Field.Attribute.BORDER_COLOR);
-        builder.borderColor(convertBorderColor(StringUtils.defaultIfEmpty(borderColor, "#000000,#000000,#000000,#000000")));
+        builder.borderColor(ConfigUtils.convertBorderColor(StringUtils.defaultIfEmpty(borderColor, "#000000,#000000,#000000,#000000")));
 
         field.setFieldCellStyle(builder.build());
     }
@@ -206,10 +207,10 @@ public class XmlConfigFactory extends AbstractXMLConfigFactory {
         builder.foregroundColor(ColorUtils.hex2Rgb(StringUtils.defaultIfEmpty(foregroundColor, "#FFFFFF")));
 
         String border = getAttribute(node, XMLConstant.Header.Attribute.HEADER_BORDER);
-        builder.border(convertBorder(StringUtils.defaultIfEmpty(border, "1,1,1,1")));
+        builder.border(ConfigUtils.convertBorder(StringUtils.defaultIfEmpty(border, "1,1,1,1")));
 
         String borderColor = getAttribute(node, XMLConstant.Header.Attribute.HEADER_BORDER_COLOR);
-        builder.borderColor(convertBorderColor(StringUtils.defaultIfEmpty(borderColor, "#000000,#000000,#000000,#000000")));
+        builder.borderColor(ConfigUtils.convertBorderColor(StringUtils.defaultIfEmpty(borderColor, "#000000,#000000,#000000,#000000")));
 
         field.setHeaderFieldCellStyle(builder.build());
     }

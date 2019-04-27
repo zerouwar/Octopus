@@ -2,6 +2,7 @@ package cn.chenhuanming.octopus.config.annotation;
 
 import cn.chenhuanming.octopus.config.CachedConfigFactory;
 import cn.chenhuanming.octopus.config.Config;
+import cn.chenhuanming.octopus.config.ConfigUtils;
 import cn.chenhuanming.octopus.config.Field;
 import cn.chenhuanming.octopus.config.FieldCellStyle;
 import cn.chenhuanming.octopus.config.ImportValidation;
@@ -145,11 +146,11 @@ public class AnnotationConfigFactory extends CachedConfigFactory {
         builder.foregroundColor(ColorUtils.hex2Rgb(StringUtils.defaultIfEmpty(foregroundColor, null)));
 
         String border = fieldAnnotation.border();
-        builder.border(convertBorder(StringUtils.defaultIfEmpty(border, "0,0,0,0")));
+        builder.border(ConfigUtils.convertBorder(StringUtils.defaultIfEmpty(border, "0,0,0,0")));
 
         String borderColor = fieldAnnotation.borderColor();
         borderColor = StringUtils.defaultIfEmpty(borderColor, "#000000,#000000,#000000,#000000");
-        builder.borderColor(convertBorderColor(borderColor));
+        builder.borderColor(ConfigUtils.convertBorderColor(borderColor));
 
         field.setFieldCellStyle(builder.build());
     }
@@ -185,9 +186,9 @@ public class AnnotationConfigFactory extends CachedConfigFactory {
             builder.color(ColorUtils.hex2Rgb(StringUtils.defaultIfEmpty(color, "#000000")));
             builder.bold(isBold);
             builder.foregroundColor(ColorUtils.hex2Rgb(StringUtils.defaultIfEmpty(foregroundColor, "#FFFFFF")));
-            builder.border(convertBorder(StringUtils.defaultIfEmpty(border, "1,1,1,1")));
+            builder.border(ConfigUtils.convertBorder(StringUtils.defaultIfEmpty(border, "1,1,1,1")));
             borderColor = StringUtils.defaultIfEmpty(borderColor, "#000000,#000000,#000000,#000000");
-            builder.borderColor(convertBorderColor(borderColor));
+            builder.borderColor(ConfigUtils.convertBorderColor(borderColor));
 
             field.setHeaderFieldCellStyle(builder.build());
         } else {
