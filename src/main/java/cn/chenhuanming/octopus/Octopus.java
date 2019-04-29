@@ -52,6 +52,7 @@ public final class Octopus {
      * @param configFactory get configFactory from @{{@link #getXMLConfigFactory(InputStream)}}
      * @param sheetName    name of sheet
      * @param data         data
+     * @param <T>           class type of data you want
      * @throws IOException when writing excel file failed
      */
     public static <T> void writeOneSheet(OutputStream os, ConfigFactory configFactory, String sheetName, Collection<T> data) throws IOException {

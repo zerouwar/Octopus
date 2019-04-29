@@ -8,11 +8,13 @@ package cn.chenhuanming.octopus.model;
 public interface CellPosition {
     /**
      * begin with 0,same as java poi
+     * @return row index
      */
     int getRow();
 
     /**
      * begin with 0,same as java poi
+     * @return column index
      */
     int getCol();
 }

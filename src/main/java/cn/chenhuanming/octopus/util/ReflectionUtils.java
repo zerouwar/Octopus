@@ -15,10 +15,10 @@ public class ReflectionUtils {
     /**
      * call method and get the return string value,or return defaultValue
      *
-     * @param method
-     * @param o
-     * @param defaultValue
-     * @return
+     * @param method method
+     * @param o which call method from
+     * @param defaultValue default value
+     * @return return of method,or default value when is null
      */
     public static String invokeReadMethod(Method method, Object o, String defaultValue) {
         if (method == null || o == null) {
@@ -36,8 +36,8 @@ public class ReflectionUtils {
     /**
      * call getter method and return value,or return null
      *
-     * @param method
-     * @param o
+     * @param method method
+     * @param o which call method from
      * @return return value fo read method
      * return null if failed or method is null
      */

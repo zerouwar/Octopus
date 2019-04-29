@@ -44,10 +44,6 @@ public abstract class AbstractSheetReader<T> implements SheetReader<T> {
 
     /**
      * set value into object
-     *
-     * @param str
-     * @param field
-     * @param o
      */
     protected void setValue(String str, Field field, Object o) throws ParseException {
         Method pusher = field.getPusher();

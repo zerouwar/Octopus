@@ -14,9 +14,6 @@ import static java.lang.invoke.MethodHandles.lookup;
 public class MethodHandleUtil {
     /**
      * 获取Setter方法句柄
-     *
-     * @param field
-     * @return 方法句柄
      */
     public static MethodHandle setterMethodHandle(Field field) {
         StringBuilder setter = new StringBuilder("set");
@@ -37,9 +34,6 @@ public class MethodHandleUtil {
 
     /**
      * 获取Getter方法句柄
-     *
-     * @param field
-     * @return 方法句柄
      */
     public static MethodHandle getterMethodHandle(Field field) {
         StringBuilder getter = new StringBuilder("get");
