@@ -360,5 +360,5 @@ CheckedData(data=Company(name=null, address=Address(city=Mcdonough, detail=1278 
 `Octopus`类可以提供一行代码式的API，让你不用碰Apache POI的API。但是如果你确实需要用到Apache POI，可以先看一下Octopus核心类`SheetWriter`和`SheetReader`代码。我在设计的时候尽量考虑扩展，并且完全基于接口实现，实在不行可以选择继承重写，属性基本都是protected，或者直接自己实现接口
 
 ### 有建议或者想法？
-email我**chenhuanming.cn@gmail.com**
+提Issue或者email我**chenhuanming.cn@gmail.com**
 
