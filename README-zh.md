@@ -16,6 +16,10 @@
 <!-- /TOC -->
 
 # Octopus
+
+[![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/mockito/mockito/blob/master/LICENSE)
+[![Maven Central](https://img.shields.io/badge/maven-octopus-blue.svg)](https://search.maven.org/search?q=g:cn.chenhuanming%20AND%20a:octopus)
+
  `Octopus` 是一个简单的java excel导入导出工具。目的是不用接触Apache POI的API就可以完成简单的Excel导出导入。
  同时，可以自定义表格样式，导入检验数据和转换数据
 
@@ -24,18 +28,6 @@
 ![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/applicant_example.png)
 
 ## 从Maven导入
-
-增加仓库
-
-		<repositories>
-		    <repository>
-		        <id>chenhuanming-repo</id>
-		        <name>chenhuanming-repo</name>
-		        <url>https://raw.githubusercontent.com/zerouwar/my-maven-repo/master</url>
-		    </repository>
-		</repositories>
-
-引入依赖
 
 		<dependency>
 				<groupId>cn.chenhuanming</groupId>
