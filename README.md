@@ -364,5 +364,5 @@ If you are "anti-xml", can implements `ConfigFactory`,it will not be hard.
 `Octopus` provides one-code-api,get rid of Apache API。If you really need Apache POI,check core class `SheetWriter`和`SheetReader`
 
 ### Have Advice or idea?
-email me **chenhuanming.cn@gmail.com**
+New a issue or email **chenhuanming.cn@gmail.com**
 
