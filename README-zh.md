@@ -28,12 +28,13 @@
 ![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/applicant_example.png)
 
 ## 从Maven导入
-
-		<dependency>
-				<groupId>cn.chenhuanming</groupId>
-				<artifactId>octopus</artifactId>
-				<version>1.1.0</version>
-		</dependency>
+```
+<dependency>
+	<groupId>cn.chenhuanming</groupId>
+	<artifactId>octopus</artifactId>
+	<version>1.1.0</version>
+</dependency>
+```
 
 ## 导出Excel
 
