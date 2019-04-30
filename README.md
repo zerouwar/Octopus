@@ -1,4 +1,3 @@
-
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Octopus](#octopus)
@@ -18,29 +17,18 @@
 [跳去中文版](https://github.com/zerouwar/Octopus/blob/master/README-zh.md)
 
 # Octopus
- `Octopus` is a simple Java excel import and export tool,
- aiming to not touch Apache POI API for simply import or export excel.
- At the meantime,you can customize cell style,validate importing data according some rule
- and convert data you want
+
+[![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/mockito/mockito/blob/master/LICENSE)
+[![Maven Central](https://img.shields.io/badge/maven-octopus-blue.svg)](https://search.maven.org/search?q=g:cn.chenhuanming%20AND%20a:octopus)
+
+A simple Java excel import and export tool aiming to not touch Apache POI API for simply import or export excel.
+At the meantime,you can customize cell style,validate importing data according some rule
+and convert data you want
 
 **Talk less,directly see a picutre**
 ![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/applicant_example.png)
 
 ## Import from Maven
-
-Add repository
-
-```xml
-<repositories>
-    <repository>
-        <id>chenhuanming-repo</id>
-        <name>chenhuanming-repo</name>
-        <url>https://raw.githubusercontent.com/zerouwar/my-maven-repo/master</url>
-    </repository>
-</repositories>
-```
-
-
 Add dependency
 
 ```xml
