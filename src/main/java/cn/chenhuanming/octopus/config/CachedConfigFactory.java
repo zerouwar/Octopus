@@ -10,8 +10,6 @@ import java.util.Map;
  * Created at 2018/12/10
  */
 public abstract class CachedConfigFactory implements ConfigFactory {
-    protected static final String SPLITTER = "\\|";
-    protected Map<Class, Formatter> instanceMap = new HashMap<>();
     protected volatile Config config;
 
     @Override

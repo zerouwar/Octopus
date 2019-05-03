@@ -241,7 +241,7 @@ public class XmlConfigFactory extends AbstractXMLConfigFactory {
         }
         String options = getAttribute(node, XMLConstant.Field.Attribute.OPTIONS);
         if (!StringUtils.isEmpty(options) && options.length() >= 2) {
-            String[] split = options.split(SPLITTER);
+            String[] split = options.split(StringUtils.OPTION_SPLITTER_VERTICAL);
             validation.setOptions(Arrays.asList(split));
         }
 

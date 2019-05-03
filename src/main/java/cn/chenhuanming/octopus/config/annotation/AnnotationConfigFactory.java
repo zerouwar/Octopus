@@ -20,12 +20,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
  * @author : youthlin.chen @ 2019-04-26 12:00
  */
 public class AnnotationConfigFactory extends CachedConfigFactory {
+    private Map<Class, cn.chenhuanming.octopus.formatter.Formatter> instanceMap = new ConcurrentHashMap<>();
     @Getter
     private final Class<?> modelClass;
 
@@ -217,7 +220,7 @@ public class AnnotationConfigFactory extends CachedConfigFactory {
 
         String options = fieldAnnotation.options();
         if (!StringUtils.isEmpty(options) && options.length() >= 2) {
-            String[] split = options.split(SPLITTER);
+            String[] split = options.split(StringUtils.OPTION_SPLITTER_VERTICAL);
             validation.setOptions(Arrays.asList(split));
         }
 

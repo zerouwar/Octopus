@@ -6,6 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * thread unsafe, only used when the formatter is stateless
+ *
  * @author : youthlin.chen @ 2019-04-26 12:21
  */
 @Retention(RetentionPolicy.RUNTIME)
