@@ -403,10 +403,6 @@ Usage:
 
 ## Q&A
 
-### No Java Annotation Config?
-For now,only XML config because XML and class file are separate.Sometimes you can not modify class file,especially when exporting excel,XML will be better choice. 
-If you are "anti-xml", can implements `ConfigFactory`,it will not be hard.
-
 ### Need Apache POI?
 `Octopus` provides one-code-api,get rid of Apache API。If you really need Apache POI,check core class `SheetWriter`和`SheetReader`
 
