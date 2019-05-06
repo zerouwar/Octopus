@@ -366,6 +366,41 @@ Octopus will catch them,put into `exceptions` and fill with position of cell and
 
 ***All example could be founud at `cn.chenhuanming.octopus.example`，you can run and check these examples*** 
 
+## Annotation
+We recommend using XML to configure the import and export formats, because XML configuration is not coupled with classes and is more flexible than annotations.  
+Sometimes, however, users may be less concerned about flexibility and want to put configuration and data classes together, so annotation can be used.  
+Annotations are similar to XML files, There are  `@Sheet`,`@Formatter`,`@Header`,`@Field`:
+- `@Sheet` on class, with a optional `formatters` attribute represents the global formatter
+- `@Formatter` represents a formatter as the `formatters` attribute value of `@Sheet`
+- `@Header` on a field of the data class, indicating that the field is a composite field
+- `@Field` on a field of the data class, indicating that the field is a single field
+
+Please refer to the XML file for the attribute values of the annotations(show as above examples). The following is an annotation example of a data class:
+```java
+@Sheet(formatters = {
+        @Formatter(target = BigDecimal.class, format = BigDecimalFormatter.class),
+})
+public class Applicants {
+    @Field(description = "Value", color = "#74f441")
+    private int id;
+    @Field(description = "Name", fontSize = 20, border = "0,2,0,2", borderColor = ",#4242f4,,#4242f4")
+    private String name;
+    @Header(description = "Job", headerColor = "#4286f4")
+    private Job job;
+    @Field(description = "Entry Date", dateFormat = "yyyy-MM-dd")
+    private Date entryDate;
+    @Field(description = "Working/Leaved", options = "Working|Leaved",
+            formatter = cn.chenhuanming.octopus.formatter.WorkingFormatter.class, color = "#42f4b9")
+    private boolean working = true;
+}
+
+```
+Usage:
+```java
+    ConfigFactory configFactory = new AnnotationConfigFactory(Applicants.class);
+    // ... use configFactory ...
+```
+
 ## Q&A
 
 ### No Java Annotation Config?

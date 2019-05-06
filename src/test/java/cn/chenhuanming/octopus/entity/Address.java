@@ -1,5 +1,7 @@
 package cn.chenhuanming.octopus.entity;
 
+import cn.chenhuanming.octopus.config.annotation.Field;
+import cn.chenhuanming.octopus.config.annotation.Sheet;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +13,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Sheet
 public class Address {
+    @Field(description = " City")
     private String city;
+    @Field(description = "Detail")
     private String detail;
 }

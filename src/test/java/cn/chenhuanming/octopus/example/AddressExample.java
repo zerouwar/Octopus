@@ -2,6 +2,7 @@ package cn.chenhuanming.octopus.example;
 
 import cn.chenhuanming.octopus.Octopus;
 import cn.chenhuanming.octopus.config.ConfigFactory;
+import cn.chenhuanming.octopus.config.annotation.AnnotationConfigFactory;
 import cn.chenhuanming.octopus.entity.Address;
 import org.fluttercode.datafactory.impl.DataFactory;
 import org.junit.Before;
@@ -50,4 +51,20 @@ public class AddressExample {
             System.out.println("export failed");
         }
     }
+
+    @Test
+    public void exportWithAnnotation() throws FileNotFoundException {
+        //where to export
+        String rootPath = this.getClass().getClassLoader().getResource("").getPath();
+        FileOutputStream os = new FileOutputStream(rootPath + "/address1.xlsx");
+
+        ConfigFactory configFactory = new AnnotationConfigFactory(Address.class);
+
+        try {
+            Octopus.writeOneSheet(os, configFactory, "address", addresses);
+        } catch (IOException e) {
+            System.out.println("export failed");
+        }
+    }
+
 }

@@ -1,6 +1,8 @@
 package cn.chenhuanming.octopus.core;
 
 import cn.chenhuanming.octopus.config.XmlConfigFactory;
+import cn.chenhuanming.octopus.config.annotation.AnnotationConfigFactory;
+import cn.chenhuanming.octopus.entity.Applicants;
 import cn.chenhuanming.octopus.writer.DefaultSheetWriter;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -20,9 +22,10 @@ public class FieldSheetWriterTest extends AbstractWriterTest {
 
         Workbook workbook = new XSSFWorkbook();
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
-        FileOutputStream os = new FileOutputStream(rootPath + "/export.xlsx");
+        FileOutputStream os = new FileOutputStream(rootPath + "/export1.xlsx");
 
-        DefaultSheetWriter writer = new DefaultSheetWriter(new XmlConfigFactory(this.getClass().getClassLoader().getResourceAsStream("applicants.xml")));
+        //DefaultSheetWriter writer = new DefaultSheetWriter(new XmlConfigFactory(this.getClass().getClassLoader().getResourceAsStream("applicants.xml")));
+        DefaultSheetWriter writer = new DefaultSheetWriter(new AnnotationConfigFactory(Applicants.class));
 
         writer.write(workbook.createSheet(), applicantsList);
 
