@@ -2,6 +2,7 @@ package cn.chenhuanming.octopus.util;
 
 import cn.chenhuanming.octopus.model.CellPosition;
 import cn.chenhuanming.octopus.model.DefaultCellPosition;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -11,6 +12,8 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+
+import java.awt.*;
 
 /**
  * @author chenhuanming
@@ -64,15 +67,15 @@ public class CellUtils {
             return defaultValue;
         }
         switch (cell.getCellTypeEnum()) {
-            case STRING:
-                return cell.getStringCellValue();
-            case FORMULA:
-            case NUMERIC:
-                return String.valueOf(cell.getNumericCellValue());
-            case BOOLEAN:
-                return String.valueOf(cell.getBooleanCellValue());
-            default:
-                return defaultValue;
+        case STRING:
+            return cell.getStringCellValue();
+        case FORMULA:
+        case NUMERIC:
+            return String.valueOf(cell.getNumericCellValue());
+        case BOOLEAN:
+            return String.valueOf(cell.getBooleanCellValue());
+        default:
+            return defaultValue;
         }
     }
 
@@ -83,6 +86,7 @@ public class CellUtils {
             return false;
         }
     }
+
 
 
 }

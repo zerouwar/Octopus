@@ -351,10 +351,43 @@ CheckedData(data=Company(name=null, address=Address(city=Mcdonough, detail=1278 
 
 ***以上代码都可以在测试路径`cn.chenhuanming.octopus.example`找到，通过这些例子可以感受下Octopus的魅力***
 
-## Q&A
+## 注解
+我们推荐使用 xml 方式配置导入导出格式，因为 xml 配置与类不相耦合，相比注解更加灵活。  
+不过有时使用方可能不太在意灵活性，希望把配置和数据类放在一起，那么可以使用注解版本。  
+注解与 xml 文件的使用方法类似，主要有 `@Sheet`,`@Formatter`,`@Header`,`@Field` 这几个。
+- `@Sheet` 注解在数据类上，可选 `formatters` 属性, 表示全局转换器
+- `@Formatter` 作为 `@Sheet` 的 formatters 属性值，表示一个转换器
+- `@Header` 注解在数据类的字段上，表示该字段是一个复合字段
+- `@Field` 注解在数据类的字段上，表示该字段是一个单一字段
 
-### 没有Java注解配置？
-目前只提供XML配置，因为XML和类文件解耦，有时候你无法修改类代码时，尤其是导出场景，XML会是更好的选择。如果你是"anti-xml"，可以实现注解版`ConfigFactory`，把注解配置转换成`Field`，这应该不会很难。后面我有空再弄注解配置吧~
+注解的的属性取值请参考 xml 文件。下面是一个数据类的注解示例：
+```java
+@Sheet(formatters = {
+        @Formatter(target = BigDecimal.class, format = BigDecimalFormatter.class),
+})
+public class Applicants {
+    @Field(description = "Value", color = "#74f441")
+    private int id;
+    @Field(description = "Name", fontSize = 20, border = "0,2,0,2", borderColor = ",#4242f4,,#4242f4")
+    private String name;
+    @Header(description = "Job", headerColor = "#4286f4")
+    private Job job;
+    @Field(description = "Entry Date", dateFormat = "yyyy-MM-dd")
+    private Date entryDate;
+    @Field(description = "Working/Leaved", options = "Working|Leaved",
+            formatter = cn.chenhuanming.octopus.formatter.WorkingFormatter.class, color = "#42f4b9")
+    private boolean working = true;
+}
+
+```
+使用方法：
+```java
+    // 构造方法必须传入一个带有 @Sheet 注解的类
+    ConfigFactory configFactory = new AnnotationConfigFactory(Applicants.class);
+    // ... 使用 configFactory 就像 xml 的方式一样
+```
+
+## Q&A
 
 ### 需要操作Apache POI？
 `Octopus`类可以提供一行代码式的API，让你不用碰Apache POI的API。但是如果你确实需要用到Apache POI，可以先看一下Octopus核心类`SheetWriter`和`SheetReader`代码。我在设计的时候尽量考虑扩展，并且完全基于接口实现，实在不行可以选择继承重写，属性基本都是protected，或者直接自己实现接口

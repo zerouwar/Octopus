@@ -1,11 +1,15 @@
 package cn.chenhuanming.octopus.config;
 
+import cn.chenhuanming.octopus.formatter.Formatter;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author chenhuanming
  * Created at 2018/12/10
  */
 public abstract class CachedConfigFactory implements ConfigFactory {
-
     protected volatile Config config;
 
     @Override
@@ -25,4 +29,5 @@ public abstract class CachedConfigFactory implements ConfigFactory {
     public void refresh() {
         config = readConfig();
     }
+
 }

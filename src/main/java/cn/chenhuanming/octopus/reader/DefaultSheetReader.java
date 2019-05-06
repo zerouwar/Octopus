@@ -1,6 +1,5 @@
 package cn.chenhuanming.octopus.reader;
 
-
 import cn.chenhuanming.octopus.config.ConfigFactory;
 import cn.chenhuanming.octopus.config.Field;
 import cn.chenhuanming.octopus.exception.ParseException;
@@ -14,7 +13,6 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.Date;
-
 
 /**
  * @author chenhuanming
@@ -35,7 +33,10 @@ public class DefaultSheetReader<T> extends AbstractSheetReader<T> {
                 Cell cell = sheet.getRow(row).getCell(col);
                 String str;
                 if (CellUtils.isDate(cell)) {
-                    Formatter<Date> dateFormatter = configFactory.getConfig().getFormatterContainer().get(Date.class);
+                    Formatter<Date> dateFormatter = field.getDateFormat();
+                    if (dateFormatter == null) {
+                        dateFormatter = configFactory.getConfig().getFormatterContainer().get(Date.class);
+                    }
                     str = dateFormatter.format(DateUtil.getJavaDate(cell.getNumericCellValue()));
                 } else {
                     str = CellUtils.getCellValue(sheet, row, col, field.getDefaultValue());

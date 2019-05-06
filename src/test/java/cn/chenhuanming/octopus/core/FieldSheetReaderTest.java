@@ -26,7 +26,7 @@ public class FieldSheetReaderTest {
 
     @Before
     public void prepare() throws IOException, InvalidFormatException {
-        InputStream is = this.getClass().getClassLoader().getResourceAsStream("export.xlsx");
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream("import.xlsx");
         Workbook workbook = WorkbookFactory.create(is);
         this.sheet = workbook.getSheetAt(0);
     }
@@ -35,7 +35,7 @@ public class FieldSheetReaderTest {
     public void test() {
         ConfigFactory configFactory = new XmlConfigFactory(this.getClass().getClassLoader().getResourceAsStream("applicants.xml"));
 
-        final SheetReader<Applicants> sheetReader = new DefaultSheetReader<>(sheet, configFactory, new DefaultCellPosition(2, 0));
+        final SheetReader<Applicants> sheetReader = new DefaultSheetReader<>(sheet, configFactory, new DefaultCellPosition(4, 0));
 
         for (Applicants applicants : sheetReader) {
             System.out.println(applicants);
