@@ -44,7 +44,7 @@ public @interface Field {
 
     Class<? extends Formatter> formatter() default Formatter.class;
 
-    boolean isBlankable() default false;
+    boolean isBlankable() default true;
 
     String regex() default "";
 

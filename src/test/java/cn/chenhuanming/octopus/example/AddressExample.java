@@ -1,7 +1,8 @@
 package cn.chenhuanming.octopus.example;
 
 import cn.chenhuanming.octopus.Octopus;
-import cn.chenhuanming.octopus.config.ConfigFactory;
+import cn.chenhuanming.octopus.config.Config;
+import cn.chenhuanming.octopus.config.XmlConfigFactory;
 import cn.chenhuanming.octopus.config.annotation.AnnotationConfigFactory;
 import cn.chenhuanming.octopus.entity.Address;
 import org.fluttercode.datafactory.impl.DataFactory;
@@ -43,10 +44,10 @@ public class AddressExample {
 
         //read config from address.xml
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("address.xml");
-        ConfigFactory configFactory = Octopus.getXMLConfigFactory(is);
+        Config config = new XmlConfigFactory(is).getConfig();
 
         try {
-            Octopus.writeOneSheet(os, configFactory, "address", addresses);
+            Octopus.writeOneSheet(os, config, "address", addresses);
         } catch (IOException e) {
             System.out.println("export failed");
         }
@@ -58,10 +59,10 @@ public class AddressExample {
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
         FileOutputStream os = new FileOutputStream(rootPath + "/address1.xlsx");
 
-        ConfigFactory configFactory = new AnnotationConfigFactory(Address.class);
+        Config config = new AnnotationConfigFactory(Address.class).getConfig();
 
         try {
-            Octopus.writeOneSheet(os, configFactory, "address", addresses);
+            Octopus.writeOneSheet(os, config, "address", addresses);
         } catch (IOException e) {
             System.out.println("export failed");
         }

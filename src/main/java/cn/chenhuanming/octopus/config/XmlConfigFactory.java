@@ -3,10 +3,10 @@ package cn.chenhuanming.octopus.config;
 import cn.chenhuanming.octopus.formatter.DateFormatter;
 import cn.chenhuanming.octopus.formatter.DefaultFormatterContainer;
 import cn.chenhuanming.octopus.formatter.FormatterContainer;
-import cn.chenhuanming.octopus.util.CellUtils;
 import cn.chenhuanming.octopus.util.ColorUtils;
 import cn.chenhuanming.octopus.util.ReflectionUtils;
 import cn.chenhuanming.octopus.util.StringUtils;
+import cn.chenhuanming.octopus.util.ValidationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -17,8 +17,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.stream.StreamSource;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -35,7 +37,7 @@ public class XmlConfigFactory extends AbstractXMLConfigFactory {
     }
 
     @Override
-    protected Config readConfig() {
+    public Config getConfig() {
         Document document;
         try {
             validateXML(new StreamSource(is));
@@ -45,38 +47,31 @@ public class XmlConfigFactory extends AbstractXMLConfigFactory {
         }
 
         Element root = document.getDocumentElement();
-        Config config = new Config();
 
-        if (!XMLConstant.Root.name.equals(root.getTagName())) {
-            throw new IllegalArgumentException("xml config file: must has a root tag named " + XMLConstant.Root.name);
+        if (!XmlNode.Root.nodeName.equals(root.getTagName())) {
+            throw new IllegalArgumentException("xml config file: must has a root tag named " + XmlNode.Root.nodeName);
         }
-        String className = root.getAttribute(XMLConstant.Root.Attribute.CLASS);
+        String className = root.getAttribute(XmlNode.Root.Attribute.CLASS);
         if (StringUtils.isEmpty(className)) {
-            throw new IllegalArgumentException("xml config file: tag " + XMLConstant.Root.name + "must has " + XMLConstant.Root.Attribute.CLASS + " attribute");
+            throw new IllegalArgumentException("xml config file: tag " + XmlNode.Root.nodeName + "must has " + XmlNode.Root.Attribute.CLASS + " attribute");
         }
 
         Class<?> classType = null;
         try {
             classType = Class.forName(className);
-            config.setClassType(classType);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException(e);
         }
 
-        Node formattersNode = root.getElementsByTagName(XMLConstant.Formatters.name).item(0);
-        config.setFormatterContainer(readFormatter(formattersNode));
+        Node formattersNode = root.getElementsByTagName(XmlNode.Formatters.nodeName).item(0);
 
-        Field field = getField(root, classType);
-
-        config.setFields(field.getChildren());
-
-        return config;
+        return Config.of(classType, readFormatter(formattersNode), getFields(root, classType));
     }
 
     private FormatterContainer readFormatter(Node formatNode) {
         DefaultFormatterContainer container = new DefaultFormatterContainer();
 
-        String dateFormat = getAttribute(formatNode, XMLConstant.Formatters.Attribute.DATE_FORMAT);
+        String dateFormat = getAttribute(formatNode, XmlNode.Formatters.Attribute.DATE_FORMAT);
         if (StringUtils.isEmpty(dateFormat)) {
             container.addFormat(Date.class, new DateFormatter("yyyy-MM-dd HH:mm:ss"));
         } else {
@@ -87,11 +82,11 @@ public class XmlConfigFactory extends AbstractXMLConfigFactory {
             NodeList children = formatNode.getChildNodes();
             for (int i = 0; i < children.getLength(); i++) {
                 Node item = children.item(i);
-                if (item.getNodeType() == Node.ELEMENT_NODE || !item.getNodeName().equals(XMLConstant.Formatters.Formatter.name)) {
+                if (item.getNodeType() == Node.ELEMENT_NODE || !item.getNodeName().equals(XmlNode.Formatters.Formatter.nodeName)) {
                     continue;
                 }
-                String targetClass = getAttribute(item, XMLConstant.Formatters.Formatter.Attribute.TARGET);
-                String formatClass = getAttribute(item, XMLConstant.Formatters.Formatter.Attribute.CLASS);
+                String targetClass = getAttribute(item, XmlNode.Formatters.Formatter.Attribute.TARGET);
+                String formatClass = getAttribute(item, XmlNode.Formatters.Formatter.Attribute.CLASS);
 
                 try {
                     Class target = Class.forName(targetClass);
@@ -106,146 +101,143 @@ public class XmlConfigFactory extends AbstractXMLConfigFactory {
         return container;
     }
 
-    private Field getField(Node node, Class classType) {
-        Field field = new Field();
+    private List<Field> getFields(Node node, Class classType) {
 
-        setBaseConfig(field, node);
+        List<Field> children = new ArrayList<>();
 
-        setCellStyleConfig(field, node);
-
-        setHeaderCellStyleConfig(field, node);
-
-        setInvoker(field, classType);
-
-        if (node.getNodeName().equals(XMLConstant.Field.name)) {
-            setImportValidation(field, node);
-        }
-
-        NodeList children = node.getChildNodes();
-
-        Class headerType = node.getNodeName().equals(XMLConstant.Root.name) ? classType : (field.getPicker() != null ? field.getPicker().getReturnType() : null);
-        for (int i = 0; i < children.getLength(); i++) {
-            Node item = children.item(i);
-            if (item.getNodeType() != Node.ELEMENT_NODE || (!item.getNodeName().equals(XMLConstant.Field.name) && !item.getNodeName().equals(XMLConstant.Header.name))) {
+        for (int i = 0; i < node.getChildNodes().getLength(); i++) {
+            Node item = node.getChildNodes().item(i);
+            if (item.getNodeType() != Node.ELEMENT_NODE || (!item.getNodeName().equals(XmlNode.Field.nodeName) && !item.getNodeName().equals(XmlNode.Header.nodeName))) {
                 continue;
             }
-            field.addChildren(getField(children.item(i), headerType));
+
+            Field.FieldBuilder field = Field.builder();
+
+            String name = getAttribute(item, XmlNode.Field.Attribute.NAME);
+            ValidationUtils.notEmpty(name, XmlNode.Field.Attribute.NAME);
+            field.name(name);
+
+            String description = getAttribute(item, XmlNode.Field.Attribute.DESCRIPTION);
+            ValidationUtils.notEmpty(description, XmlNode.Field.Attribute.DESCRIPTION);
+            field.description(description);
+
+            setFormatter(field, item);
+
+            Method picker = null;
+            if (classType != null) {
+                //set picker
+                picker = ReflectionUtils.readMethod(classType, name);
+                field.picker(picker);
+
+                //set pusher
+                Method pusher = ReflectionUtils.writeMethod(classType, name);
+                field.pusher(pusher);
+            }
+
+            setHeaderCellStyleConfig(field, item);
+
+            if (item.getNodeName().equals(XmlNode.Field.nodeName)) {
+                setCellStyleConfig(field, item);
+                setImportValidation(field, item);
+            } else {
+                Class headerType = item.getNodeName().equals(XmlNode.Root.nodeName) ? classType : (picker != null ? picker.getReturnType() : null);
+                field.children(getFields(item, headerType));
+            }
+            children.add(field.build());
         }
-        return field;
+        return children;
     }
 
-    private void setBaseConfig(Field field, Node node) {
-        String name = getAttribute(node, XMLConstant.Field.Attribute.NAME);
-        if (!StringUtils.isEmpty(name)) {
-            field.setName(name);
-        }
-        String desc = getAttribute(node, XMLConstant.Field.Attribute.DESCRIPTION);
-        if (!StringUtils.isEmpty(desc)) {
-            field.setDescription(desc);
-        }
-
-        String dateFormat = getAttribute(node, XMLConstant.Field.Attribute.DATE_FORMAT);
-        if (!StringUtils.isEmpty(dateFormat)) {
-            DateFormatter dateFormatter = new DateFormatter(dateFormat);
-            field.setDateFormat(dateFormatter);
-            field.setFormatter(dateFormatter);
-        }
-
-        //read formatter
-        String formatterStr = getAttribute(node, XMLConstant.Field.Attribute.FORMATTER);
-        if (!StringUtils.isEmpty(formatterStr)) {
+    private void setFormatter(Field.FieldBuilder field, Node node) {
+        String formatterStr = getAttribute(node, XmlNode.Field.Attribute.FORMATTER);
+        if (StringUtils.isNotEmpty(formatterStr)) {
             try {
                 Class formatterClass = Class.forName(formatterStr);
                 if (!cn.chenhuanming.octopus.formatter.Formatter.class.isAssignableFrom(formatterClass)) {
-                    log.error(formatterStr + " is not subclass of cn.chenhuanming.octopus.formatter.Formatters");
+                    throw new IllegalArgumentException(formatterStr + " is not subclass of cn.chenhuanming.octopus.formatter.Formatters");
                 } else {
-                    field.setFormatter((cn.chenhuanming.octopus.formatter.Formatter) formatterClass.newInstance());
+                    field.formatter((cn.chenhuanming.octopus.formatter.Formatter) formatterClass.newInstance());
                 }
             } catch (Exception e) {
-                log.warn(formatterStr + " may not have a default constructor");
+                throw new IllegalArgumentException(formatterStr + " may not have a default constructor");
+            }
+        } else {
+            String dateFormat = getAttribute(node, XmlNode.Field.Attribute.DATE_FORMAT);
+            if (StringUtils.isNotEmpty(dateFormat)) {
+                field.formatter(new DateFormatter(dateFormat));
             }
         }
     }
 
-    private void setCellStyleConfig(Field field, Node node) {
+    private void setCellStyleConfig(Field.FieldBuilder field, Node node) {
         FieldCellStyle.FieldCellStyleBuilder builder = FieldCellStyle.builder();
 
-        String fontSize = getAttribute(node, XMLConstant.Field.Attribute.FONT_SIZE);
+        String fontSize = getAttribute(node, XmlNode.Field.Attribute.FONT_SIZE);
         builder.fontSize(Short.parseShort(StringUtils.defaultIfEmpty(fontSize, "14")));
 
-        String color = getAttribute(node, XMLConstant.Field.Attribute.COLOR);
+        String color = getAttribute(node, XmlNode.Field.Attribute.COLOR);
         builder.color(ColorUtils.hex2Rgb(StringUtils.defaultIfEmpty(color, "#000000")));
 
-        String isBold = getAttribute(node, XMLConstant.Field.Attribute.IS_BOLD);
+        String isBold = getAttribute(node, XmlNode.Field.Attribute.IS_BOLD);
         builder.bold(Boolean.parseBoolean(StringUtils.defaultIfEmpty(isBold, "false")));
 
-        String foregroundColor = getAttribute(node, XMLConstant.Field.Attribute.FOREGROUND_COLOR);
+        String foregroundColor = getAttribute(node, XmlNode.Field.Attribute.FOREGROUND_COLOR);
         builder.foregroundColor(ColorUtils.hex2Rgb(StringUtils.defaultIfEmpty(foregroundColor, null)));
 
-        String border = getAttribute(node, XMLConstant.Field.Attribute.BORDER);
-        builder.border(ConfigUtils.convertBorder(StringUtils.defaultIfEmpty(border, "0,0,0,0")));
+        String border = getAttribute(node, XmlNode.Field.Attribute.BORDER);
+        builder.border(super.convertBorder(StringUtils.defaultIfEmpty(border, "0,0,0,0")));
 
-        String borderColor = getAttribute(node, XMLConstant.Field.Attribute.BORDER_COLOR);
-        builder.borderColor(ConfigUtils.convertBorderColor(StringUtils.defaultIfEmpty(borderColor, "#000000,#000000,#000000,#000000")));
+        String borderColor = getAttribute(node, XmlNode.Field.Attribute.BORDER_COLOR);
+        builder.borderColor(super.convertBorderColor(StringUtils.defaultIfEmpty(borderColor, "#000000,#000000,#000000,#000000")));
 
-        field.setFieldCellStyle(builder.build());
+        field.fieldCellStyle(builder.build());
     }
 
-    private void setHeaderCellStyleConfig(Field field, Node node) {
+    private void setHeaderCellStyleConfig(Field.FieldBuilder field, Node node) {
         FieldCellStyle.FieldCellStyleBuilder builder = FieldCellStyle.builder();
 
-        String fontSize = getAttribute(node, XMLConstant.Header.Attribute.HEADER_FONT_SIZE);
+        String fontSize = getAttribute(node, XmlNode.Header.Attribute.HEADER_FONT_SIZE);
         builder.fontSize(Short.parseShort(StringUtils.defaultIfEmpty(fontSize, "15")));
 
-        String color = getAttribute(node, XMLConstant.Header.Attribute.HEADER_COLOR);
+        String color = getAttribute(node, XmlNode.Header.Attribute.HEADER_COLOR);
         builder.color(ColorUtils.hex2Rgb(StringUtils.defaultIfEmpty(color, "#000000")));
 
-        String isBold = getAttribute(node, XMLConstant.Header.Attribute.IS_HEADER_BOLD);
+        String isBold = getAttribute(node, XmlNode.Header.Attribute.IS_HEADER_BOLD);
         builder.bold(Boolean.parseBoolean(StringUtils.defaultIfEmpty(isBold, "true")));
 
-        String foregroundColor = getAttribute(node, XMLConstant.Header.Attribute.HEADER_FOREGROUND_COLOR);
+        String foregroundColor = getAttribute(node, XmlNode.Header.Attribute.HEADER_FOREGROUND_COLOR);
         builder.foregroundColor(ColorUtils.hex2Rgb(StringUtils.defaultIfEmpty(foregroundColor, "#FFFFFF")));
 
-        String border = getAttribute(node, XMLConstant.Header.Attribute.HEADER_BORDER);
-        builder.border(ConfigUtils.convertBorder(StringUtils.defaultIfEmpty(border, "1,1,1,1")));
+        String border = getAttribute(node, XmlNode.Header.Attribute.HEADER_BORDER);
+        builder.border(super.convertBorder(StringUtils.defaultIfEmpty(border, "1,1,1,1")));
 
-        String borderColor = getAttribute(node, XMLConstant.Header.Attribute.HEADER_BORDER_COLOR);
-        builder.borderColor(ConfigUtils.convertBorderColor(StringUtils.defaultIfEmpty(borderColor, "#000000,#000000,#000000,#000000")));
+        String borderColor = getAttribute(node, XmlNode.Header.Attribute.HEADER_BORDER_COLOR);
+        builder.borderColor(super.convertBorderColor(StringUtils.defaultIfEmpty(borderColor, "#000000,#000000,#000000,#000000")));
 
-        field.setHeaderFieldCellStyle(builder.build());
+        field.headerFieldCellStyle(builder.build());
     }
 
-    private void setInvoker(Field field, Class classType) {
-        if (classType == null || StringUtils.isEmpty(field.getName())) {
-            return;
-        }
-        //set picker
-        Method picker = ReflectionUtils.readMethod(classType, field.getName());
-        field.setPicker(picker);
+    private void setImportValidation(Field.FieldBuilder field, Node node) {
+        String isBlankable = getAttribute(node, XmlNode.Field.Attribute.IS_BLANKABLE);
+        boolean blankable = true;
+        List<String> options = null;
+        Pattern regex = null;
 
-        //set pusher
-        Method pusher = ReflectionUtils.writeMethod(classType, field.getName());
-        field.setPusher(pusher);
-    }
-
-    private void setImportValidation(Field field, Node node) {
-        ImportValidation validation = new ImportValidation();
-        String isBlankable = getAttribute(node, XMLConstant.Field.Attribute.IS_BLANKABLE);
-        if (!StringUtils.isEmpty(isBlankable)) {
-            validation.setBlankable(Boolean.parseBoolean(isBlankable));
+        if (StringUtils.isNotEmpty(isBlankable)) {
+            blankable = Boolean.parseBoolean(isBlankable);
         }
 
-        String regex = getAttribute(node, XMLConstant.Field.Attribute.REGEX);
-        if (!StringUtils.isEmpty(regex)) {
-            validation.setRegex(Pattern.compile(regex));
+        String regexStr = getAttribute(node, XmlNode.Field.Attribute.REGEX);
+        if (!StringUtils.isEmpty(regexStr)) {
+            regex = Pattern.compile(regexStr);
         }
-        String options = getAttribute(node, XMLConstant.Field.Attribute.OPTIONS);
-        if (!StringUtils.isEmpty(options) && options.length() >= 2) {
-            String[] split = options.split(StringUtils.OPTION_SPLITTER_VERTICAL);
-            validation.setOptions(Arrays.asList(split));
+        String optionsStr = getAttribute(node, XmlNode.Field.Attribute.OPTIONS);
+        if (!StringUtils.isEmpty(optionsStr) && optionsStr.length() >= 2) {
+            String[] split = optionsStr.split(StringUtils.OPTION_SPLITTER_VERTICAL);
+            options = Arrays.asList(split);
         }
 
-        field.setImportValidation(validation);
+        field.importValidation(ImportValidation.of(blankable, options, regex));
     }
 
 }

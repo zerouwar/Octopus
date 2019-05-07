@@ -4,14 +4,14 @@ import cn.chenhuanming.octopus.util.ColorUtils;
 import cn.chenhuanming.octopus.util.StringUtils;
 import org.apache.poi.ss.usermodel.BorderStyle;
 
-import java.awt.Color;
+import java.awt.*;
 
 /**
- * @author : youthlin.chen @ 2019-04-27 21:05
+ * @author chenhuanming
+ * Created at 2018/12/10
  */
-public class ConfigUtils {
-
-    public static BorderStyle[] convertBorder(String border) {
+public abstract class AbstractConfigFactory implements ConfigFactory {
+    protected BorderStyle[] convertBorder(String border) {
         BorderStyle[] result = new BorderStyle[4];
         String[] split = border.split(",");
         for (int i = 0; i < split.length; i++) {
@@ -22,7 +22,7 @@ public class ConfigUtils {
         return result;
     }
 
-    public static Color[] convertBorderColor(String borderColor) {
+    protected Color[] convertBorderColor(String borderColor) {
         Color[] result = new Color[4];
         String[] split = borderColor.split(",");
 
@@ -33,5 +33,4 @@ public class ConfigUtils {
         }
         return result;
     }
-
 }

@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Sheet
 public class Company {
-    @Field(description = "Company Name", color = "#ff0000")
+    @Field(description = "Company Name")
     private String name;
     @Header(description = "Address")
     private Address address;

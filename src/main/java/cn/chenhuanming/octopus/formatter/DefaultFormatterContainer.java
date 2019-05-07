@@ -1,5 +1,7 @@
 package cn.chenhuanming.octopus.formatter;
 
+import lombok.EqualsAndHashCode;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,6 +9,7 @@ import java.util.Map;
  * @author chenhuanming
  * Created at 2018/12/17
  */
+@EqualsAndHashCode
 public class DefaultFormatterContainer implements FormatterContainer {
 
     private Map<Class, Formatter> formatMap;
@@ -20,7 +23,7 @@ public class DefaultFormatterContainer implements FormatterContainer {
         formatMap.put(Long.class, new LongFormatter());
         formatMap.put(Long.TYPE, new LongFormatter());
         formatMap.put(Float.class, new FloatFormatter());
-        formatMap.put(Float.TYPE, new LongFormatter());
+        formatMap.put(Float.TYPE, new FloatFormatter());
         formatMap.put(Boolean.class, new BooleanFormatter());
         formatMap.put(Boolean.TYPE, new BooleanFormatter());
         formatMap.put(Short.class, new ShortFormatter());

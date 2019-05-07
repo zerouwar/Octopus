@@ -1,6 +1,6 @@
 package cn.chenhuanming.octopus.writer;
 
-import cn.chenhuanming.octopus.config.ConfigFactory;
+import cn.chenhuanming.octopus.config.Config;
 import cn.chenhuanming.octopus.model.CellPosition;
 import cn.chenhuanming.octopus.util.CellUtils;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -13,12 +13,12 @@ import java.util.Collection;
  * Created at 2018/12/16
  */
 public class DefaultSheetWriter<T> extends AbstractSheetWriter<T> {
-    public DefaultSheetWriter(ConfigFactory configFactory, HeaderWriter headerWriter, CellPosition startPoint) {
-        super(configFactory, headerWriter, startPoint);
+    public DefaultSheetWriter(Config config, HeaderWriter headerWriter, CellPosition startPoint) {
+        super(config, headerWriter, startPoint);
     }
 
-    public DefaultSheetWriter(ConfigFactory configFactory) {
-        this(configFactory, new DefaultHeaderWriter(), CellUtils.POSITION_ZERO_ZERO);
+    public DefaultSheetWriter(Config config) {
+        this(config, new DefaultHeaderWriter(), CellUtils.POSITION_ZERO_ZERO);
     }
 
     @Override

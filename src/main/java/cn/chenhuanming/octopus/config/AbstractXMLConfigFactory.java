@@ -1,9 +1,6 @@
 package cn.chenhuanming.octopus.config;
 
 
-import cn.chenhuanming.octopus.util.ColorUtils;
-import cn.chenhuanming.octopus.util.StringUtils;
-import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.util.IOUtils;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -13,7 +10,6 @@ import javax.xml.transform.Source;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
-import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +19,7 @@ import java.net.URL;
  * @author chenhuanming
  * Created at 2018/12/17
  */
-public abstract class AbstractXMLConfigFactory extends CachedConfigFactory {
+public abstract class AbstractXMLConfigFactory extends AbstractConfigFactory {
 
     protected final ByteArrayInputStream is;
 
@@ -63,10 +59,10 @@ public abstract class AbstractXMLConfigFactory extends CachedConfigFactory {
     /**
      * xml config constant
      */
-    protected interface XMLConstant {
+    protected interface XmlNode {
 
         interface Root {
-            String name = "Root";
+            String nodeName = "Root";
 
             interface Attribute {
                 String CLASS = "class";
@@ -74,7 +70,7 @@ public abstract class AbstractXMLConfigFactory extends CachedConfigFactory {
         }
 
         interface Header {
-            String name = "Header";
+            String nodeName = "Header";
 
             interface Attribute {
                 String NAME = "name";
@@ -89,7 +85,7 @@ public abstract class AbstractXMLConfigFactory extends CachedConfigFactory {
         }
 
         interface Field {
-            String name = "Field";
+            String nodeName = "Field";
 
             interface Attribute extends Header.Attribute {
                 String FONT_SIZE = "font-size";
@@ -108,10 +104,10 @@ public abstract class AbstractXMLConfigFactory extends CachedConfigFactory {
         }
 
         interface Formatters {
-            String name = "Formatters";
+            String nodeName = "Formatters";
 
             interface Formatter {
-                String name = "Formatter";
+                String nodeName = "Formatter";
 
                 interface Attribute {
                     String TARGET = "target";

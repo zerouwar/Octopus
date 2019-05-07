@@ -1,6 +1,6 @@
 package cn.chenhuanming.octopus.core;
 
-import cn.chenhuanming.octopus.config.ConfigFactory;
+import cn.chenhuanming.octopus.config.Config;
 import cn.chenhuanming.octopus.config.XmlConfigFactory;
 import cn.chenhuanming.octopus.config.annotation.AnnotationConfigFactory;
 import cn.chenhuanming.octopus.entity.Applicants;
@@ -23,11 +23,11 @@ import java.math.BigDecimal;
  * Created at 2019-01-09
  */
 public class CheckedSheetReaderTest {
-    private ConfigFactory configFactory = new XmlConfigFactory(
-            this.getClass().getClassLoader().getResourceAsStream("applicants.xml"));
+    private Config config = new XmlConfigFactory(
+            this.getClass().getClassLoader().getResourceAsStream("applicants.xml")).getConfig();
 
     private void switchToAnnotation() {
-        configFactory = new AnnotationConfigFactory(Applicants.class);
+        config = new AnnotationConfigFactory(Applicants.class).getConfig();
     }
 
     @Test
@@ -35,7 +35,7 @@ public class CheckedSheetReaderTest {
         normal();
         switchToAnnotation();
         System.out.println("----------------");
-        System.out.println(configFactory.getConfig().getFormatterContainer().get(BigDecimal.class));
+        System.out.println(config.getFormatterContainer().get(BigDecimal.class));
         normal();
     }
 
@@ -45,7 +45,7 @@ public class CheckedSheetReaderTest {
         Workbook workbook = WorkbookFactory.create(is);
         Sheet sheet = workbook.getSheetAt(0);
 
-        final SheetReader<CheckedData<Applicants>> sheetReader = new CheckedSheetReader<>(sheet, configFactory,
+        final SheetReader<CheckedData<Applicants>> sheetReader = new CheckedSheetReader<>(sheet, config,
                 new DefaultCellPosition(4, 0));
 
         for (CheckedData<Applicants> checkedData : sheetReader) {

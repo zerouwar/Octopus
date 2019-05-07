@@ -1,6 +1,6 @@
 package cn.chenhuanming.octopus.reader;
 
-import cn.chenhuanming.octopus.config.ConfigFactory;
+import cn.chenhuanming.octopus.config.Config;
 import cn.chenhuanming.octopus.config.Field;
 import cn.chenhuanming.octopus.config.ImportValidation;
 import cn.chenhuanming.octopus.exception.CanNotBeBlankException;
@@ -25,8 +25,8 @@ public class CheckedSheetReader<T> extends DefaultSheetReader<CheckedData<T>> {
      */
     private CheckedData<T> checkedData;
 
-    public CheckedSheetReader(Sheet sheet, ConfigFactory configFactory, CellPosition startPoint) {
-        super(sheet, configFactory, startPoint);
+    public CheckedSheetReader(Sheet sheet, Config config, CellPosition startPoint) {
+        super(sheet, config, startPoint);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class CheckedSheetReader<T> extends DefaultSheetReader<CheckedData<T>> {
     @Override
     protected CheckedData<T> newInstance(Class classType) {
         try {
-            T data = (T) configFactory.getConfig().getClassType().newInstance();
+            T data = (T) config.getClassType().newInstance();
             checkedData = new CheckedData<>();
             checkedData.setData(data);
             return checkedData;

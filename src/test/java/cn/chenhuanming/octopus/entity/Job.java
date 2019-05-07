@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Job {
-    @Header(description = "Company")
+    @Header(description = "Company Name")
     private Company company;
     @Field(description = "JD")
     private String JobDescription;

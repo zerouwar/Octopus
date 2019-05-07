@@ -19,7 +19,7 @@
             <Field name="name" description="Company Name"/>
             <Header name="address" description="Address">
                 <Field name="city" description="City"/>
-                <Field name="detail" description="detail"/>
+                <Field name="detail" description="Detail"/>
             </Header>
         </Header>
         <Field name="JobDescription" description="JD"/>

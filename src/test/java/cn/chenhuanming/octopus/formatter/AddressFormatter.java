@@ -2,11 +2,13 @@ package cn.chenhuanming.octopus.formatter;
 
 import cn.chenhuanming.octopus.entity.Address;
 import cn.chenhuanming.octopus.exception.ParseException;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author chenhuanming
  * Created at 2018/12/19
  */
+@EqualsAndHashCode
 public class AddressFormatter implements Formatter<Address> {
     @Override
     public String format(Address address) {

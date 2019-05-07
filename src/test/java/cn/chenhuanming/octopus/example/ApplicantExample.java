@@ -1,7 +1,8 @@
 package cn.chenhuanming.octopus.example;
 
 import cn.chenhuanming.octopus.Octopus;
-import cn.chenhuanming.octopus.config.ConfigFactory;
+import cn.chenhuanming.octopus.config.Config;
+import cn.chenhuanming.octopus.config.XmlConfigFactory;
 import cn.chenhuanming.octopus.config.annotation.AnnotationConfigFactory;
 import cn.chenhuanming.octopus.core.AbstractWriterTest;
 import cn.chenhuanming.octopus.entity.Applicants;
@@ -20,10 +21,9 @@ public class ApplicantExample extends AbstractWriterTest {
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
         FileOutputStream os = new FileOutputStream(rootPath + "/applicator.xlsx");
 
-        ConfigFactory configFactory = Octopus
-                .getXMLConfigFactory(this.getClass().getClassLoader().getResourceAsStream("applicants.xml"));
+        Config config = new XmlConfigFactory(this.getClass().getClassLoader().getResourceAsStream("applicants.xml")).getConfig();
 
-        Octopus.writeOneSheet(os, configFactory, "test", applicantsList);
+        Octopus.writeOneSheet(os, config, "test", applicantsList);
     }
 
     @Test
@@ -31,8 +31,8 @@ public class ApplicantExample extends AbstractWriterTest {
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
         FileOutputStream os = new FileOutputStream(rootPath + "/applicator1.xlsx");
 
-        ConfigFactory configFactory = new AnnotationConfigFactory(Applicants.class);
+        Config config = new AnnotationConfigFactory(Applicants.class).getConfig();
 
-        Octopus.writeOneSheet(os, configFactory, "test", applicantsList);
+        Octopus.writeOneSheet(os, config, "test", applicantsList);
     }
 }

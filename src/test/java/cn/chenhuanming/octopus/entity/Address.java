@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Sheet
 public class Address {
-    @Field(description = " City")
+    @Field(description = "City")
     private String city;
     @Field(description = "Detail")
     private String detail;

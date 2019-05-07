@@ -102,10 +102,10 @@ public class AddressExample {
 
         //read config from address.xml
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("address.xml");
-        ConfigFactory configFactory = Octopus.getXMLConfigFactory(is);
+        Config config = new XmlConfigFactory(is).getConfig();
 
         try {
-            Octopus.writeOneSheet(os, configFactory, "address", addresses);
+            Octopus.writeOneSheet(os, config, "address", addresses);
         } catch (IOException e) {
             System.out.println("export failed");
         }
@@ -115,8 +115,8 @@ public class AddressExample {
 
 这是一个完整的单元测试代码，不过导出Excel其实只要两步：
 
-1. 从XML配置文件中创建一个`ConfigFactory`对象
-2. 调用`Octopus.writeOneSheet()`，传入导出的文件，configFactory，工作表的名字和数据
+1. 通过`ConfigFactory`从XML配置文件或Java注解方式构造一个`Config`对象
+2. 调用`Octopus.writeOneSheet()`，传入导出的文件，Config对象，工作表的名字和数据
 
 下面是导出的Excel文件
 
@@ -186,10 +186,10 @@ public class CompanyExample {
 
         //read config from company.xml
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("company.xml");
-        ConfigFactory configFactory = Octopus.getXMLConfigFactory(is);
+        Config config = new XmlConfigFactory(is).getConfig();
 
         try {
-            Octopus.writeOneSheet(os, configFactory, "company", companies);
+            Octopus.writeOneSheet(os, config, "company", companies);
         } catch (IOException e) {
             System.out.println("export failed");
         }
@@ -249,14 +249,14 @@ public class AddressFormatter implements Formatter<Address> {
 
 
 ## 导入Excel
-我们直接拿上一个例子的导出结果来演示导入，共用同一个`ConfigFactory`，直接编写导入的代码
+我们直接拿上一个例子的导出结果来演示导入，共用同一个`Config`对象，直接编写导入的代码
 
 ```java
 //First get the excel file
 FileInputStream fis = new FileInputStream(rootPath + "/company2.xlsx");
 
 try {
-    SheetReader<Company> importData = Octopus.readFirstSheet(fis, configFactory, new DefaultCellPosition(1, 0));
+    SheetReader<Company> importData = Octopus.readFirstSheet(fis, config, new DefaultCellPosition(1, 0));
 
     
     for (Company company : importData) {
@@ -320,9 +320,9 @@ Company(name=Toccoa Development, address=Address(city=Ridgeville, detail=1790 La
 public void importCheckedData() throws IOException, InvalidFormatException {
     InputStream is = this.getClass().getClassLoader().getResourceAsStream("wrongCompany.xlsx");
 
-    ConfigFactory configFactory = new XmlConfigFactory(this.getClass().getClassLoader().getResourceAsStream("company3.xml"));
+    Config config = new XmlConfigFactory(this.getClass().getClassLoader().getResourceAsStream("company3.xml")).getConfig();
 
-    final SheetReader<CheckedData<Company>> sheetReader = Octopus.readFirstSheetWithValidation(is,configFactory,new DefaultCellPosition(1,0));
+    final SheetReader<CheckedData<Company>> sheetReader = Octopus.readFirstSheetWithValidation(is,config,new DefaultCellPosition(1,0));
 
     for (CheckedData<Company> checkedData : sheetReader) {
         System.out.println(checkedData);
@@ -383,8 +383,8 @@ public class Applicants {
 使用方法：
 ```java
     // 构造方法必须传入一个带有 @Sheet 注解的类
-    ConfigFactory configFactory = new AnnotationConfigFactory(Applicants.class);
-    // ... 使用 configFactory 就像 xml 的方式一样
+    Config config = new AnnotationConfigFactory(Applicants.class).getConfig();
+    // ... 使用 config 就像 xml 的方式一样
 ```
 
 ## Q&A

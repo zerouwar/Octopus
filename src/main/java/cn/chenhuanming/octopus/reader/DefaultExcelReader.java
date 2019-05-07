@@ -1,6 +1,6 @@
 package cn.chenhuanming.octopus.reader;
 
-import cn.chenhuanming.octopus.config.ConfigFactory;
+import cn.chenhuanming.octopus.config.Config;
 import cn.chenhuanming.octopus.exception.SheetNotFoundException;
 import cn.chenhuanming.octopus.model.CellPosition;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -21,16 +21,16 @@ public class DefaultExcelReader<T> implements ExcelReader<T> {
     }
 
     @Override
-    public SheetReader<T> get(int index, ConfigFactory configFactory, CellPosition startPoint) {
-        return new DefaultSheetReader<>(workbook.getSheetAt(index), configFactory, startPoint);
+    public SheetReader<T> get(int index, Config config, CellPosition startPoint) {
+        return new DefaultSheetReader<>(workbook.getSheetAt(index), config, startPoint);
     }
 
     @Override
-    public SheetReader<T> get(String sheetName, ConfigFactory configFactory, CellPosition startPoint) throws SheetNotFoundException {
+    public SheetReader<T> get(String sheetName, Config config, CellPosition startPoint) throws SheetNotFoundException {
         for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
             Sheet sheet = workbook.getSheetAt(i);
             if (sheet.getSheetName().equals(sheetName)) {
-                return get(i, configFactory, startPoint);
+                return get(i, config, startPoint);
             }
         }
         throw new SheetNotFoundException("not found:" + sheetName);

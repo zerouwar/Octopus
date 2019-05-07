@@ -1,6 +1,5 @@
 package cn.chenhuanming.octopus.core;
 
-import cn.chenhuanming.octopus.config.XmlConfigFactory;
 import cn.chenhuanming.octopus.config.annotation.AnnotationConfigFactory;
 import cn.chenhuanming.octopus.entity.Applicants;
 import cn.chenhuanming.octopus.writer.DefaultSheetWriter;
@@ -15,17 +14,17 @@ import java.io.IOException;
  * @author chenhuanming
  * Created at 2018/12/13
  */
-public class FieldSheetWriterTest extends AbstractWriterTest {
+public class SheetWriterTest extends AbstractWriterTest {
 
     @Test
     public void test() throws IOException {
 
         Workbook workbook = new XSSFWorkbook();
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
-        FileOutputStream os = new FileOutputStream(rootPath + "/export1.xlsx");
+        FileOutputStream os = new FileOutputStream(rootPath + "/sheetWriter.xlsx");
 
         //DefaultSheetWriter writer = new DefaultSheetWriter(new XmlConfigFactory(this.getClass().getClassLoader().getResourceAsStream("applicants.xml")));
-        DefaultSheetWriter writer = new DefaultSheetWriter(new AnnotationConfigFactory(Applicants.class));
+        DefaultSheetWriter writer = new DefaultSheetWriter(new AnnotationConfigFactory(Applicants.class).getConfig());
 
         writer.write(workbook.createSheet(), applicantsList);
 

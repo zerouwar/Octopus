@@ -1,6 +1,6 @@
 package cn.chenhuanming.octopus.reader;
 
-import cn.chenhuanming.octopus.config.ConfigFactory;
+import cn.chenhuanming.octopus.config.Config;
 import cn.chenhuanming.octopus.model.CellPosition;
 import cn.chenhuanming.octopus.model.CheckedData;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -15,7 +15,7 @@ public class CheckedExcelReader<T> extends DefaultExcelReader<CheckedData<T>> {
     }
 
     @Override
-    public SheetReader<CheckedData<T>> get(int index, ConfigFactory configFactory, CellPosition startPoint) {
-        return new CheckedSheetReader<>(workbook.getSheetAt(index), configFactory, startPoint);
+    public SheetReader<CheckedData<T>> get(int index, Config config, CellPosition startPoint) {
+        return new CheckedSheetReader<>(workbook.getSheetAt(index), config, startPoint);
     }
 }

@@ -1,7 +1,7 @@
 package cn.chenhuanming.octopus.example;
 
 import cn.chenhuanming.octopus.Octopus;
-import cn.chenhuanming.octopus.config.ConfigFactory;
+import cn.chenhuanming.octopus.config.Config;
 import cn.chenhuanming.octopus.config.XmlConfigFactory;
 import cn.chenhuanming.octopus.config.annotation.AnnotationConfigFactory;
 import cn.chenhuanming.octopus.entity.Address;
@@ -50,10 +50,10 @@ public class CompanyExample {
 
         //read config from company.xml
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("company.xml");
-        ConfigFactory configFactory = Octopus.getXMLConfigFactory(is);
+        Config config = new XmlConfigFactory(is).getConfig();
 
         try {
-            Octopus.writeOneSheet(os, configFactory, "company", companies);
+            Octopus.writeOneSheet(os, config, "company", companies);
         } catch (IOException e) {
             System.out.println("export failed");
         }
@@ -65,9 +65,9 @@ public class CompanyExample {
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
         FileOutputStream os = new FileOutputStream(rootPath + "/company1.xlsx");
 
-        ConfigFactory configFactory = new AnnotationConfigFactory(Company.class);
+        Config config = new AnnotationConfigFactory(Company.class).getConfig();
         try {
-            Octopus.writeOneSheet(os, configFactory, "company", companies);
+            Octopus.writeOneSheet(os, config, "company", companies);
         } catch (IOException e) {
             System.out.println("export failed");
         }
@@ -82,10 +82,10 @@ public class CompanyExample {
 
         //read config from company.xml
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("company2.xml");
-        ConfigFactory configFactory = Octopus.getXMLConfigFactory(is);
+        Config config = new XmlConfigFactory(is).getConfig();
 
         try {
-            Octopus.writeOneSheet(os, configFactory, "company2", companies);
+            Octopus.writeOneSheet(os, config, "company2", companies);
         } catch (IOException e) {
             System.out.println("export failed");
         }
@@ -96,7 +96,7 @@ public class CompanyExample {
         FileInputStream fis = new FileInputStream(rootPath + "/company2.xlsx");
 
         try {
-            SheetReader<Company> importData = Octopus.readFirstSheet(fis, configFactory, new DefaultCellPosition(1, 0));
+            SheetReader<Company> importData = Octopus.readFirstSheet(fis, config, new DefaultCellPosition(1, 0));
 
             for (Company company : importData) {
                 System.out.println(company);
@@ -110,11 +110,11 @@ public class CompanyExample {
     public void importCheckedData() throws IOException, InvalidFormatException {
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("wrongCompany.xlsx");
 
-        ConfigFactory configFactory = new XmlConfigFactory(
-                this.getClass().getClassLoader().getResourceAsStream("company3.xml"));
+        Config config = new XmlConfigFactory(
+                this.getClass().getClassLoader().getResourceAsStream("company3.xml")).getConfig();
 
         final SheetReader<CheckedData<Company>> sheetReader = Octopus
-                .readFirstSheetWithValidation(is, configFactory, new DefaultCellPosition(1, 0));
+                .readFirstSheetWithValidation(is, config, new DefaultCellPosition(1, 0));
 
         for (CheckedData<Company> checkedData : sheetReader) {
             System.out.println(checkedData);

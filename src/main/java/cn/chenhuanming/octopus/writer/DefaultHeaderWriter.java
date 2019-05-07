@@ -20,9 +20,8 @@ import java.util.List;
 public class DefaultHeaderWriter implements HeaderWriter {
     @Override
     public CellPosition drawHeader(Sheet sheet, CellPosition startPoint, List<Field> fields) {
-        Field fake = new Field(fields);
 
-        SupportField supportField = new SupportField(fake);
+        SupportField supportField = new SupportField(fields);
 
         int row = startPoint.getRow() - 1;
         int col = startPoint.getCol();
@@ -39,8 +38,8 @@ public class DefaultHeaderWriter implements HeaderWriter {
 
     private Cost drawHeaderImpl(Sheet sheet, int row, int lastRow, int col, int lastCol, SupportField header, WorkbookContext bookResource) {
         Field field = header.getField();
-        CellStyle style = bookResource.getHeaderStyle(field);
-        if (field.isLeaf()) {
+        if (header.isLeaf()) {
+            CellStyle style = bookResource.getHeaderStyle(field);
             //set value into the bottom left cell
             if (header.getHeight() == 1) {
                 CellUtils.setCellValue(sheet, lastRow, col, field.getDescription(), style);
@@ -61,6 +60,7 @@ public class DefaultHeaderWriter implements HeaderWriter {
         }
 
         if (row >= 0) {
+            CellStyle style = bookResource.getHeaderStyle(field);
             CellUtils.setMergeRegionValue(sheet, row, lastRow - costRow, col, col + header.getWidth() - 1,
                     field.getDescription(), style);
         }
@@ -82,23 +82,22 @@ public class DefaultHeaderWriter implements HeaderWriter {
      * Created at 2018/12/14
      */
     @Data
-    public static class SupportField {
+    private static class SupportField {
         private Field field;
         private int height;
         private int width;
         private List<SupportField> headerChildren;
 
-        public SupportField(Field field) {
-            this.field = field;
-            this.headerChildren = new ArrayList<>(field.getChildren().size());
-            if (field.isLeaf()) {
+        private SupportField(List<Field> fields) {
+            if (fields == null || fields.size() == 0) {
                 this.height = 1;
                 this.width = 1;
                 return;
             }
+            this.headerChildren = new ArrayList<>(fields.size());
             int h = 1;
             int w = 0;
-            for (Field child : field.getChildren()) {
+            for (Field child : fields) {
                 SupportField header = new SupportField(child);
                 h = Math.max(h, header.getHeight());
                 w += header.width;
@@ -111,6 +110,15 @@ public class DefaultHeaderWriter implements HeaderWriter {
             }
             this.height = h + 1;
             this.width = w;
+        }
+
+        private SupportField(Field field) {
+            this(field.getChildren());
+            this.field = field;
+        }
+
+        public boolean isLeaf() {
+            return getHeaderChildren() == null || getHeaderChildren().size() == 0;
         }
     }
 }

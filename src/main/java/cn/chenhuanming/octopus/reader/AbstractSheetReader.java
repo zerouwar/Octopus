@@ -1,6 +1,6 @@
 package cn.chenhuanming.octopus.reader;
 
-import cn.chenhuanming.octopus.config.ConfigFactory;
+import cn.chenhuanming.octopus.config.Config;
 import cn.chenhuanming.octopus.config.Field;
 import cn.chenhuanming.octopus.exception.ParseException;
 import cn.chenhuanming.octopus.formatter.Formatter;
@@ -19,24 +19,24 @@ import java.util.Iterator;
 public abstract class AbstractSheetReader<T> implements SheetReader<T> {
 
     protected Sheet sheet;
-    protected ConfigFactory configFactory;
+    protected Config config;
     protected CellPosition startPoint;
 
-    public AbstractSheetReader(Sheet sheet, ConfigFactory configFactory, CellPosition startPoint) {
-        if (sheet == null || configFactory == null || startPoint == null) {
+    public AbstractSheetReader(Sheet sheet, Config config, CellPosition startPoint) {
+        if (sheet == null || config == null || startPoint == null) {
             throw new NullPointerException();
         }
         this.sheet = sheet;
-        this.configFactory = configFactory;
+        this.config = config;
         this.startPoint = startPoint;
     }
 
     @Override
     public T get(int i) {
-        T t = newInstance(configFactory.getConfig().getClassType());
+        T t = newInstance(config.getClassType());
 
         int col = startPoint.getCol();
-        for (Field field : configFactory.getConfig().getFields()) {
+        for (Field field : config.getFields()) {
             col = read(startPoint.getRow() + i, col, field, t);
         }
         return t;
@@ -53,7 +53,7 @@ public abstract class AbstractSheetReader<T> implements SheetReader<T> {
         if (field.getFormatter() != null) {
             value = field.getFormatter().parse(str);
         } else {
-            Formatter globalFormatter = configFactory.getConfig().getFormatterContainer().get(pusher.getParameterTypes()[0]);
+            Formatter globalFormatter = config.getFormatterContainer().get(pusher.getParameterTypes()[0]);
             if (globalFormatter != null) {
                 value = globalFormatter.parse(str);
             } else {
@@ -73,7 +73,7 @@ public abstract class AbstractSheetReader<T> implements SheetReader<T> {
 
     protected T newInstance(Class classType) {
         try {
-            return (T) configFactory.getConfig().getClassType().newInstance();
+            return (T) config.getClassType().newInstance();
         } catch (Exception e) {
             throw new IllegalArgumentException("wrong type or no default constructor", e);
         }
