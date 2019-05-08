@@ -8,8 +8,8 @@
 	    - [Converting Data](#converting-data)
 	- [Import Excel](#import-excel)
 	    - [Data Validation](#data-validation)
+    - [Annotation](#annotation)
     - [Q&A](#qa)
-        - [No Java Annotation Config?](#no-java-annotation-config)
         - [Need Apache POI?](#need-apache-poi)
         - [Have Advice or idea?](#have-advice-or-idea)
 <!-- /TOC -->
