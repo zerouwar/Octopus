@@ -35,7 +35,7 @@ Add dependency
 <dependency>
         <groupId>cn.chenhuanming</groupId>
         <artifactId>octopus</artifactId>
-        <version>1.1.0</version>
+        <version>1.1.2</version>
 </dependency>
 ```
 
