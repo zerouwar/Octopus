@@ -1,6 +1,7 @@
 package cn.chenhuanming.octopus.config;
 
 
+import cn.chenhuanming.octopus.util.StringUtils;
 import org.apache.poi.util.IOUtils;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -32,12 +33,18 @@ public abstract class AbstractXMLConfigFactory extends AbstractConfigFactory {
         }
     }
 
-    private static final String SCHEMA_URI = "https://raw.githubusercontent.com/zerouwar/my-maven-repo/master/cn/chenhuanming/octopus/1.1.0/octopus.xsd";
+    private static final String DEFAULT_SCHEMA_URI = "http://ftp.chenhuanming.cn/octopus/1.1.1/octopus.xsd";
 
-    protected void validateXML(Source source) throws Exception {
+    protected void validateXML(Source source, String schemaUri) throws Exception {
+        is.reset();
         SchemaFactory schemaFactory = SchemaFactory
                 .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = schemaFactory.newSchema(new URL(SCHEMA_URI));
+        Schema schema = null;
+        if (StringUtils.isNotEmpty(schemaUri)) {
+            schema = schemaFactory.newSchema(new URL(schemaUri));
+        } else {
+            schema = schemaFactory.newSchema(new URL(DEFAULT_SCHEMA_URI));
+        }
         Validator validator = schema.newValidator();
         validator.validate(source);
         is.reset();

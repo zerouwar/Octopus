@@ -40,8 +40,9 @@ public class XmlConfigFactory extends AbstractXMLConfigFactory {
     public Config getConfig() {
         Document document;
         try {
-            validateXML(new StreamSource(is));
             document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
+            String schemaUri = document.getDocumentElement().getAttribute("xsi:noNamespaceSchemaLocation");
+            validateXML(new StreamSource(is), schemaUri);
         } catch (Exception e) {
             throw new IllegalArgumentException("xml file is not valid", e);
         }
@@ -52,9 +53,6 @@ public class XmlConfigFactory extends AbstractXMLConfigFactory {
             throw new IllegalArgumentException("xml config file: must has a root tag named " + XmlNode.Root.nodeName);
         }
         String className = root.getAttribute(XmlNode.Root.Attribute.CLASS);
-        if (StringUtils.isEmpty(className)) {
-            throw new IllegalArgumentException("xml config file: tag " + XmlNode.Root.nodeName + "must has " + XmlNode.Root.Attribute.CLASS + " attribute");
-        }
 
         Class<?> classType = null;
         try {
