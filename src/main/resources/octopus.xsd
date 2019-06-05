@@ -54,10 +54,11 @@
         <xs:attribute name="is-bold" type="xs:boolean" default="false"/>
         <xs:attribute name="border" type="border" default="0,0,0,0"/>
         <xs:attribute name="border-color" type="borderColor"/>
+        <xs:attribute name="width" type="xs:nonNegativeInteger" default="0"/>
+
         <xs:attribute name="is-blankable" type="xs:boolean" default="true"/>
         <xs:attribute name="regex" type="xs:string"/>
         <xs:attribute name="options" type="options"/>
-
     </xs:attributeGroup>
 
     <xs:attributeGroup name="headerAttributes">

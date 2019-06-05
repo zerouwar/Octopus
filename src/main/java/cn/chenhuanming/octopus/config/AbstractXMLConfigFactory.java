@@ -8,10 +8,12 @@ import org.w3c.dom.Node;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -33,17 +35,22 @@ public abstract class AbstractXMLConfigFactory extends AbstractConfigFactory {
         }
     }
 
-    private static final String DEFAULT_SCHEMA_URI = "http://ftp.chenhuanming.cn/octopus/1.1.1/octopus.xsd";
-
     protected void validateXML(Source source, String schemaUri) throws Exception {
         is.reset();
         SchemaFactory schemaFactory = SchemaFactory
                 .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         Schema schema = null;
-        if (StringUtils.isNotEmpty(schemaUri)) {
-            schema = schemaFactory.newSchema(new URL(schemaUri));
+        if (StringUtils.isEmpty(schemaUri)) {
+            //default use xsd in this jar
+            schema = schemaFactory.newSchema(new StreamSource(this.getClass().getClassLoader().getResourceAsStream("octopus.xsd")));
         } else {
-            schema = schemaFactory.newSchema(new URL(DEFAULT_SCHEMA_URI));
+            if (schemaUri.startsWith("http:") || schemaUri.startsWith("https:")) {
+                schema = schemaFactory.newSchema(new URL(schemaUri));
+            } else if (schemaUri.startsWith("file:")) {
+                schema = schemaFactory.newSchema(new File(schemaUri));
+            } else {
+                schema = schemaFactory.newSchema(new StreamSource(this.getClass().getClassLoader().getResourceAsStream(schemaUri)));
+            }
         }
         Validator validator = schema.newValidator();
         validator.validate(source);
@@ -101,6 +108,7 @@ public abstract class AbstractXMLConfigFactory extends AbstractConfigFactory {
                 String FOREGROUND_COLOR = "foreground-color";
                 String BORDER = "border";
                 String BORDER_COLOR = "border-color";
+                String WIDTH = "width";
 
                 String DATE_FORMAT = "date-format";
                 String FORMATTER = "formatter";

@@ -18,12 +18,12 @@ public class OctopusTest extends AbstractWriterTest {
         return 100000;
     }
 
+    Config config = new XmlConfigFactory(this.getClass().getClassLoader().getResourceAsStream("applicants.xml")).getConfig();
+
     @Test
-    public void export() throws IOException {
+    public void export() throws IOException, InterruptedException {
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
         FileOutputStream os = new FileOutputStream(rootPath + "/octopusExport.xlsx");
-
-        Config config = new XmlConfigFactory(this.getClass().getClassLoader().getResourceAsStream("applicants.xml")).getConfig();
 
         Octopus.writeOneSheet(os, config, "test", applicantsList);
     }

@@ -21,7 +21,7 @@ import java.util.Date;
         @Formatter(target = BigDecimal.class, format = BigDecimalFormatter.class),
 })
 public class Applicants {
-    @Field(description = "Value", color = "#74f441")
+    @Field(description = "Value", color = "#74f441", width = 50)
     private int id;
     @Field(description = "Name", fontSize = 20, border = "0,2,0,2", borderColor = ",#4242f4,,#4242f4")
     private String name;

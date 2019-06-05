@@ -1,5 +1,6 @@
 package cn.chenhuanming.octopus.core;
 
+import cn.chenhuanming.octopus.config.Config;
 import cn.chenhuanming.octopus.config.annotation.AnnotationConfigFactory;
 import cn.chenhuanming.octopus.entity.Applicants;
 import cn.chenhuanming.octopus.writer.DefaultSheetWriter;
@@ -16,6 +17,8 @@ import java.io.IOException;
  */
 public class SheetWriterTest extends AbstractWriterTest {
 
+    Config config = new AnnotationConfigFactory(Applicants.class).getConfig();
+
     @Test
     public void test() throws IOException {
 
@@ -24,7 +27,7 @@ public class SheetWriterTest extends AbstractWriterTest {
         FileOutputStream os = new FileOutputStream(rootPath + "/sheetWriter.xlsx");
 
         //DefaultSheetWriter writer = new DefaultSheetWriter(new XmlConfigFactory(this.getClass().getClassLoader().getResourceAsStream("applicants.xml")));
-        DefaultSheetWriter writer = new DefaultSheetWriter(new AnnotationConfigFactory(Applicants.class).getConfig());
+        DefaultSheetWriter writer = new DefaultSheetWriter(config);
 
         writer.write(workbook.createSheet(), applicantsList);
 

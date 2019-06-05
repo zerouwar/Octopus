@@ -148,6 +148,8 @@ public class AnnotationConfigFactory extends AbstractConfigFactory {
         borderColor = StringUtils.defaultIfEmpty(borderColor, "#000000,#000000,#000000,#000000");
         builder.borderColor(super.convertBorderColor(borderColor));
 
+        builder.width(fieldAnnotation.width());
+
         field.fieldCellStyle(builder.build());
     }
 
@@ -161,6 +163,7 @@ public class AnnotationConfigFactory extends AbstractConfigFactory {
             String foregroundColor = null;
             String border = null;
             String borderColor = null;
+
             if (headerOrField instanceof Header) {
                 fontSize = ((Header) headerOrField).headerFontSize();
                 color = ((Header) headerOrField).headerColor();
@@ -185,6 +188,7 @@ public class AnnotationConfigFactory extends AbstractConfigFactory {
             builder.border(super.convertBorder(StringUtils.defaultIfEmpty(border, "1,1,1,1")));
             borderColor = StringUtils.defaultIfEmpty(borderColor, "#000000,#000000,#000000,#000000");
             builder.borderColor(super.convertBorderColor(borderColor));
+            builder.width(0);
 
             field.headerFieldCellStyle(builder.build());
         } else {

@@ -40,6 +40,8 @@ public @interface Field {
 
     String borderColor() default "#000000,#000000,#000000,#000000";
 
+    int width() default 0;
+
     String dateFormat() default "";
 
     Class<? extends Formatter> formatter() default Formatter.class;

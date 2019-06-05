@@ -12,6 +12,7 @@ import java.io.InputStream;
  * Created at 2019-05-07
  */
 public class ConfigFactoryTest {
+
     @Test
     public void assertSameConfig() {
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("applicants.xml");

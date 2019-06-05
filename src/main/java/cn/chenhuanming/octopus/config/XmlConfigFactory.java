@@ -188,6 +188,9 @@ public class XmlConfigFactory extends AbstractXMLConfigFactory {
         String borderColor = getAttribute(node, XmlNode.Field.Attribute.BORDER_COLOR);
         builder.borderColor(super.convertBorderColor(StringUtils.defaultIfEmpty(borderColor, "#000000,#000000,#000000,#000000")));
 
+        String width = getAttribute(node, XmlNode.Field.Attribute.WIDTH);
+        builder.width(Integer.parseInt(StringUtils.defaultIfEmpty(width, "0")));
+
         field.fieldCellStyle(builder.build());
     }
 
@@ -211,6 +214,9 @@ public class XmlConfigFactory extends AbstractXMLConfigFactory {
 
         String borderColor = getAttribute(node, XmlNode.Header.Attribute.HEADER_BORDER_COLOR);
         builder.borderColor(super.convertBorderColor(StringUtils.defaultIfEmpty(borderColor, "#000000,#000000,#000000,#000000")));
+
+        //handle width in cellStyle rather than headerCellStyle
+        builder.width(0);
 
         field.headerFieldCellStyle(builder.build());
     }
