@@ -9,15 +9,19 @@ import java.math.BigDecimal;
 public class BigDecimalFormatter extends AbstractFormatter<BigDecimal> {
     @Override
     public BigDecimal parseImpl(String str) throws Exception {
-        if(str != null && !"".equals(str)) {
-            return new BigDecimal(str);
-        } else {
-            return null;
-        }
+        return new BigDecimal(str);
     }
 
     @Override
     public String format(BigDecimal bigDecimal) {
         return bigDecimal.toString();
+    }
+
+    static class PrimitiveFormatter extends BigDecimalFormatter {
+
+        @Override
+        protected BigDecimal defaultValueWhenParseEmpty() {
+            return null;
+        }
     }
 }
