@@ -29,7 +29,7 @@ public class DefaultFormatterContainer implements FormatterContainer {
         formatMap.put(Boolean.TYPE, new BooleanFormatter.PrimitiveFormatter());
         formatMap.put(Short.class, new ShortFormatter());
         formatMap.put(Short.TYPE, new ShortFormatter.PrimitiveFormatter());
-        formatMap.put(BigDecimal.class,new BigDecimalFormatter());
+        formatMap.put(BigDecimal.class,new BigDecimalFormatter.PrimitiveFormatter());
     }
 
     public <T> void addFormat(Class<T> clazz, Formatter<T> formatter) {
