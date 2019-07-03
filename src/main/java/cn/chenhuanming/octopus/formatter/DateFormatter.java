@@ -1,7 +1,5 @@
 package cn.chenhuanming.octopus.formatter;
 
-import cn.chenhuanming.octopus.util.StringUtils;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,9 +26,6 @@ public class DateFormatter extends AbstractFormatter<Date> {
 
     @Override
     public Date parseImpl(String str) throws Exception {
-        if (StringUtils.isEmpty(str)) {
-            return null;
-        }
         return FORMAT.parse(str);
     }
 }

@@ -15,4 +15,11 @@ public class ShortFormatter extends AbstractFormatter<Short> {
     public Short parseImpl(String str) throws Exception {
         return Short.valueOf(str);
     }
+
+    static class PrimitiveFormatter extends ShortFormatter {
+        @Override
+        protected Short defaultValueWhenParseEmpty() {
+            return 0;
+        }
+    }
 }
