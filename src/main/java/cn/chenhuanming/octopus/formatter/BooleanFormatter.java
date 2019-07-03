@@ -14,4 +14,11 @@ public class BooleanFormatter extends AbstractFormatter<Boolean> {
     public String format(Boolean aBoolean) {
         return String.valueOf(aBoolean);
     }
+
+    static class PrimitiveFormatter extends BooleanFormatter {
+        @Override
+        protected Boolean defaultValueWhenParseEmpty() {
+            return Boolean.FALSE;
+        }
+    }
 }

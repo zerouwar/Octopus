@@ -17,17 +17,17 @@ public class DefaultFormatterContainer implements FormatterContainer {
     public DefaultFormatterContainer() {
         formatMap = new HashMap<>();
         formatMap.put(Integer.class, new IntegerFormatter());
-        formatMap.put(Integer.TYPE, new IntegerFormatter());
+        formatMap.put(Integer.TYPE, new IntegerFormatter.PrimitiveFormatter());
         formatMap.put(Double.class, new DoubleFormatter());
-        formatMap.put(Double.TYPE, new DoubleFormatter());
+        formatMap.put(Double.TYPE, new DoubleFormatter.PrimitiveFormatter());
         formatMap.put(Long.class, new LongFormatter());
-        formatMap.put(Long.TYPE, new LongFormatter());
+        formatMap.put(Long.TYPE, new LongFormatter.PrimitiveFormatter());
         formatMap.put(Float.class, new FloatFormatter());
-        formatMap.put(Float.TYPE, new FloatFormatter());
+        formatMap.put(Float.TYPE, new FloatFormatter.PrimitiveFormatter());
         formatMap.put(Boolean.class, new BooleanFormatter());
-        formatMap.put(Boolean.TYPE, new BooleanFormatter());
+        formatMap.put(Boolean.TYPE, new BooleanFormatter.PrimitiveFormatter());
         formatMap.put(Short.class, new ShortFormatter());
-        formatMap.put(Short.TYPE, new ShortFormatter());
+        formatMap.put(Short.TYPE, new ShortFormatter.PrimitiveFormatter());
 
     }
 

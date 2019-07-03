@@ -14,4 +14,11 @@ public class LongFormatter extends AbstractFormatter<Long> {
     public String format(Long aLong) {
         return String.valueOf(aLong);
     }
+
+    static class PrimitiveFormatter extends LongFormatter {
+        @Override
+        protected Long defaultValueWhenParseEmpty() {
+            return 0L;
+        }
+    }
 }

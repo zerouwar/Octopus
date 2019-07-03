@@ -14,4 +14,11 @@ public class DoubleFormatter extends AbstractFormatter<Double> {
     public String format(Double aDouble) {
         return String.valueOf(aDouble);
     }
+
+    static class PrimitiveFormatter extends DoubleFormatter {
+        @Override
+        protected Double defaultValueWhenParseEmpty() {
+            return 0.0;
+        }
+    }
 }

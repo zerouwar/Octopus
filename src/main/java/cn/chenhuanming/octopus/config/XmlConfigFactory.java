@@ -236,8 +236,9 @@ public class XmlConfigFactory extends AbstractXMLConfigFactory {
             regex = Pattern.compile(regexStr);
         }
         String optionsStr = getAttribute(node, XmlNode.Field.Attribute.OPTIONS);
-        if (!StringUtils.isEmpty(optionsStr) && optionsStr.length() >= 2) {
+        if (!StringUtils.isEmpty(optionsStr)) {
             String[] split = optionsStr.split(StringUtils.OPTION_SPLITTER_VERTICAL);
+            blankable = false;//can not blank when options were set
             options = Arrays.asList(split);
         }
 

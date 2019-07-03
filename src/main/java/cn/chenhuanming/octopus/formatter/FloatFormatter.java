@@ -14,4 +14,11 @@ public class FloatFormatter extends AbstractFormatter<Float> {
     public String format(Float aFloat) {
         return String.valueOf(aFloat);
     }
+
+    static class PrimitiveFormatter extends FloatFormatter {
+        @Override
+        protected Float defaultValueWhenParseEmpty() {
+            return 0.0f;
+        }
+    }
 }

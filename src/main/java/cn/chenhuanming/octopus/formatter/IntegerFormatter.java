@@ -16,4 +16,11 @@ public class IntegerFormatter extends AbstractFormatter<Integer> {
     public Integer parseImpl(String str) throws Exception {
         return Integer.valueOf(str);
     }
+
+    static class PrimitiveFormatter extends IntegerFormatter {
+        @Override
+        protected Integer defaultValueWhenParseEmpty() {
+            return 0;
+        }
+    }
 }
