@@ -216,8 +216,9 @@ public class AnnotationConfigFactory extends AbstractConfigFactory {
         }
 
         String optionsStr = fieldAnnotation.options();
-        if (StringUtils.isNotEmpty(optionsStr) && optionsStr.length() >= 2) {
+        if (StringUtils.isNotEmpty(optionsStr)) {
             String[] split = optionsStr.split(StringUtils.OPTION_SPLITTER_VERTICAL);
+            blankable = false;//can not blank when options were set
             options = Arrays.asList(split);
         }
 
