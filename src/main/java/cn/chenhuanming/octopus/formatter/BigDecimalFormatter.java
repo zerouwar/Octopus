@@ -16,12 +16,4 @@ public class BigDecimalFormatter extends AbstractFormatter<BigDecimal> {
     public String format(BigDecimal bigDecimal) {
         return bigDecimal.toString();
     }
-
-    static class PrimitiveFormatter extends BigDecimalFormatter {
-
-        @Override
-        protected BigDecimal defaultValueWhenParseEmpty() {
-            return null;
-        }
-    }
 }
