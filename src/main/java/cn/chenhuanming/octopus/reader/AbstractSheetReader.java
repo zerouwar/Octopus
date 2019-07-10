@@ -5,6 +5,7 @@ import cn.chenhuanming.octopus.config.Field;
 import cn.chenhuanming.octopus.exception.ParseException;
 import cn.chenhuanming.octopus.formatter.Formatter;
 import cn.chenhuanming.octopus.model.CellPosition;
+import cn.chenhuanming.octopus.model.WorkbookContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Sheet;
 
@@ -29,6 +30,8 @@ public abstract class AbstractSheetReader<T> implements SheetReader<T> {
         this.sheet = sheet;
         this.config = config;
         this.startPoint = startPoint;
+        //init workbookContext anyway,prevent data pollution from thread reuse
+        WorkbookContext.init(sheet.getWorkbook(), config);
     }
 
     @Override

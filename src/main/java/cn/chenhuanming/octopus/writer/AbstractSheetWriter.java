@@ -37,6 +37,8 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
             return CellUtils.POSITION_ZERO_ZERO;
         }
 
+        //init workbookContext anyway,prevent data pollution from thread reuse
+        WorkbookContext.init(sheet.getWorkbook(), config);
         Class dataType = data.iterator().next().getClass();
         if (config.getClassType() != dataType) {
             throw new IllegalArgumentException("class of config is " + config.getClassType().getName() + " but type of data is " + dataType.getName());
@@ -46,15 +48,15 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
 
         int row = end.getRow() + 1;
         int col = getStartColumn();
-        WorkbookContext bookResource = new WorkbookContext(sheet.getWorkbook());
 
         for (T t : data) {
             for (Field field : config.getFields()) {
-                col = draw(sheet, row, col, field, t, bookResource);
+                col = draw(sheet, row, col, field, t);
             }
             col = getStartColumn();
             row++;
         }
+
         return new DefaultCellPosition(row, end.getCol());
     }
 
@@ -62,9 +64,9 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
         return 0;
     }
 
-    private int draw(Sheet sheet, final int row, final int col, Field field, Object o, WorkbookContext bookResource) {
+    private int draw(Sheet sheet, final int row, final int col, Field field, Object o) {
         if (field.isLeaf()) {
-            return drawColumn(sheet, row, col, field, o, bookResource);
+            return drawColumn(sheet, row, col, field, o);
         }
 
         Object p = null;
@@ -73,12 +75,12 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
         }
         int c = col;
         for (Field child : field.getChildren()) {
-            c = draw(sheet, row, c, child, p, bookResource);
+            c = draw(sheet, row, c, child, p);
         }
         return c;
     }
 
-    protected int drawColumn(Sheet sheet, final int row, final int col, Field field, Object o, WorkbookContext bookResource) {
+    protected int drawColumn(Sheet sheet, final int row, final int col, Field field, Object o) {
         if (o == null) {
             return col + 1;
         }
@@ -86,7 +88,7 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
         Formatter formatter = field.getFormatter();
         if (formatter != null) {
             value = formatter.format(ReflectionUtils.invokeReadMethod(field.getPicker(), o));
-            CellUtils.setCellValue(sheet, row, col, value, bookResource.getCellStyle(field));
+            CellUtils.setCellValue(sheet, row, col, value, WorkbookContext.get().getCellStyle(field));
             return col + 1;
         }
 
@@ -94,7 +96,7 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
 
         if (field.getPicker().getReturnType() == String.class || formatter == null) {
             value = ReflectionUtils.invokeReadMethod(field.getPicker(), o, field.getDefaultValue());
-            CellUtils.setCellValue(sheet, row, col, value, bookResource.getCellStyle(field));
+            CellUtils.setCellValue(sheet, row, col, value, WorkbookContext.get().getCellStyle(field));
             return col + 1;
         }
         //导出时要么是 Date 类型使用 dateFormatter 要么不是 Date 类型，使用 formatter 那么其实可以只用 formatter 字段表示
@@ -103,7 +105,7 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
         if (StringUtils.isEmpty(value)) {
             value = field.getDefaultValue();
         }
-        CellUtils.setCellValue(sheet, row, col, value, bookResource.getCellStyle(field));
+        CellUtils.setCellValue(sheet, row, col, value, WorkbookContext.get().getCellStyle(field));
         return col + 1;
 
     }

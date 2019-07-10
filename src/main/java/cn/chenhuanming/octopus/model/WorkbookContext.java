@@ -1,14 +1,11 @@
 package cn.chenhuanming.octopus.model;
 
+import cn.chenhuanming.octopus.config.Config;
 import cn.chenhuanming.octopus.config.Field;
 import cn.chenhuanming.octopus.config.FieldCellStyle;
 import cn.chenhuanming.octopus.util.ColorUtils;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
+import lombok.Getter;
+import org.apache.poi.ss.usermodel.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,13 +17,26 @@ import java.util.Map;
  * @author chenhuanming
  * Created at 2019-02-18
  */
+@Getter
 public class WorkbookContext {
+    private static final ThreadLocal<WorkbookContext> holder = new ThreadLocal<>();
+
+    public static WorkbookContext get() {
+        return holder.get();
+    }
+
+    public static void init(Workbook book, Config config) {
+        holder.set(new WorkbookContext(book, config));
+    }
+
     private Workbook book;
+    private Config config;
     private Map<Field, CellStyle> cellStyleMap;
     private Map<Field, CellStyle> headerStyleMap;
 
-    public WorkbookContext(Workbook book) {
+    private WorkbookContext(Workbook book, Config config) {
         this.book = book;
+        this.config = config;
         this.cellStyleMap = new HashMap<>();
         this.headerStyleMap = new HashMap<>();
     }
