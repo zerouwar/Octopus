@@ -21,15 +21,14 @@
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/mockito/mockito/blob/master/LICENSE)
 [![Maven Central](https://img.shields.io/badge/maven-octopus-blue.svg)](https://search.maven.org/search?q=g:cn.chenhuanming%20AND%20a:octopus)
 
-A simple Java excel import and export tool aiming to not touch Apache POI API for simply import or export excel.
-At the meantime,you can customize cell style,validate importing data according some rule
-and convert data you want
+**Simple** Java excel import and export tool.You can finish work with some object instead of annoying `Apache POI` API.
 
-**Talk less,directly see a picutre**
+Besides,some additional function like customizing cell style,converting data during export,validating data during import,etc.
+
+***A complicated excel exporting with Octopus***
 ![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/applicant_example.png)
 
 ## Import from Maven
-Add dependency
 
 ```xml
 <dependency>
@@ -43,7 +42,11 @@ Add dependency
 ## Export Excel
 
 ### Simplest Example
-Let's begin with simplest example,to export some addresses.Only two fields in `Address` class
+Let's begin with a simple example,exporting some address information
+
+![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/simplest_example.png)
+
+Define class `Address`
 
 ```java
 @Data
@@ -54,12 +57,11 @@ public class Address {
 }
 ```
 
-Before exporting,we must create a XML config to define how and what to export
+We need a xml config to define what and how to export
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<Root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      class="cn.chenhuanming.octopus.entity.Address">
+<Root class="cn.chenhuanming.octopus.entity.Address">
 
     <Field name="city" description="City"/>
     <Field name="detail" description="Detail"/>
@@ -67,25 +69,19 @@ Before exporting,we must create a XML config to define how and what to export
 </Root>
 ```  
 
-First,create a root element named `Root`.Here refer a *octopus.xsd* file to help us compose XML code.
+Element `Field` represents one column in excel.
+Attribute `name` is the field name of class `Address`.Attribute `description` is the column header in excel
 
-Second,assign `class` attribute,which is the class name we will export
+Actually `Octopus` get value from getter method,so make sure there is a getter method.
 
-Last,create two `Field` element,representing two column data read from `Address` we will export.
-
-Value of Attribute `name` is the field name of Address.
-Actually Octopus get value from its getter method,so make sure there is a getter method.
-
-Attribute `description` will be used to draw header
-
-Let's do the last thing,writing Java code
+Last,writing code to export
 
 ```java
 public class AddressExample {
     List<Address> addresses;
 
     /**
-     * make testing data
+     * preparing testing data
      */
     @Before
     public void prepare() {
@@ -97,53 +93,43 @@ public class AddressExample {
     }
 
     @Test
-    public void export() throws FileNotFoundException {
+    public void export() throws Exception {
 
         //where to export
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
         FileOutputStream os = new FileOutputStream(rootPath + "/address.xlsx");
 
-        //read config from address.xml
+        //get config from xml file.Singleton pattern is recommending
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("address.xml");
         Config config = new XmlConfigFactory(is).getConfig();
 
-        try {
-            Octopus.writeOneSheet(os, config, "address", addresses);
-        } catch (IOException e) {
-            System.out.println("export failed");
-        }
+        //just one line of code with Octopus facade
+        Octopus.writeOneSheet(os, config, "address", addresses);
     }
 }
 ```
 
-This is a complete unit test.In fact,exporting Excel only needs two steps:
-
-1. By `ConfigFacotry`,get a `Config` instance from XML config file or through java config
-2. Call `Octopus.writeOneSheet()` and pass exporting file,config,name of sheet and data
-
-Here is exporting excel file
-
-![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/simplest_example.png)
+This is a complete unit test.You can find it in [test classpath](https://github.com/zerouwar/Octopus/blob/master/src/test/java/cn/chenhuanming/octopus/example/AddressExample.java) 
 
 ### Auto Drawing Header
-Octopus supports exporting complicated object and drawing header automatically.
+You can exporting complex structure data.`Octopus` will drawing header automatically.
 
-This Time we need to export some companies.Here is `Company` class
+Now,we will export some company information.Here is the class `Company`
 
 ```java
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class Company {
     private String name;
     private Address address;
 }
 ```
 
-And we create a XML config file named *company.xml*
+XML config file is different from first example.
 
 ```xml
-<Root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      class="cn.chenhuanming.octopus.entity.Address">
+<Root class="cn.chenhuanming.octopus.entity.Address">
 
 
     <Field name="name"
@@ -158,7 +144,8 @@ And we create a XML config file named *company.xml*
 </Root>
 ```
 
-We use `Header` element representing a complicated field in company object,and set font color of `name` to `#ff0000`
+This time we set font color of column name to red in excel.
+Element `Header` represents a complicated field in company object,
 
 The Java code is almost the same as before
 
@@ -167,7 +154,7 @@ public class CompanyExample {
     List<Company> companies;
 
     /**
-     * make testing data
+     * preparing testing data
      */
     @Before
     public void prepare() {
@@ -179,27 +166,22 @@ public class CompanyExample {
     }
 
     @Test
-    public void export() throws FileNotFoundException {
+    public void export() throws Exception {
 
         //where to export
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
         FileOutputStream os = new FileOutputStream(rootPath + "/company.xlsx");
 
-        //read config from company.xml
+        //get config from xml file.Singleton pattern is recommending
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("company.xml");
         Config config = new XmlConfigFactory(is).getConfig();
 
-        try {
-            Octopus.writeOneSheet(os, config, "company", companies);
-        } catch (IOException e) {
-            System.out.println("export failed");
-        }
+        Octopus.writeOneSheet(os, config, "company", companies);
     }
-
 }
 ```
 
-This is the final exporting excel file
+Following is the exported excel
 
 ![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/auto_drawing_header.png)
 
@@ -208,9 +190,10 @@ Octopus can handle more complicated data,you can check this from `cn.chenhuanmin
 ![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/applicant_example.png)
 
 ### Converting Data
-Sometimes you want to convert exporting data.For example,in previous example,we don't want to export entire `Address`,just make this like a string.
+Sometimes you want to convert data during export.
+For example,in previous example,we want export address as one column.
 
-All we need is implementing `Formatter`
+We need to define a `Formatter`
 
 ```java
 public class AddressFormatter implements Formatter<Address> {
@@ -219,6 +202,9 @@ public class AddressFormatter implements Formatter<Address> {
         return address.getCity() + "," + address.getDetail();
     }
 
+    /**
+     * called during import 
+     */
     @Override
     public Address parse(String str) {
         String[] split = str.split(",");
@@ -233,7 +219,7 @@ public class AddressFormatter implements Formatter<Address> {
 `parse` method is used in importing excel,so just pay attention on `format
  method.It accepts a `Address` object and returns a `String` object.
  
- At last,put this into XML file
+ At last,put this into XML config file
  
  ```xml
 <Field name="name"
@@ -250,24 +236,17 @@ Exporting excel will be like this
 ![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/convering_data.png)
 
 ## Import Excel
-We directly reuse previous example to see how to import a excel.Reuse `Config` object,just change Java code
+Let's how to import a excel.Reuse xml config file in [Converting Data](#Converting Data)
 
 ```java
-//First get the excel file
-FileInputStream fis = new FileInputStream(rootPath + "/company2.xlsx");
+SheetReader<Company> importData = Octopus.readFirstSheet(fis, config, new DefaultCellPosition(1, 0));
 
-try {
-    SheetReader<Company> importData = Octopus.readFirstSheet(fis, config, new DefaultCellPosition(1, 0));
-
-    for (Company company : importData) {
-        System.out.println(company);
-    }
-} catch (Exception e) {
-    System.out.println("import failed");
+for (Company company : importData) {
+    System.out.println(company);
 }
 ```
 
-And check the output of terminal.See,`AddressFormatter` we created works!
+Check terminal.See,`AddressFormatter` works!
 
 ```
 Company(name=Graham Motor Services, address=Address(city=Monroe, detail=666 Bonnair Ave))
@@ -280,16 +259,29 @@ Company(name=Toccoa Development, address=Address(city=Ridgeville, detail=1790 La
 ```
 
 ### Data Validation
-SomeTimes we have some requirements for importing data.Octopus provides simple validation config.
+SomeTimes we have restrictions for importing data.Octopus provides simple validation config.
 
-First of all,we add a field `status` for `Company` class.And value of `status` is only one of *good*,*bad* and *closed*,`name` can not be empty.
-Let's check out XML config
+we add a property `status` for class `Company`.
+
+```java
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class Company {
+    private String name;
+    private Address address;
+    private String status;
+}
+```
+
+We want restrictions during import.
+
+* Value of `status` is only one of *good*,*bad* and *closed*.
+* `name` can not be empty.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<Root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      class="cn.chenhuanming.octopus.entity.Company">
-
+<Root class="cn.chenhuanming.octopus.entity.Company">
 
     <Field name="name"
            description="Name"
@@ -313,7 +305,7 @@ Here is the excel we will import,there are three wrong.
 
 ![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/wrong_data.png)
 
-And the Java code
+Java code
 
 ```java
 @Test
@@ -330,7 +322,7 @@ public void importCheckedData() throws IOException, InvalidFormatException {
 }
 ```
 
-We call `Octopus.readFirstSheetWithValidation` and get `SheetReader` with result of validation.Check the terminal
+We call `Octopus.readFirstSheetWithValidation` and get `SheetReader` which implements `Iterable`.Check the terminal
 
 ```
 CheckedData(data=Company(name=Graham Motor Services, address=Address(city=Monroe, detail=666 Bonnair Ave), status=good), exceptions=[])
@@ -338,7 +330,7 @@ CheckedData(data=Company(name=Social Circle Engineering, address=Address(city=Fo
 CheckedData(data=Company(name=null, address=Address(city=Mcdonough, detail=1278 Midway Trail), status=null), exceptions=[cn.chenhuanming.octopus.exception.CanNotBeBlankException, cn.chenhuanming.octopus.exception.NotAllowValueException])
 ```
 
-`CheckData` has `data` and `exceptions`.In `exceptions`,it saves all exceptions of every cell occurred in importing.All of them are subclass of `ParseException`
+`CheckData` has `data` and `exceptions`.In `exceptions`,it saves all exceptions of every cell occurred during import.All of them are subclass of `ParseException`.
 
 Besides `is-blankable` and `options`,you can apply regular expression validation through `regex`.When validate fails,it will throw corresponding `ParseException`
 
@@ -346,14 +338,14 @@ Besides `is-blankable` and `options`,you can apply regular expression validation
 * `options`：throws `NotAllowValueException`
 * `regex`：throws `PatternNotMatchException`
 
-You can handle more with these exceptions.If it can not be satisfied with you,you can throws `ParseException` in `paese` method of `Formatters`.
+You can handle more with these exceptions.If it is not satisfied with you,throws `ParseException` in `paese` method of `Formatter`.
 Octopus will catch them,put into `exceptions` and fill with position of cell and config info at the same time.
 
-***All example could be founud at `cn.chenhuanming.octopus.example`，you can run and check these examples*** 
+***All example could be found at `cn.chenhuanming.octopus.example`，you can run and check these examples*** 
 
 ## Annotation
-We recommend using XML to configure the import and export formats, because XML configuration is not coupled with classes and is more flexible than annotations.  
-Sometimes, however, users may be less concerned about flexibility and want to put configuration and data classes together, so annotation can be used.  
+We recommend using XML to configure the import and export, because XML configuration is not coupled with classes and is more flexible than annotations.  
+Sometimes, you may be less concerned about flexibility and want to put configuration and data classes together, so annotation can be used.  
 Annotations are similar to XML files, There are  `@Sheet`,`@Formatter`,`@Header`,`@Field`:
 - `@Sheet` on class, with a optional `formatters` attribute represents the global formatter
 - `@Formatter` represents a formatter as the `formatters` attribute value of `@Sheet`
@@ -391,6 +383,6 @@ Usage:
 ### Need Apache POI?
 `Octopus` provides one-code-api,get rid of Apache API。If you really need Apache POI,check core class `SheetWriter`和`SheetReader`
 
-### Have Advice or idea?
+### Have Advice or Question?
 New a issue or email **chenhuanming.cn@gmail.com**
 

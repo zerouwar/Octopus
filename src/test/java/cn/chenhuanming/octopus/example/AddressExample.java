@@ -9,9 +9,7 @@ import org.fluttercode.datafactory.impl.DataFactory;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +22,7 @@ public class AddressExample {
     List<Address> addresses;
 
     /**
-     * make testing data
+     * preparing testing data
      */
     @Before
     public void prepare() {
@@ -36,36 +34,29 @@ public class AddressExample {
     }
 
     @Test
-    public void export() throws FileNotFoundException {
+    public void export() throws Exception {
 
         //where to export
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
         FileOutputStream os = new FileOutputStream(rootPath + "/address.xlsx");
 
-        //read config from address.xml
+        //get config from xml file.Singleton pattern is recommending
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("address.xml");
         Config config = new XmlConfigFactory(is).getConfig();
 
-        try {
-            Octopus.writeOneSheet(os, config, "address", addresses);
-        } catch (IOException e) {
-            System.out.println("export failed");
-        }
+        //just one line of code with Octopus facade
+        Octopus.writeOneSheet(os, config, "address", addresses);
     }
 
     @Test
-    public void exportWithAnnotation() throws FileNotFoundException {
+    public void exportWithAnnotation() throws Exception {
         //where to export
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
         FileOutputStream os = new FileOutputStream(rootPath + "/address1.xlsx");
 
         Config config = new AnnotationConfigFactory(Address.class).getConfig();
 
-        try {
-            Octopus.writeOneSheet(os, config, "address", addresses);
-        } catch (IOException e) {
-            System.out.println("export failed");
-        }
+        Octopus.writeOneSheet(os, config, "address", addresses);
     }
 
 }

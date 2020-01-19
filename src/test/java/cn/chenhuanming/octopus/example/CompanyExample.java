@@ -9,13 +9,11 @@ import cn.chenhuanming.octopus.entity.Company;
 import cn.chenhuanming.octopus.model.CheckedData;
 import cn.chenhuanming.octopus.model.DefaultCellPosition;
 import cn.chenhuanming.octopus.reader.SheetReader;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.fluttercode.datafactory.impl.DataFactory;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +28,7 @@ public class CompanyExample {
     List<Company> companies;
 
     /**
-     * make testing data
+     * preparing testing data
      */
     @Before
     public void prepare() {
@@ -42,39 +40,32 @@ public class CompanyExample {
     }
 
     @Test
-    public void export() throws FileNotFoundException {
+    public void export() throws Exception {
 
         //where to export
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
         FileOutputStream os = new FileOutputStream(rootPath + "/company.xlsx");
 
-        //read config from company.xml
+        //get config from xml file.Singleton pattern is recommending
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("company.xml");
         Config config = new XmlConfigFactory(is).getConfig();
 
-        try {
-            Octopus.writeOneSheet(os, config, "company", companies);
-        } catch (IOException e) {
-            System.out.println("export failed");
-        }
+        Octopus.writeOneSheet(os, config, "company", companies);
     }
 
     @Test
-    public void exportWithAnnotation() throws FileNotFoundException {
+    public void exportWithAnnotation() throws Exception {
         //where to export
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
         FileOutputStream os = new FileOutputStream(rootPath + "/company1.xlsx");
 
         Config config = new AnnotationConfigFactory(Company.class).getConfig();
-        try {
-            Octopus.writeOneSheet(os, config, "company", companies);
-        } catch (IOException e) {
-            System.out.println("export failed");
-        }
+
+        Octopus.writeOneSheet(os, config, "company", companies);
     }
 
     @Test
-    public void exportAndImport() throws FileNotFoundException {
+    public void exportAndImport() throws Exception {
 
         //where to export
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
@@ -95,19 +86,15 @@ public class CompanyExample {
         //First get the excel file
         FileInputStream fis = new FileInputStream(rootPath + "/company2.xlsx");
 
-        try {
-            SheetReader<Company> importData = Octopus.readFirstSheet(fis, config, new DefaultCellPosition(1, 0));
+        SheetReader<Company> importData = Octopus.readFirstSheet(fis, config, new DefaultCellPosition(1, 0));
 
-            for (Company company : importData) {
-                System.out.println(company);
-            }
-        } catch (Exception e) {
-            System.out.println("import failed");
+        for (Company company : importData) {
+            System.out.println(company);
         }
     }
 
     @Test
-    public void importCheckedData() throws IOException, InvalidFormatException {
+    public void importCheckedData() throws Exception {
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("wrongCompany.xlsx");
 
         Config config = new XmlConfigFactory(

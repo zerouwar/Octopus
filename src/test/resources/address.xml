@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Root
-        class="cn.chenhuanming.octopus.entity.Address">
+<Root class="cn.chenhuanming.octopus.entity.Address">
 
     <Field name="city" description="City"/>
     <Field name="detail" description="Detail"/>

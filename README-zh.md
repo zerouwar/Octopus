@@ -39,7 +39,11 @@
 ## 导出Excel
 
 ### 从最简单的例子开始
-我们从最简单的例子开始——导出一些地址数据。`Address`类只有两个属性
+我们从最简单的例子开始，导出一些地址数据
+
+![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/simplest_example.png)
+
+定义`Address`类
 
 ```java
 @Data
@@ -51,12 +55,11 @@ public class Address {
 }
 ```
 
-在导出前，我们需要创建一个XML文件定义怎样去导出
+用XML文件定义怎么导出
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<Root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      class="cn.chenhuanming.octopus.entity.Address">
+<Root class="cn.chenhuanming.octopus.entity.Address">
 
     <Field name="city" description="City"/>
     <Field name="detail" description="Detail"/>
@@ -64,15 +67,13 @@ public class Address {
 </Root>
 ```  
 
-首先，创建`Root`根元素。这里引用*octopus.xsd*文件帮助我们编写XML
+`Root`标签的`class`属性，代表我们要导出的类全限定名
 
-然后，赋值`class`属性，代表我们要导出的类全限定名
-
-最后，创建两个`Field`元素，代表要导出类的两个属性
+一个`Field`标签代表Excel里的一列数据
 
 `name`属性值就是`Address`里的属性名，实际上Octopus调用其getter方法获取值，所以要确保有getter方法
 
-`description`属性会被用在绘制表头
+`description`属性会被用来绘制表头
 
 我们可以开始做最后一件事，编写Java代码
 
@@ -81,7 +82,7 @@ public class AddressExample {
     List<Address> addresses;
 
     /**
-     * make testing data
+     * preparing testing data
      */
     @Before
     public void prepare() {
@@ -93,33 +94,23 @@ public class AddressExample {
     }
 
     @Test
-    public void export() throws FileNotFoundException {
+    public void export() throws Exception {
 
-        //where to export
+        //导出文件的is
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
         FileOutputStream os = new FileOutputStream(rootPath + "/address.xlsx");
 
-        //read config from address.xml
+        //从XML读取配置，建议单例模式
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("address.xml");
         Config config = new XmlConfigFactory(is).getConfig();
 
-        try {
-            Octopus.writeOneSheet(os, config, "address", addresses);
-        } catch (IOException e) {
-            System.out.println("export failed");
-        }
+        //用Octopus，只需要一行代码
+        Octopus.writeOneSheet(os, config, "address", addresses);
     }
 }
 ```
 
-这是一个完整的单元测试代码，不过导出Excel其实只要两步：
-
-1. 通过`ConfigFactory`从XML配置文件或Java注解方式构造一个`Config`对象
-2. 调用`Octopus.writeOneSheet()`，传入导出的文件，Config对象，工作表的名字和数据
-
-下面是导出的Excel文件
-
-![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/simplest_example.png)
+这是一个完整的单元测试，可以在[单测测试路径](https://github.com/zerouwar/Octopus/blob/master/src/test/java/cn/chenhuanming/octopus/example/AddressExample.java)找到它
 
 ### 自动绘制表头
 Octopus支持导出复杂对象时自动绘制表头
@@ -139,8 +130,7 @@ public class Company {
 然后我们创建一个 *company.xml* 配置文件
 
 ```xml
-<Root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      class="cn.chenhuanming.octopus.entity.Address">
+<Root class="cn.chenhuanming.octopus.entity.Address">
 
 
     <Field name="name"
@@ -164,7 +154,7 @@ public class CompanyExample {
     List<Company> companies;
 
     /**
-     * make testing data
+     * preparing testing data
      */
     @Before
     public void prepare() {
@@ -176,23 +166,18 @@ public class CompanyExample {
     }
 
     @Test
-    public void export() throws FileNotFoundException {
+    public void export() throws Exception {
 
-        //where to export
+        //导出文件的is
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();
         FileOutputStream os = new FileOutputStream(rootPath + "/company.xlsx");
 
-        //read config from company.xml
+        //从XML读取配置，建议单例模式
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("company.xml");
         Config config = new XmlConfigFactory(is).getConfig();
 
-        try {
-            Octopus.writeOneSheet(os, config, "company", companies);
-        } catch (IOException e) {
-            System.out.println("export failed");
-        }
+        Octopus.writeOneSheet(os, config, "company", companies);
     }
-
 }
 ```
 
@@ -205,7 +190,7 @@ Octopus可以处理更复杂的数据，你可以在`cn.chenhuanming.octopus.exa
 ![](https://raw.githubusercontent.com/zerouwar/Octopus/master/pictures/applicant_example.png)
 
 ### 转换数据
-有时你想转换导出的数据。例如，在上一个例子中，我们不想导出整个`Address`对象，把它当做一个字符串导出
+有时你想转换导出的数据。例如，在上一个例子中，我们不想导出整个`Address`对象，把它当做一个一列数据导出
 
 我们所需要做的只是实现一个`Formatter`
 
@@ -227,7 +212,7 @@ public class AddressFormatter implements Formatter<Address> {
 }
 ```
 
-`parse`方法用于导入Excel时，只要关注`format`方法。这里接受一个Address对象，返回一个字符串。
+`parse`方法用于导入Excel，只要关注`format`方法。这里接受一个Address对象，返回一个字符串。
 
 最后，配置`AddressFormatter`到XML文件
 
@@ -250,18 +235,10 @@ public class AddressFormatter implements Formatter<Address> {
 我们直接拿上一个例子的导出结果来演示导入，共用同一个`Config`对象，直接编写导入的代码
 
 ```java
-//First get the excel file
-FileInputStream fis = new FileInputStream(rootPath + "/company2.xlsx");
+SheetReader<Company> importData = Octopus.readFirstSheet(fis, config, new DefaultCellPosition(1, 0));
 
-try {
-    SheetReader<Company> importData = Octopus.readFirstSheet(fis, config, new DefaultCellPosition(1, 0));
-
-    
-    for (Company company : importData) {
-        System.out.println(company);
-    }
-} catch (Exception e) {
-    System.out.println("import failed");
+for (Company company : importData) {
+    System.out.println(company);
 }
 ```
 
@@ -389,6 +366,6 @@ public class Applicants {
 ### 需要操作Apache POI？
 `Octopus`类可以提供一行代码式的API，让你不用碰Apache POI的API。但是如果你确实需要用到Apache POI，可以先看一下Octopus核心类`SheetWriter`和`SheetReader`代码。我在设计的时候尽量考虑扩展，并且完全基于接口实现，实在不行可以选择继承重写，属性基本都是protected，或者直接自己实现接口
 
-### 有建议或者想法？
+### 有建议或者问题？
 提Issue或者email我**chenhuanming.cn@gmail.com**
 
