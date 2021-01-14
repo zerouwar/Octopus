@@ -13,7 +13,7 @@
     <url>https://github.com/zerouwar/Octopus</url>
 
     <properties>
-        <poi-version>3.16</poi-version>
+        <poi-version>4.1.2</poi-version>
         <lombok-version>1.16.14</lombok-version>
         <slf4j-version>1.7.25</slf4j-version>
         <log4j2-version>2.11.1</log4j2-version>
