@@ -4,7 +4,6 @@ import cn.chenhuanming.octopus.config.Config;
 import cn.chenhuanming.octopus.config.Field;
 import cn.chenhuanming.octopus.formatter.Formatter;
 import cn.chenhuanming.octopus.model.CellPosition;
-import cn.chenhuanming.octopus.model.DefaultCellPosition;
 import cn.chenhuanming.octopus.model.WorkbookContext;
 import cn.chenhuanming.octopus.util.CellUtils;
 import cn.chenhuanming.octopus.util.ReflectionUtils;
@@ -31,9 +30,20 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
         this.startPoint = startPoint;
     }
 
+    /**
+     * Writes the content after writing the header.
+     *
+     * @param sheet           sheet
+     * @param data            data
+     * @param headerEndPos    header last position
+     * @param workbookContext workbook context
+     * @return content last position
+     */
+    abstract CellPosition writeContent(Sheet sheet, Collection<T> data, CellPosition headerEndPos, WorkbookContext workbookContext);
+
     @Override
     public CellPosition write(Sheet sheet, Collection<T> data) {
-        if (!canWrite(sheet, data)) {
+        if (data == null || data.size() == 0) {
             return CellUtils.POSITION_ZERO_ZERO;
         }
 
@@ -42,76 +52,76 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
             throw new IllegalArgumentException("class of config is " + config.getClassType().getName() + " but type of data is " + dataType.getName());
         }
 
-        CellPosition end = headerWriter.drawHeader(sheet, startPoint, config.getFields());
+        WorkbookContext workbookContext = new WorkbookContext(sheet.getWorkbook());
 
-        int row = end.getRow() + 1;
-        int col = getStartColumn();
-        WorkbookContext bookResource = new WorkbookContext(sheet.getWorkbook());
+        CellPosition headerEndPos = headerWriter.drawHeader(sheet, startPoint, config.getFields());
 
-        for (T t : data) {
-            for (Field field : config.getFields()) {
-                col = draw(sheet, row, col, field, t, bookResource);
-            }
-            col = getStartColumn();
-            row++;
-        }
-        return new DefaultCellPosition(row, end.getCol());
+        return writeContent(sheet, data, headerEndPos, workbookContext);
     }
 
-    protected int getStartColumn() {
-        return 0;
-    }
-
-    private int draw(Sheet sheet, final int row, final int col, Field field, Object o, WorkbookContext bookResource) {
+    /**
+     * Writes field recursively in the DFS(Depth First Search)
+     *
+     * @param sheet           sheet
+     * @param row             row index,base on 0
+     * @param col             column index,base on 0
+     * @param field           field config
+     * @param o               data object
+     * @param workbookContext workbook context
+     * @return next column index,aka col+1
+     */
+    protected int writeField(Sheet sheet, final int row, final int col, Field field, Object o, WorkbookContext workbookContext) {
         if (field.isLeaf()) {
-            return drawColumn(sheet, row, col, field, o, bookResource);
+            writeCell(sheet, row, col, field, o, workbookContext);
+            return col + 1;
         }
 
-        Object p = null;
+        Object value = null;
         if (o != null) {
-            p = ReflectionUtils.invokeReadMethod(field.getPicker(), o);
+            value = ReflectionUtils.invokeReadMethod(field.getPicker(), o);
         }
         int c = col;
         for (Field child : field.getChildren()) {
-            c = draw(sheet, row, c, child, p, bookResource);
+            c = writeField(sheet, row, c, child, value, workbookContext);
         }
         return c;
     }
 
-    protected int drawColumn(Sheet sheet, final int row, final int col, Field field, Object o, WorkbookContext bookResource) {
-        if (o == null) {
-            return col + 1;
-        }
-        String value;
-        Formatter formatter = field.getFormatter();
-        if (formatter != null) {
-            value = formatter.format(ReflectionUtils.invokeReadMethod(field.getPicker(), o));
-            CellUtils.setCellValue(sheet, row, col, value, bookResource.getCellStyle(field));
-            return col + 1;
+    /**
+     * Writes one cell with formatter of field config.
+     * It is convenient when you customize sheet content with field config.
+     *
+     * @param sheet           sheet
+     * @param row             row index,base on 0
+     * @param col             column index,base on 0
+     * @param field           field config
+     * @param data            data value
+     * @param workbookContext workbook context
+     */
+    protected void writeCell(Sheet sheet, final int row, final int col, Field field, Object data, WorkbookContext workbookContext) {
+        if (data == null) {
+            return;
         }
 
-        formatter = config.getFormatterContainer().get(field.getPicker().getReturnType());
-
-        if (field.getPicker().getReturnType() == String.class || formatter == null) {
-            value = ReflectionUtils.invokeReadMethod(field.getPicker(), o, field.getDefaultValue());
-            CellUtils.setCellValue(sheet, row, col, value, bookResource.getCellStyle(field));
-            return col + 1;
+        //Apply special formatter if not null
+        if (field.getFormatter() != null) {
+            String value = field.getFormatter().format(ReflectionUtils.invokeReadMethod(field.getPicker(), data));
+            CellUtils.setCellValue(sheet, row, col, value, workbookContext.getCellStyle(field));
+            return;
         }
-        //导出时要么是 Date 类型使用 dateFormatter 要么不是 Date 类型，使用 formatter 那么其实可以只用 formatter 字段表示
-        value = formatter.format(ReflectionUtils.invokeReadMethod(field.getPicker(), o));
 
-        if (StringUtils.isEmpty(value)) {
-            value = field.getDefaultValue();
+        //Try Applying global formatter of container
+        Formatter formatter = config.getFormatterContainer().get(field.getPicker().getReturnType());
+
+        //Set data.toString() if no formatter
+        if (formatter == null) {
+            String value = ReflectionUtils.invokeReadMethod(field.getPicker(), data, field.getDefaultValue());
+            CellUtils.setCellValue(sheet, row, col, value, workbookContext.getCellStyle(field));
+            return;
         }
-        CellUtils.setCellValue(sheet, row, col, value, bookResource.getCellStyle(field));
-        return col + 1;
 
-    }
-
-    protected boolean canWrite(Sheet sheet, Collection<T> collection) {
-        if (collection != null && collection.size() > 0) {
-            return true;
-        }
-        return false;
+        //Apply formatter and set value
+        String value = formatter.format(ReflectionUtils.invokeReadMethod(field.getPicker(), data));
+        CellUtils.setCellValue(sheet, row, col, StringUtils.isEmpty(value) ? field.getDefaultValue() : value, workbookContext.getCellStyle(field));
     }
 }
