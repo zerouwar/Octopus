@@ -63,8 +63,8 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
      * Writes field recursively in the DFS(Depth First Search)
      *
      * @param sheet           sheet
-     * @param row             row index,base on 0
-     * @param col             column index,base on 0
+     * @param row             row index,starts from 0
+     * @param col             column index,starts from 0
      * @param field           field config
      * @param o               data object
      * @param workbookContext workbook context
@@ -92,8 +92,8 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
      * It is convenient when you customize sheet content with field config.
      *
      * @param sheet           sheet
-     * @param row             row index,base on 0
-     * @param col             column index,base on 0
+     * @param row             row index,starts from 0
+     * @param col             column index,starts from 0
      * @param field           field config
      * @param data            data value
      * @param workbookContext workbook context
