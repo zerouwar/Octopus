@@ -35,5 +35,6 @@ public class DefaultExcelWriter implements ExcelWriter {
     @Override
     public void close() throws IOException {
         workbook.write(os);
+        workbook.close();
     }
 }
