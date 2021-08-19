@@ -1,8 +1,5 @@
 package cn.chenhuanming.octopus.util;
 
-import cn.chenhuanming.octopus.model.CellPosition;
-import cn.chenhuanming.octopus.model.DefaultCellPosition;
-import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -13,15 +10,11 @@ import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
-import java.awt.*;
-
 /**
  * @author chenhuanming
  * Created at 2018/12/16
  */
 public class CellUtils {
-
-    public static final CellPosition POSITION_ZERO_ZERO = new DefaultCellPosition(0, 0);
 
     public static void setCellValue(Sheet sheet, int row, int col, String value, CellStyle cellStyle) {
         Row sheetRow = sheet.getRow(row);

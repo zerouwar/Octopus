@@ -6,6 +6,7 @@ import cn.chenhuanming.octopus.config.XmlConfigFactory;
 import cn.chenhuanming.octopus.config.annotation.AnnotationConfigFactory;
 import cn.chenhuanming.octopus.entity.Address;
 import cn.chenhuanming.octopus.entity.Company;
+import cn.chenhuanming.octopus.model.CellPositions;
 import cn.chenhuanming.octopus.model.CheckedData;
 import cn.chenhuanming.octopus.model.DefaultCellPosition;
 import cn.chenhuanming.octopus.reader.SheetReader;
@@ -86,7 +87,7 @@ public class CompanyExample {
         //First get the excel file
         FileInputStream fis = new FileInputStream(rootPath + "/company2.xlsx");
 
-        SheetReader<Company> importData = Octopus.readFirstSheet(fis, config, new DefaultCellPosition(1, 0));
+        SheetReader<Company> importData = Octopus.readFirstSheet(fis, config, CellPositions.getContentStartPosition(CellPositions.POSITION_ZERO_ZERO, config));
 
         for (Company company : importData) {
             System.out.println(company);

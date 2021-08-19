@@ -3,9 +3,9 @@ package cn.chenhuanming.octopus.writer;
 import cn.chenhuanming.octopus.config.Config;
 import cn.chenhuanming.octopus.config.Field;
 import cn.chenhuanming.octopus.model.CellPosition;
+import cn.chenhuanming.octopus.model.CellPositions;
 import cn.chenhuanming.octopus.model.DefaultCellPosition;
 import cn.chenhuanming.octopus.model.WorkbookContext;
-import cn.chenhuanming.octopus.util.CellUtils;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.Collection;
@@ -23,7 +23,7 @@ public class DefaultSheetWriter<T> extends AbstractSheetWriter<T> {
     }
 
     public DefaultSheetWriter(Config config) {
-        this(config, new DefaultHeaderWriter(), CellUtils.POSITION_ZERO_ZERO);
+        this(config, new DefaultHeaderWriter(), CellPositions.POSITION_ZERO_ZERO);
     }
 
     @Override

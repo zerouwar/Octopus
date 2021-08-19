@@ -81,7 +81,7 @@ public abstract class AbstractSheetReader<T> implements SheetReader<T> {
 
     @Override
     public int size() {
-        return sheet.getLastRowNum() + 1;
+        return sheet.getLastRowNum() - startPoint.getRow() + 1;
     }
 
     abstract int read(int row, int col, Field field, Object o);

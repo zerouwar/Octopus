@@ -4,6 +4,7 @@ import cn.chenhuanming.octopus.config.Config;
 import cn.chenhuanming.octopus.config.Field;
 import cn.chenhuanming.octopus.formatter.Formatter;
 import cn.chenhuanming.octopus.model.CellPosition;
+import cn.chenhuanming.octopus.model.CellPositions;
 import cn.chenhuanming.octopus.model.WorkbookContext;
 import cn.chenhuanming.octopus.util.CellUtils;
 import cn.chenhuanming.octopus.util.ReflectionUtils;
@@ -44,7 +45,7 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
     @Override
     public CellPosition write(Sheet sheet, Collection<T> data) {
         if (data == null || data.size() == 0) {
-            return CellUtils.POSITION_ZERO_ZERO;
+            return CellPositions.POSITION_ZERO_ZERO;
         }
 
         Class dataType = data.iterator().next().getClass();

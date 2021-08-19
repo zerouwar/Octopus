@@ -10,6 +10,7 @@ import java.util.Collection;
  *
  * @author guangdao
  * Created at 2021-08-15
+ * @since 1.1.5
  */
 public class AutoSizeSheetWriter implements SheetWriter {
     private final SheetWriter sheetWriter;
