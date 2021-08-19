@@ -6,7 +6,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import java.util.Collection;
 
 /**
- * Auto size all content,but width in config will be ignored
+ * Auto size all content,but width of config will be ignored
  *
  * @author guangdao
  * Created at 2021-08-15

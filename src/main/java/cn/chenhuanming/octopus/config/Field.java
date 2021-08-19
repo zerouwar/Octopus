@@ -6,7 +6,6 @@ import lombok.NonNull;
 import lombok.Value;
 
 import java.lang.reflect.Method;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,12 +32,6 @@ public class Field {
      * default value
      */
     private String defaultValue;
-
-    /**
-     * format value if it is date type
-     */
-    @Deprecated
-    private Formatter<Date> dateFormat;
 
     /**
      * format content which is wrote into excel or read from excel
