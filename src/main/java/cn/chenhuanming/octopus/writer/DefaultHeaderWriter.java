@@ -59,7 +59,7 @@ public class DefaultHeaderWriter implements HeaderWriter {
             costRow = cost.getRowNum();
         }
 
-        if (row >= 0) {
+        if (field != null) {
             CellStyle style = bookResource.getHeaderStyle(field);
             CellUtils.setMergeRegionValue(sheet, row, lastRow - costRow, col, col + header.getWidth() - 1,
                     field.getDescription(), style);

@@ -22,22 +22,26 @@ public class DefaultSheetWriter<T> extends AbstractSheetWriter<T> {
         super(config, headerWriter, startPoint);
     }
 
+    public DefaultSheetWriter(Config config, CellPosition startPoint) {
+        super(config, new DefaultHeaderWriter(), startPoint);
+    }
+
     public DefaultSheetWriter(Config config) {
         this(config, new DefaultHeaderWriter(), CellPositions.POSITION_ZERO_ZERO);
     }
 
     @Override
-    CellPosition writeContent(Sheet sheet, Collection<T> data, CellPosition headerEndPos, WorkbookContext workbookContext) {
-        int row = headerEndPos.getRow() + 1;
-        int col = startPoint.getCol();
+    CellPosition writeContent(Sheet sheet, Collection<T> data, CellPosition startPosition, WorkbookContext workbookContext) {
+        int row = startPosition.getRow();
+        int col = startPosition.getCol();
 
         for (T t : data) {
+            col = startPosition.getCol();
             for (Field field : config.getFields()) {
                 col = writeField(sheet, row, col, field, t, workbookContext);
             }
-            col = startPoint.getCol();
             row++;
         }
-        return new DefaultCellPosition(row, headerEndPos.getCol());
+        return new DefaultCellPosition(row, col);
     }
 }

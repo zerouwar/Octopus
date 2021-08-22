@@ -23,12 +23,12 @@ import java.util.Collection;
 public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
     protected Config config;
     protected HeaderWriter headerWriter;
-    protected CellPosition startPoint;
+    protected CellPosition startPosition;
 
-    public AbstractSheetWriter(Config config, HeaderWriter headerWriter, CellPosition startPoint) {
+    public AbstractSheetWriter(Config config, HeaderWriter headerWriter, CellPosition startPosition) {
         this.config = config;
         this.headerWriter = headerWriter;
-        this.startPoint = startPoint;
+        this.startPosition = startPosition;
     }
 
     /**
@@ -36,11 +36,11 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
      *
      * @param sheet           sheet
      * @param data            data
-     * @param headerEndPos    header last position
+     * @param startPosition   start position to write
      * @param workbookContext workbook context
      * @return content last position
      */
-    abstract CellPosition writeContent(Sheet sheet, Collection<T> data, CellPosition headerEndPos, WorkbookContext workbookContext);
+    abstract CellPosition writeContent(Sheet sheet, Collection<T> data, CellPosition startPosition, WorkbookContext workbookContext);
 
     @Override
     public CellPosition write(Sheet sheet, Collection<T> data) {
@@ -55,9 +55,13 @@ public abstract class AbstractSheetWriter<T> implements SheetWriter<T> {
 
         WorkbookContext workbookContext = new WorkbookContext(sheet.getWorkbook());
 
-        CellPosition headerEndPos = headerWriter.drawHeader(sheet, startPoint, config.getFields());
+        if (headerWriter != null) {
+            CellPosition headerEndPos = headerWriter.drawHeader(sheet, startPosition, config.getFields());
+            return writeContent(sheet, data, CellPositions.of(headerEndPos.getRow() + 1, startPosition.getCol()), workbookContext);
+        } else {
+            return writeContent(sheet, data, startPosition, workbookContext);
+        }
 
-        return writeContent(sheet, data, headerEndPos, workbookContext);
     }
 
     /**

@@ -8,5 +8,14 @@ import java.util.Collection;
  * Created at 2018/12/19
  */
 public interface ExcelWriter extends Closeable {
-    <T> ExcelWriter write(String sheetName, SheetWriter<T> sheetWriter, Collection<T> collection);
+    /**
+     * Create new sheet and write data into it
+     *
+     * @param sheetName   new sheet name
+     * @param sheetWriter sheet writer
+     * @param data        data
+     * @param <T>         data type
+     * @return this
+     */
+    <T> ExcelWriter write(String sheetName, SheetWriter<T> sheetWriter, Collection<T> data);
 }
