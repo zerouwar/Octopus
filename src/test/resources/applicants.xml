@@ -32,7 +32,7 @@
 
     <Field name="entryDate"
            description="Entry Date"
-           date-format="yyyy-MM-dd"/>
+           date-format="yyyy-MM-dd HH:mm::ss"/>
 
     <Field name="working"
            description="Working/Leaved"

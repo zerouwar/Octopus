@@ -1,19 +1,24 @@
 package cn.chenhuanming.octopus.model;
 
 /**
+ * Cell position.
+ *
  * @author chenhuanming
  * Created at 2018/12/14
+ * @see CellPositions
  */
 
 public interface CellPosition {
     /**
-     * begin with 0,same as java poi
+     * Begin with 0,same as java poi
+     *
      * @return row index
      */
     int getRow();
 
     /**
-     * begin with 0,same as java poi
+     * Begin with 0,same as java poi
+     *
      * @return column index
      */
     int getCol();

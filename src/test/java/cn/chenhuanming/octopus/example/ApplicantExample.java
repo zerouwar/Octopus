@@ -4,8 +4,8 @@ import cn.chenhuanming.octopus.Octopus;
 import cn.chenhuanming.octopus.config.Config;
 import cn.chenhuanming.octopus.config.XmlConfigFactory;
 import cn.chenhuanming.octopus.config.annotation.AnnotationConfigFactory;
-import cn.chenhuanming.octopus.core.AbstractWriterTest;
 import cn.chenhuanming.octopus.entity.Applicants;
+import cn.chenhuanming.octopus.test.AbstractTest;
 import org.junit.Test;
 
 import java.io.FileOutputStream;
@@ -15,7 +15,7 @@ import java.io.IOException;
  * @author chenhuanming
  * Created at 2019-01-12
  */
-public class ApplicantExample extends AbstractWriterTest {
+public class ApplicantExample extends AbstractTest {
     @Test
     public void export() throws IOException {
         String rootPath = this.getClass().getClassLoader().getResource("").getPath();

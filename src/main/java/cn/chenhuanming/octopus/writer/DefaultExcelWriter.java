@@ -26,14 +26,15 @@ public class DefaultExcelWriter implements ExcelWriter {
     }
 
     @Override
-    public <T> ExcelWriter write(String sheetName, SheetWriter<T> sheetWriter, Collection<T> collection) {
+    public <T> ExcelWriter write(String sheetName, SheetWriter<T> sheetWriter, Collection<T> data) {
         Sheet sheet = workbook.createSheet(sheetName);
-        sheetWriter.write(sheet, collection);
+        sheetWriter.write(sheet, data);
         return this;
     }
 
     @Override
     public void close() throws IOException {
         workbook.write(os);
+        workbook.close();
     }
 }

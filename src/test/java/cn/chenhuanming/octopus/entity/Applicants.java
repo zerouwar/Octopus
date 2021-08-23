@@ -27,7 +27,7 @@ public class Applicants {
     private String name;
     @Header(description = "Job", headerColor = "#4286f4")
     private Job job;
-    @Field(description = "Entry Date", dateFormat = "yyyy-MM-dd")
+    @Field(description = "Entry Date", dateFormat = "yyyy-MM-dd HH:mm::ss")
     private Date entryDate;
     @Field(description = "Working/Leaved", options = "Working|Leaved",
             formatter = cn.chenhuanming.octopus.formatter.WorkingFormatter.class, color = "#42f4b9")

@@ -1,4 +1,4 @@
-package cn.chenhuanming.octopus.core;
+package cn.chenhuanming.octopus.test;
 
 import cn.chenhuanming.octopus.entity.Address;
 import cn.chenhuanming.octopus.entity.Applicants;
@@ -14,7 +14,7 @@ import java.util.List;
  * @author chenhuanming
  * Created at 2019-01-09
  */
-public class AbstractWriterTest {
+public class AbstractTest {
     protected List<Applicants> applicantsList;
 
     protected Integer number = 5;
