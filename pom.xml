@@ -6,7 +6,7 @@
 
     <groupId>cn.chenhuanming</groupId>
     <artifactId>octopus</artifactId>
-    <version>1.1.4</version>
+    <version>1.1.5</version>
 
     <name>Octopus</name>
     <description>A simple excel import and export tool</description>
