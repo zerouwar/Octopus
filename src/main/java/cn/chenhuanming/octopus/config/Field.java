@@ -72,20 +72,6 @@ public class Field {
      */
     private ImportValidation importValidation;
 
-//    public Field() {
-//        description = "";
-//        defaultValue = null;
-//        children = new ArrayList<>();
-//
-//        fieldCellStyle = FieldCellStyle.defaultCellStyle();
-//        headerFieldCellStyle = FieldCellStyle.defaultHeaderCellStyle();
-//    }
-//
-//    public Field(List<Field> children) {
-//        this();
-//        this.setChildren(children);
-//    }
-
     public boolean isLeaf() {
         return getChildren() == null || getChildren().size() == 0;
     }
