@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
  * @author chenhuanming
  * Created at 2019-01-11
  */
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Sheet
 public class Company {
     @Field(description = "Company Name")
